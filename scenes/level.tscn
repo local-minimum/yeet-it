@@ -31,6 +31,9 @@ metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
 
 [sub_resource type="Resource" id="Resource_8iemx"]
 script = ExtResource("6_8c41q")
+refuse_distance_factor_lateral = 0.3
+refuse_distance_factor_forward = 0.3
+refuse_distance_factor_reverse = 0.05
 metadata/_custom_type_script = "uid://crv5isbs0cdmp"
 
 [sub_resource type="Resource" id="Resource_ux5qa"]
@@ -75,6 +78,8 @@ script = ExtResource("4_82cfe")
 [node name="Camera3D" type="Camera3D" parent="Player/Head"]
 environment = ExtResource("4_ux5qa")
 current = true
+near = 0.1
+far = 100.0
 
 [node name="KeyRingCore" type="Node" parent="Player"]
 script = ExtResource("4_klq6b")
