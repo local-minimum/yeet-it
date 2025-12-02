@@ -2,6 +2,7 @@ extends Node
 class_name MovementPlanningCoordinator
 
 @export var planners: Array[MovementPlannerBase]
+@export var priority: int = 1
 
 func _enter_tree() -> void:
     if __SignalBus.on_move_plan.connect(_handle_move_plan) != OK:
@@ -28,5 +29,5 @@ func _handle_move_plan(entity: GridEntity, movement: Movement.MovementType) -> v
         plan = planner.create_no_movement(entity, movement)
 
     if plan != null:
-        # TODO: Decide somehow if a plan is concurrent or no
-        entity.execute_plan(plan, 1, false)
+        if !entity.has_conflicting_plan(plan, priority):
+            entity.execute_plan(plan, priority, entity.count_active_plans())

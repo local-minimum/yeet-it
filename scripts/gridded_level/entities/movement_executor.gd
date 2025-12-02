@@ -13,6 +13,8 @@ var _active_plan_b: MovementPlannerBase.MovementPlan
 var _active_plan_prio_b: int
 var _tween_b: Tween
 
+var _plans: Dictionary[MovementPlannerBase.MovementPlan, Tween] = {}
+
 var active_plan_prio: int:
     get():
         if _active_plan_b == null && _active_plan_a != null && _active_plan_a.running:
@@ -33,7 +35,16 @@ var has_concurrency_slot: bool:
             !_active_plan_b.running
         )
 
+func abort_plan(plan: MovementPlannerBase.MovementPlan) -> void:
+    var tween = _plans.get(plan, null)
+    if tween:
+        tween.kill()
+        _plans.erase(plan)
+
 func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurrent: bool) -> void:
+    if _verbose:
+        print_debug("[Movement Executor %s] Recieved plan %s with priority %s, concurrent=%s" % [name, plan.summarize(), priority, concurrent])
+
     if !concurrent && priority < active_plan_prio || plan.equals(_active_plan_a) || plan.equals(_active_plan_b):
         if _verbose:
             print_debug("[Movement Executor %s] Discarding plan %s because of priority or currently running" % [name, plan.summarize()])
@@ -52,7 +63,8 @@ func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurr
             _tween_a = create_tween()
             _active_plan_a = plan
             _active_plan_prio_a = priority
-            _start_plan(plan, _tween_a)
+            if _start_plan(plan, _tween_a):
+                pass
         else:
             if _tween_b != null && _tween_b.is_running():
                 _tween_b.kill()
@@ -99,12 +111,12 @@ func _handle_ducking(plan: MovementPlannerBase.MovementPlan) -> void:
     elif plan.from.mode == MovementPlanner.PositionMode.AIRBOURNE && _settings.ducking_in_the_air:
         _entity.stand_up()
 
-func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> void:
+func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> bool:
     if plan.mode == MovementPlannerBase.MovementMode.NONE:
         if _verbose:
             print_debug("[Movement Executor %s] Discarding plan %s of its mode" % [name, plan.summarize()])
         tween.kill()
-        return
+        return false
 
     _trigger_grid_events(plan)
 
@@ -112,7 +124,7 @@ func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> void:
         if _verbose:
             print_debug("[Movement Executor %s] Discarding plan %s of its mode" % [name, plan.summarize()])
         tween.kill()
-        return
+        return false
 
     if _verbose:
         print_debug("[Movement Executor %s] Executing plan %s" % [name, plan.summarize()])
@@ -159,7 +171,7 @@ func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> void:
 
         MovementPlannerBase.MovementMode.NONE:
             tween.kill()
-            return
+            return false
 
         _:
             push_error("[Movement Planner %s] got plan of unhandled movement type for %s" % [
@@ -168,7 +180,7 @@ func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> void:
                 _entity,
             ])
             tween.kill()
-            return
+            return false
 
     __SignalBus.on_move_start.emit(_entity, plan.from.coordinates, plan.move_direction)
 
@@ -195,6 +207,8 @@ func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> void:
 
     if _settings.instant_step:
         _fast_forward_tween(tween, plan)
+
+    return true
 
 func _fast_forward_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
     var step: float = max((plan.end_time_msec - plan.start_time_msec) * 0.001, 1)
@@ -262,7 +276,8 @@ func _create_rotation_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan
     tween.finished.connect(
         func () -> void:
             GridEntity.orient(_entity)
-            _entity.end_movement(plan.movement)
+            _entity.complete_plan(plan)
+            _plans.erase(plan)
     )
     @warning_ignore_restore("return_value_discarded")
 
@@ -346,7 +361,8 @@ func _create_translate_planar_tween(tween: Tween, plan: MovementPlannerBase.Move
         func () -> void:
             _entity.sync_position()
             _entity.remove_concurrent_movement_block()
-            _entity.end_movement(plan.movement)
+            _entity.complete_plan(plan)
+            _plans.erase(plan)
     )
 
 func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
@@ -362,7 +378,8 @@ func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: Mov
                 GridEntity.orient(_entity)
                 _entity.sync_position()
                 _entity.remove_concurrent_movement_block()
-                _entity.end_movement(plan.movement)
+                _entity.complete_plan(plan)
+                _plans.erase(plan)
         )
         return
 
@@ -370,7 +387,8 @@ func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: Mov
         func () -> void:
             _entity.sync_position()
             _entity.remove_concurrent_movement_block()
-            _entity.end_movement(plan.movement)
+            _entity.complete_plan(plan)
+            _plans.erase(plan)
     )
     @warning_ignore_restore("return_value_discarded")
 
@@ -436,7 +454,8 @@ func _create_translate_corner_tween(tween: Tween, plan: MovementPlannerBase.Move
             GridEntity.orient(_entity)
             _entity.sync_position()
             _entity.remove_concurrent_movement_block()
-            _entity.end_movement(plan.movement)
+            _entity.complete_plan(plan)
+            _plans.erase(plan)
     )
     @warning_ignore_restore("return_value_discarded")
 

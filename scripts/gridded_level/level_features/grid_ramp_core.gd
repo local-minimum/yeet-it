@@ -46,7 +46,6 @@ func trigger(entity: GridEntity, movement: Movement.MovementType) -> void:
     _transporting_entities.append(entity)
     super.trigger(entity, movement)
     entity.cause_cinematic(self)
-    entity.end_movement(movement, false)
     entity.clear_queue()
     var down: CardinalDirections.CardinalDirection = CardinalDirections.invert(up_direction)
     var down_anchor: GridAnchor = get_grid_node().get_grid_anchor(down)
@@ -289,7 +288,6 @@ func trigger(entity: GridEntity, movement: Movement.MovementType) -> void:
             entity.remove_cinematic_cause(self)
 
             _transporting_entities.erase(entity)
-            entity.end_movement(movement, false, true)
     )
     @warning_ignore_restore("return_value_discarded")
 

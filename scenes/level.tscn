@@ -89,6 +89,7 @@ metadata/_custom_type_script = "uid://v5vk4n110r8p"
 script = ExtResource("5_b121j")
 _entity = NodePath("..")
 _settings = SubResource("Resource_8iemx")
+_verbose = true
 metadata/_custom_type_script = "uid://d1e0odws2w1g1"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Player"]

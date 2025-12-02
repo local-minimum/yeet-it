@@ -81,7 +81,6 @@ var transportation_ability_override: TransportationMode
 @export var _spawn_node: GridNode
 @export var _spawn_anchor_direction: CardinalDirections.CardinalDirection = CardinalDirections.CardinalDirection.NONE
 
-var _active_movement: Movement.MovementType = Movement.MovementType.NONE
 var _concurrent_movement: Movement.MovementType = Movement.MovementType.NONE
 var _next_movement: Movement.MovementType = Movement.MovementType.NONE
 var _next_next_movement: Movement.MovementType = Movement.MovementType.NONE
@@ -120,7 +119,7 @@ func delay_emit() -> void:
         _old_look_direction = look_direction
 
 func is_moving() -> bool:
-    return _active_movement != Movement.MovementType.NONE || _concurrent_movement != Movement.MovementType.NONE
+    return count_active_plans() > 0
 
 var _block_concurrent: bool
 
@@ -130,62 +129,128 @@ func block_concurrent_movement() -> void:
 func remove_concurrent_movement_block() -> void:
     _block_concurrent = false
 
+var _active_plans: Dictionary[MovementPlannerBase.MovementPlan, int] = {}
+
+func count_active_plans() -> int:
+    var now: int = Time.get_ticks_msec()
+    for plan: MovementPlannerBase.MovementPlan in _active_plans.keys():
+        if plan.end_time_msec < now:
+            _active_plans.erase(plan)
+
+    return _active_plans.size()
+
+func _superseeded_plans(
+    plan: MovementPlannerBase.MovementPlan,
+    priority: int,
+) -> Array[MovementPlannerBase.MovementPlan]:
+    var conflicts: Array[MovementPlannerBase.MovementPlan]
+    var is_translation: bool = MovementPlannerBase.is_translation_plan(plan)
+    var is_rotation: bool = MovementPlannerBase.is_rotation_plan(plan)
+    var now: int = Time.get_ticks_msec()
+    for active: MovementPlannerBase.MovementPlan in _active_plans:
+        if active.end_time_msec < now:
+            continue
+
+        var active_should_be_replaced: bool = _active_plans[active] <= priority
+        if !_concurrent_movement && active_should_be_replaced:
+            conflicts.append(active)
+        elif is_translation && MovementPlannerBase.is_translation_plan(active):
+            if !active_should_be_replaced:
+                conflicts.append(active)
+        elif is_rotation && MovementPlannerBase.is_rotation_plan(active):
+            if !active_should_be_replaced:
+                conflicts.append(active)
+
+    return conflicts
+
+func has_conflicting_plan(
+    plan: MovementPlannerBase.MovementPlan,
+    priority: int,
+) -> bool:
+    var is_translation: bool = MovementPlannerBase.is_translation_plan(plan)
+    var is_rotation: bool = MovementPlannerBase.is_rotation_plan(plan)
+    var now: int = Time.get_ticks_msec()
+
+    for active: MovementPlannerBase.MovementPlan in _active_plans:
+        if active.end_time_msec < now:
+            continue
+
+        var active_has_prio: bool = _active_plans[active] > priority
+        if !_concurrent_movement && active_has_prio:
+            return true
+        elif is_translation && MovementPlannerBase.is_translation_plan(active):
+            if !active_has_prio:
+                return true
+        elif is_rotation && MovementPlannerBase.is_rotation_plan(active):
+            if !active_has_prio:
+                return true
+
+    return false
+
+func _executing_conflicting_plan(
+    movement: Movement.MovementType,
+) -> bool:
+    var is_translation: bool = Movement.is_translation(movement)
+    var is_rotation: bool = Movement.is_turn(movement)
+    var now: int = Time.get_ticks_msec()
+
+    for active: MovementPlannerBase.MovementPlan in _active_plans:
+        if active.end_time_msec < now:
+            continue
+
+        if !_concurrent_movement:
+            return true
+        elif is_translation && MovementPlannerBase.is_translation_plan(active):
+            return true
+        elif is_rotation && MovementPlannerBase.is_rotation_plan(active):
+            return true
+
+    return false
+
 func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurrent: bool) -> void:
+    for existing in _superseeded_plans(plan, priority):
+        if existing.equals(plan):
+            print_debug("[Grid Entity %s] Ignoring plan %s because equivalent to %s" % [
+                name,
+                plan.summarize(),
+                existing.summarize(),
+            ])
+            return
+
+        executor.abort_plan(plan)
+        _active_plans.erase(plan)
+
+    _active_plans[plan] = priority
     executor.execute_plan(plan, priority, concurrent)
 
 func force_movement(movement: Movement.MovementType) -> bool:
-    if _start_movement(movement, true):
+    if _movement_allowed(movement, true):
         return attempt_movement(movement, false, true)
     return false
 
-func _start_movement(movement: Movement.MovementType, force: bool) -> bool:
-    if Movement.MovementType.NONE == movement || falling() && !force:
-        push_warning("[Grid Entity %s] Movement refused: not accepting movements" % name)
+func _movement_allowed(movement: Movement.MovementType, force: bool) -> bool:
+    if Movement.MovementType.NONE == movement || (cinematic || falling()) && !force:
+        push_warning("[Grid Entity %s] Movement refused: not accepting movements [cinematic = %s, falling = %s]" % [
+            name,
+            cinematic,
+            falling(),
+        ])
         return false
 
-    if _active_movement == Movement.MovementType.NONE || force:
-        _active_movement = movement
-        # print_debug("Movement %s accepted as primary" % [Movement.name(movement)])
-    elif concurrent_turns && !_block_concurrent && Movement.is_turn(movement) && !Movement.is_turn(_active_movement):
-        # print_debug("Movement %s accepted as concurrent" % [Movement.name(movement)])
-        _concurrent_movement = movement
-    else:
-        # print_debug("Movement refused: busy")
-        return false
+    return !force && !_executing_conflicting_plan(movement)
 
-    return true
+func complete_plan(plan: MovementPlannerBase.MovementPlan, continue_with_next: bool = true) -> void:
+    _active_plans.erase(plan)
 
-func end_movement(movement: Movement.MovementType, start_next_from_queue: bool = true, force_emit: bool = false) -> void:
-    if _active_movement == movement:
-        _active_movement = _concurrent_movement
-        _concurrent_movement = Movement.MovementType.NONE
-    elif _concurrent_movement == movement:
-        _concurrent_movement = Movement.MovementType.NONE
-    else:
-        if force_emit:
-            __SignalBus.on_move_end.emit(self)
-        elif !cinematic:
-            push_warning("[Grid Entity %s] %s was not an active movement (%s / %s)" % [
-                name,
-                Movement.name(movement),
-                Movement.name(_active_movement),
-                Movement.name(_concurrent_movement),
-            ])
-        return
+    if count_active_plans() == 0:
+        print_debug("[Grid Entity %s] Ended all movements" % [
+            name,
+        ])
 
-    print_debug("[Grid Entity %s] %s ended, active are %s / %s" % [
-        name,
-        Movement.name(movement),
-        Movement.name(_active_movement),
-        Movement.name(_concurrent_movement),
-    ])
-
-    if movement != Movement.MovementType.NONE || force_emit:
-        # print_debug("[Grid Entity %s] Emitting end move" % name)
         __SignalBus.on_move_end.emit(self)
 
-    if start_next_from_queue:
-        _attempt_movement_from_queue()
+        if continue_with_next:
+            _attempt_movement_from_queue()
 
 func _attempt_movement_from_queue() -> void:
     if !queue_moves:
@@ -198,11 +263,6 @@ func _attempt_movement_from_queue() -> void:
         else:
             clear_queue()
             print_debug("Queued movement refused")
-
-        # print_debug("Consumed queue, now %s / %s" % [
-            # Movement.name(_active_movement),
-            # Movement.name(_concurrent_movement),
-        # ])
 
 func falling() -> bool:
     return transportation_mode.mode == TransportationMode.FALLING
@@ -218,22 +278,23 @@ func attempt_movement(
     enqueue_if_occupied: bool = true,
     force: bool = false,
 ) -> bool:
+    print_debug("[Grid Entity %s] Attempt movement %s from %s" % [name, Movement.name(movement), coordinates()])
+
     if get_level().paused:
+        print_debug("[Grid Entity %s] Ignoring movement %s because level is paused" % [name, Movement.name(movement)])
         return false
 
     if movement == Movement.MovementType.NONE:
-        push_error("A none movement cannot be performed")
+        push_error("[Grid Entity %s] Ignoring movement %s it isn't a movement" % [name, Movement.name(movement)])
         print_stack()
         return false
 
-    print_debug("[Grid Entity %s] Attempt movement %s from %s" % [name, Movement.name(movement), coordinates()])
-
-    if !_start_movement(movement, force):
+    if !_movement_allowed(movement, force):
+        print_debug("[Grid Entity %s] Movement %s not allowed at this time" % [name, Movement.name(movement)])
         if enqueue_if_occupied && queue_moves:
             _enqeue_movement(movement)
             return true
 
-        # print_debug("%s & %s are active" % [Movement.name(_active_movement), Movement.name(_concurrent_movement)])
         return false
 
     if force:

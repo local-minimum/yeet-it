@@ -15,6 +15,31 @@ enum MovementMode {
     TRANSLATE_REFUSE,
 }
 
+const _TRANSLATION_PLANS: Array[MovementMode] = [
+    MovementMode.TRANSLATE_PLANAR,
+    MovementMode.TRANSLATE_CENTER,
+    MovementMode.TRANSLATE_JUMP,
+    MovementMode.TRANSLATE_LAND,
+    MovementMode.TRANSLATE_INNER_CORNER,
+    MovementMode.TRANSLATE_OUTER_CORNER,
+    MovementMode.TRANSLATE_FALL_LATERAL,
+    MovementMode.TRANSLATE_REFUSE,
+]
+
+const _ROTATION_PLANS: Array[MovementMode] = [
+    MovementMode.ROTATE,
+    MovementMode.TRANSLATE_OUTER_CORNER,
+    MovementMode.TRANSLATE_INNER_CORNER,
+]
+
+static func is_translation_plan(plan: MovementPlan) -> bool:
+    return _TRANSLATION_PLANS.has(plan.mode)
+
+static func is_rotation_plan(plan: MovementPlan) -> bool:
+    if _ROTATION_PLANS.has(plan.mode):
+        return true
+    return plan.from.look_direction != plan.to.look_direction || plan.from.down != plan.to.down
+
 enum PositionMode {
     NORMAL,
     AIRBOURNE,
