@@ -1,14 +1,62 @@
-[gd_scene load_steps=2 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=10 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
+[ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
+[ext_resource type="Script" uid="uid://b8a6yvndcxtpa" path="res://scripts/gridded_level/transportation_mode.gd" id="3_2r41h"]
+[ext_resource type="Script" uid="uid://v5vk4n110r8p" path="res://scripts/gridded_level/key_ring_core.gd" id="4_klq6b"]
+[ext_resource type="Script" uid="uid://d1e0odws2w1g1" path="res://scripts/gridded_level/entities/movement_executor.gd" id="5_b121j"]
+[ext_resource type="Script" uid="uid://crv5isbs0cdmp" path="res://scripts/gridded_level/entities/movement_executor_settings.gd" id="6_8c41q"]
 
-[node name="Level" type="Node3D" node_paths=PackedStringArray("level_geometry", "zones_parent", "broadcasts_parent")]
+[sub_resource type="Resource" id="Resource_olg7q"]
+script = ExtResource("3_2r41h")
+metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
+
+[sub_resource type="Resource" id="Resource_t1rx8"]
+script = ExtResource("3_2r41h")
+mode = 129
+metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
+
+[sub_resource type="Resource" id="Resource_8iemx"]
+script = ExtResource("6_8c41q")
+metadata/_custom_type_script = "uid://crv5isbs0cdmp"
+
+[node name="Level" type="Node3D" node_paths=PackedStringArray("level_geometry", "zones_parent", "broadcasts_parent", "player")]
 script = ExtResource("1_2q6dc")
 level_id = "demo"
+node_size = Vector3(2.5, 3, 2.5)
 level_geometry = NodePath("Geometry")
 zones_parent = NodePath("Zones")
 broadcasts_parent = NodePath("Broadcasts")
+player = NodePath("Player")
 metadata/_custom_type_script = "uid://c74xugjiqdyyk"
+
+[node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("camera", "key_ring", "executor")]
+script = ExtResource("2_w7c3h")
+camera = NodePath("Head/Camera3D")
+key_ring = NodePath("KeyRingCore")
+transportation_mode = SubResource("Resource_olg7q")
+transportation_abilities = SubResource("Resource_t1rx8")
+can_jump_off_floor = true
+executor = NodePath("MovementExecutor")
+concurrent_turns = true
+metadata/_custom_type_script = "uid://dlbq7x82ejv6e"
+
+[node name="Head" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+
+[node name="KeyRingCore" type="Node" parent="Player"]
+script = ExtResource("4_klq6b")
+metadata/_custom_type_script = "uid://v5vk4n110r8p"
+
+[node name="MovementExecutor" type="Node" parent="Player" node_paths=PackedStringArray("_entity")]
+script = ExtResource("5_b121j")
+_entity = NodePath("..")
+_settings = SubResource("Resource_8iemx")
+metadata/_custom_type_script = "uid://d1e0odws2w1g1"
+
+[node name="Enemies" type="Node3D" parent="."]
 
 [node name="Geometry" type="Node3D" parent="."]
 
