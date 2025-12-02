@@ -33,12 +33,30 @@ func _on_hide_setting_menu() -> void:
     menu_button.show()
 
 var level: GridLevelCore
+
+func _enter_tree() -> void:
+    if __SignalBus.on_level_loaded.connect(_handle_new_level) != OK:
+        push_error("Failed to connect level loaded")
+
+    if __SignalBus.on_update_animation_speed.connect(_handle_updated_animation_speed) != OK:
+        push_error("Failed to connect update animation speed")
+
+func _exit_tree() -> void:
+    __SignalBus.on_level_loaded.disconnect(_handle_new_level)
+
+var _last_speed_update_type: EntityFilter.EntityType = EntityFilter.EntityType.NEVER
+
+func _handle_updated_animation_speed(type: EntityFilter.EntityType, new_speed: float) -> void:
+    if _last_speed_update_type == EntityFilter.EntityType.PLAYER && type != _last_speed_update_type:
+        return
+
+    speed.value = new_speed
+    _last_speed_update_type = type
+
 func _ready() -> void:
     _on_hide_setting_menu.call_deferred()
 
     level = GridLevelCore.active_level
-    if __SignalBus.on_level_loaded.connect(_handle_new_level) != OK:
-        push_error("Failed to connect level loaded")
 
     _sync.call_deferred()
 
@@ -54,8 +72,7 @@ func _sync() -> void:
     replays_replace.button_pressed = !level.player.persist_repeat_moves
     smooth_movement.button_pressed = !level.player.executor._settings.instant_step
     concurrent_turns.button_pressed = level.player.concurrent_turns
-    tank_movement.button_pressed = level.player.planner.tank_movement
-    speed.value = level.player.planner.animation_speed
+    tank_movement.button_pressed = level.player.executor._settings.tank_movement
 
     fov.value = level.player.camera.fov
     handedness.button_pressed = AccessibilitySettings.handedness == AccessibilitySettings.Handedness.RIGHT
@@ -84,7 +101,7 @@ func _on_concurrent_turning_toggled(toggled_on: bool) -> void:
 
 
 func _on_tank_animations_toggled(toggled_on: bool) -> void:
-    level.player.planner.tank_movement = toggled_on
+    level.player.executor._settings.tank_movement = toggled_on
 
 
 func _on_jump_off_walls_toggled(toggled_on: bool) -> void:
@@ -94,7 +111,8 @@ func _on_jump_off_walls_toggled(toggled_on: bool) -> void:
 func _on_speed_slider_value_changed(value: float) -> void:
     if !inited:
         return
-    level.player.planner.animation_speed = value
+
+    __SignalBus.on_request_animation_speed.emit(level.player if level != null else null, value)
 
 func _on_fov_slider_value_changed(value: float) -> void:
     if !inited:

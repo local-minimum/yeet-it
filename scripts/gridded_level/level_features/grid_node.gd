@@ -42,9 +42,10 @@ func get_door(direction: CardinalDirections.CardinalDirection) -> GridDoorCore:
 
 var _teleporter_inited: bool
 var _teleporters: Dictionary[CardinalDirections.CardinalDirection, GridTeleporter]
+
 func get_active_teleporter(
     direction: CardinalDirections.CardinalDirection,
-    for_player: bool = true,
+    for_feature: GridNodeFeature,
     omit_by_direction: bool = false,
     omit_if_active_direction: CardinalDirections.CardinalDirection = CardinalDirections.CardinalDirection.NONE,
 ) -> GridTeleporter:
@@ -56,10 +57,7 @@ func get_active_teleporter(
     var _valid_check: Callable = func (tele: GridTeleporter) -> bool:
         if !tele.can_teleport || !tele.active_for_side(direction) || omit_by_direction && tele.active_for_side(omit_if_active_direction):
             return false
-
-        if for_player:
-            return tele.teleports_player
-        return tele.teleports_non_players
+        return tele.activates_for(for_feature)
 
     if _teleporters.has(direction):
         var teleport: GridTeleporter = _teleporters.get(direction)
@@ -289,7 +287,7 @@ func add_anchor(anchor: GridAnchor) -> bool:
 
 func get_grid_anchor(direction: CardinalDirections.CardinalDirection) -> GridAnchor:
     if _anchors.has(direction):
-        var anchor = _anchors[direction]
+        var anchor: GridAnchor = _anchors[direction]
         if anchor == null || anchor.disabled:
             return null
         return anchor
@@ -297,7 +295,7 @@ func get_grid_anchor(direction: CardinalDirections.CardinalDirection) -> GridAnc
     _init_sides_and_anchors(self)
 
     if _anchors.has(direction):
-        var anchor = _anchors[direction]
+        var anchor: GridAnchor = _anchors[direction]
         if anchor == null || anchor.disabled:
             return null
         return anchor

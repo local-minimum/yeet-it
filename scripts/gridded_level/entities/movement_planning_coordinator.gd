@@ -18,6 +18,13 @@ func _get_planner(entity: GridEntity) -> MovementPlannerBase:
 
     return null
 
+func _handle_update_animation_speed(entity: GridEntity, speed: float) -> void:
+    var planner: MovementPlannerBase = _get_planner(entity)
+    if planner is MovementPlanner:
+        var mplanner: MovementPlanner = planner
+        mplanner._settings.animation_speed = speed
+        __SignalBus.on_update_animation_speed.emit(mplanner._filter.type, speed)
+
 func _handle_move_plan(entity: GridEntity, movement: Movement.MovementType) -> void:
     var planner: MovementPlannerBase = _get_planner(entity)
     if planner == null:

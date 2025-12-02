@@ -33,9 +33,16 @@ var disabled: bool:
                     continue
 
                 if entity.anchor == self:
-                    # TODO: This might not actually work
-                    entity.force_movement(Movement.MovementType.CENTER)
-                    entity.transportation_mode.mode = TransportationMode.FLYING if entity.transportation_abilities.has_flag(TransportationMode.FLYING) else TransportationMode.FALLING
+                    var push_direction: CardinalDirections.CardinalDirection = calculate_anchor_down(entity.get_level().gravity, entity.down)
+                    if push_direction == CardinalDirections.CardinalDirection.NONE || push_direction == direction:
+                        if CardinalDirections.is_parallell(entity.look_direction, direction):
+                            push_direction = CardinalDirections.random_orthogonal(direction)
+                        else:
+                            push_direction = entity.look_direction
+
+                    var movement: Movement.MovementType = Movement.from_directions(push_direction, entity.look_direction, entity.down)
+                    if !entity.force_movement(movement):
+                        push_warning("[Grid Anchor %s] Anchor became disabled and could not get rid of attached entity %s by movement %s" % [self, entity, Movement.name(movement)])
         disabled = value
 
 var _node_side: GridNodeSide

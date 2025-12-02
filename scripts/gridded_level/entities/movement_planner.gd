@@ -5,6 +5,9 @@ class_name MovementPlanner
 @export var _settings: MovementPlannerSettings
 @export var _verbose: bool
 
+func _ready() -> void:
+    __SignalBus.on_update_animation_speed.emit(_filter.type, _settings.animation_speed)
+
 func plans_for(entity: GridEntity) -> bool:
     return _filter.applies(entity)
 

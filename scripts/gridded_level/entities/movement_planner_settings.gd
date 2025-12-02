@@ -22,6 +22,3 @@ var turn_duration_scaled: float:
         return turn_duration / animation_speed
 
 @export var animation_speed: float = 1.0
-var animation_speed_scaled: float:
-    get():
-        return animation_speed / animation_speed

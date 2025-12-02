@@ -45,7 +45,8 @@ func _ready() -> void:
     # Uniqify mesh and material
     if _swapping_mesh != null:
         _swapping_mesh.mesh = _swapping_mesh.mesh.duplicate()
-        _swapping_mesh.mesh.surface_set_material(0, _swapping_mesh.mesh.surface_get_material(0).duplicate())
+        var material_copy: Material = _swapping_mesh.mesh.surface_get_material(0).duplicate()
+        _swapping_mesh.mesh.surface_set_material(0, material_copy)
 
         _sync_swapping_material()
 

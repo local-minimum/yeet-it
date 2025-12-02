@@ -355,13 +355,13 @@ func _add_extended_anchors() -> void:
                 if inv_direction == _crusher_side:
                     var own_anchor: GridAnchor = grid_node.get_grid_anchor(inv_direction)
                     if own_anchor != null:
-                        for child in own_anchor.get_children(true):
+                        for child: Node in own_anchor.get_children(true):
                             if child is Node3D:
                                 var node3d: Node3D = child
                                 var child_t: Transform3D = node3d.transform
                                 print_debug("[Crusher] Reparenting %s to %s" % [child, new_anchor])
                                 child.reparent(new_anchor, true)
-                                child.transform = child_t
+                                node3d.transform = child_t
 
                     else:
                         print_debug("[Crusher] No anchor in crusher direction %s" % [CardinalDirections.name(_crusher_side)])

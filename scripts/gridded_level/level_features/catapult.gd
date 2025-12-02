@@ -113,11 +113,12 @@ func _animate_manual_crash(
     entity.set_grid_anchor(crash_anchor)
     entity.stand_up()
 
-    tween.finished.connect(func () -> void:
+    if tween.finished.connect(func () -> void:
         _release_entity(entity)
         entity.sync_position()
         GridEntity.orient(entity)
-    )
+    ) != OK:
+        push_error("[Catapult %s] failed to connect finished to tween" % coordinates())
 
 
 func _crash_entity(entity: GridEntity) -> void:
