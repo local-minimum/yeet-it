@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=16 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
@@ -6,6 +6,10 @@
 [ext_resource type="Script" uid="uid://v5vk4n110r8p" path="res://scripts/gridded_level/key_ring_core.gd" id="4_klq6b"]
 [ext_resource type="Script" uid="uid://d1e0odws2w1g1" path="res://scripts/gridded_level/entities/movement_executor.gd" id="5_b121j"]
 [ext_resource type="Script" uid="uid://crv5isbs0cdmp" path="res://scripts/gridded_level/entities/movement_executor_settings.gd" id="6_8c41q"]
+[ext_resource type="Script" uid="uid://dqwpy4k402w15" path="res://scripts/gridded_level/entities/movement_planning_coordinator.gd" id="7_olg7q"]
+[ext_resource type="Script" uid="uid://blerqhoie555h" path="res://scripts/gridded_level/entities/movement_planner.gd" id="8_t1rx8"]
+[ext_resource type="Script" uid="uid://dsq3qb6waenpd" path="res://scripts/gridded_level/entities/entity_filter.gd" id="9_8iemx"]
+[ext_resource type="Script" uid="uid://bpoh6yp18x1ne" path="res://scripts/gridded_level/entities/movement_planner_settings.gd" id="10_64w2a"]
 
 [sub_resource type="Resource" id="Resource_olg7q"]
 script = ExtResource("3_2r41h")
@@ -19,6 +23,14 @@ metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
 [sub_resource type="Resource" id="Resource_8iemx"]
 script = ExtResource("6_8c41q")
 metadata/_custom_type_script = "uid://crv5isbs0cdmp"
+
+[sub_resource type="Resource" id="Resource_fpun6"]
+script = ExtResource("9_8iemx")
+metadata/_custom_type_script = "uid://dsq3qb6waenpd"
+
+[sub_resource type="Resource" id="Resource_wc255"]
+script = ExtResource("10_64w2a")
+metadata/_custom_type_script = "uid://bpoh6yp18x1ne"
 
 [node name="Level" type="Node3D" node_paths=PackedStringArray("level_geometry", "zones_parent", "broadcasts_parent", "player")]
 script = ExtResource("1_2q6dc")
@@ -63,3 +75,14 @@ metadata/_custom_type_script = "uid://d1e0odws2w1g1"
 [node name="Zones" type="Node3D" parent="."]
 
 [node name="Broadcasts" type="Node" parent="."]
+
+[node name="Movement Planners" type="Node" parent="." node_paths=PackedStringArray("planners")]
+script = ExtResource("7_olg7q")
+planners = [NodePath("Catch All Planner")]
+metadata/_custom_type_script = "uid://dqwpy4k402w15"
+
+[node name="Catch All Planner" type="Node" parent="Movement Planners"]
+script = ExtResource("8_t1rx8")
+_filter = SubResource("Resource_fpun6")
+_settings = SubResource("Resource_wc255")
+metadata/_custom_type_script = "uid://blerqhoie555h"
