@@ -13,3 +13,10 @@ config_version=5
 config/name="Yeet It"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+__SignalBus="*res://scripts/signal_bus_core.gd"
+__GlobalGameState="*res://scenes/globals/global_game_state.tscn"
+__AudioHub="*res://scenes/globals/audio_hub.tscn"
+__BindingHints="*res://scenes/globals/binding_hints.tscn"
