@@ -81,7 +81,6 @@ var transportation_ability_override: TransportationMode
 @export var _spawn_node: GridNode
 @export var _spawn_anchor_direction: CardinalDirections.CardinalDirection = CardinalDirections.CardinalDirection.NONE
 
-var _concurrent_movement: Movement.MovementType = Movement.MovementType.NONE
 var _next_movement: Movement.MovementType = Movement.MovementType.NONE
 var _next_next_movement: Movement.MovementType = Movement.MovementType.NONE
 
@@ -152,7 +151,7 @@ func _superseeded_plans(
             continue
 
         var active_should_be_replaced: bool = _active_plans[active] <= priority
-        if !_concurrent_movement && active_should_be_replaced:
+        if !concurrent_turns && active_should_be_replaced:
             conflicts.append(active)
         elif is_translation && MovementPlannerBase.is_translation_plan(active):
             if !active_should_be_replaced:
@@ -176,7 +175,7 @@ func has_conflicting_plan(
             continue
 
         var active_has_prio: bool = _active_plans[active] > priority
-        if !_concurrent_movement && active_has_prio:
+        if !concurrent_turns && active_has_prio:
             return true
         elif is_translation && MovementPlannerBase.is_translation_plan(active):
             if !active_has_prio:
@@ -198,11 +197,28 @@ func _executing_conflicting_plan(
         if active.end_time_msec < now:
             continue
 
-        if !_concurrent_movement:
+        if !concurrent_turns:
+            print_debug("[Grid Entity %s] does not allow concurrent plans and %s among %s is active" % [
+                name,
+                active,
+                _active_plans,
+            ])
             return true
+
         elif is_translation && MovementPlannerBase.is_translation_plan(active):
+            print_debug("[Grid Entity %s] does not allow %s as %s is active and translating" % [
+                name,
+                Movement.name(movement),
+                active.summarize(),
+            ])
             return true
+
         elif is_rotation && MovementPlannerBase.is_rotation_plan(active):
+            print_debug("[Grid Entity %s] does not allow %s as %s is active and rotating" % [
+                name,
+                Movement.name(movement),
+                active.summarize(),
+            ])
             return true
 
     return false
