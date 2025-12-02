@@ -303,6 +303,9 @@ static func orthogonals(direction: CardinalDirection) -> Array[CardinalDirection
 
     return ortho
 
+static func random_orthogonal(direction: CardinalDirection) -> CardinalDirection:
+    return orthogonals(direction).pick_random()
+
 static func orthogonal_axis(first: CardinalDirection, second: CardinalDirection) -> CardinalDirection:
     var first_inverse: CardinalDirection = invert(first)
     if first_inverse == second:

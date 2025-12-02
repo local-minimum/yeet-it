@@ -208,9 +208,7 @@ func _arrive_entity(entity: GridEntity) -> void:
             CardinalDirections.name(entity.down),
         ])
 
-        var orthos: Array[CardinalDirections.CardinalDirection] = CardinalDirections.orthogonals(entity.down)
-        orthos.shuffle()
-        entity.look_direction = orthos[0]
+        entity.look_direction = CardinalDirections.random_orthogonal(entity.down)
 
     print_debug("[Grid Teleporter] exit %s has entity %s at %s looking %s with down %s with anchor direction %s" % [
         exit,

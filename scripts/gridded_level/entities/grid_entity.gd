@@ -134,7 +134,9 @@ func count_active_plans() -> int:
     var now: int = Time.get_ticks_msec()
     for plan: MovementPlannerBase.MovementPlan in _active_plans.keys():
         if plan.end_time_msec < now:
+            @warning_ignore_start("return_value_discarded")
             _active_plans.erase(plan)
+            @warning_ignore_restore("return_value_discarded")
 
     return _active_plans.size()
 
@@ -224,7 +226,7 @@ func _executing_conflicting_plan(
     return false
 
 func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurrent: bool) -> void:
-    for existing in _superseeded_plans(plan, priority):
+    for existing: MovementPlannerBase.MovementPlan in _superseeded_plans(plan, priority):
         if existing.equals(plan):
             print_debug("[Grid Entity %s] Ignoring plan %s because equivalent to %s" % [
                 name,
@@ -234,7 +236,9 @@ func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurr
             return
 
         executor.abort_plan(plan)
+        @warning_ignore_start("return_value_discarded")
         _active_plans.erase(plan)
+        @warning_ignore_restore("return_value_discarded")
 
     _active_plans[plan] = priority
     executor.execute_plan(plan, priority, concurrent)
@@ -256,7 +260,9 @@ func _movement_allowed(movement: Movement.MovementType, force: bool) -> bool:
     return !force && !_executing_conflicting_plan(movement)
 
 func complete_plan(plan: MovementPlannerBase.MovementPlan, continue_with_next: bool = true) -> void:
+    @warning_ignore_start("return_value_discarded")
     _active_plans.erase(plan)
+    @warning_ignore_restore("return_value_discarded")
 
     if count_active_plans() == 0:
         print_debug("[Grid Entity %s] Ended all movements" % [

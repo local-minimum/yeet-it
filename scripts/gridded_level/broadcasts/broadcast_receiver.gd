@@ -9,8 +9,10 @@ func configure(contract: BroadcastContract, broadcaster_type: Broadcaster.Broadc
         return
 
 
-    push_error("Receiver doesn't know how to configure %s for unhandled type on %s, ignoring message id '%s'" % [
+    push_error("Receiver doesn't know how to configure %s for unhandled type on %s, ignoring contract %s broadcast from %s with messages %s" % [
         Broadcaster.name(broadcaster_type),
         receiver.name,
-        contract.message_id,
+        contract.name,
+        contract._broadcaster,
+        contract._messages,
     ])

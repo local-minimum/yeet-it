@@ -127,21 +127,24 @@ func _sync_reader_display(_level: GridLevelCore = null) -> void:
         if default_mat == null || default_mat is StandardMaterial3D:
             mat = StandardMaterial3D.new()
         elif default_mat is ShaderMaterial:
-            mat = ShaderMaterial.new()
-            mat.shader = (default_mat as ShaderMaterial).shader.duplicate(true)
+            var shader_mat: ShaderMaterial = ShaderMaterial.new()
+            shader_mat.shader = (default_mat as ShaderMaterial).shader.duplicate(true)
+            mat = shader_mat
 
     var tex: Texture = _get_needed_texture()
     if mat is StandardMaterial3D:
-        mat.albedo_texture = tex
+        var std_mat: StandardMaterial3D = mat
+        std_mat.albedo_texture = tex
 
         if emission_intensity > 0:
-            mat.emission_texture = tex
-            mat.emission_enabled = true
-            mat.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
-            mat.emission_intensity = emission_intensity
+            std_mat.emission_texture = tex
+            std_mat.emission_enabled = true
+            std_mat.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
+            std_mat.emission_intensity = emission_intensity
     elif mat is ShaderMaterial:
         #TODO: This is bugged, doesn't really set the texture at all
-        mat.set_shader_parameter("main_tex", tex)
+        var shader_mat: ShaderMaterial = mat
+        shader_mat.set_shader_parameter("main_tex", tex)
         print_debug("[Grid Door Interaction] Updated shader to use %s" % tex)
 
     mesh.set_surface_override_material(display_material_idx, mat)

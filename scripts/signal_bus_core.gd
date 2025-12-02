@@ -35,6 +35,7 @@ signal on_change_player(level: GridLevelCore, player: GridPlayerCore)
 signal on_level_loaded(level: GridLevelCore)
 signal on_level_unloaded(level: GridLevelCore)
 signal on_level_pause(level: GridLevelCore, paused: bool)
+signal on_critical_level_corrupt(level_id: String)
 
 # -> Grid Node
 signal on_add_anchor(node: GridNode, anchor: GridAnchor)

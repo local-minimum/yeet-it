@@ -12,16 +12,16 @@ var fall_duration_scaled: float:
         return fall_duration / animation_speed
 
 @export var corner_translation_duration: float = 0.5
-var corner_translation_duration_scaled:
+var corner_translation_duration_scaled: float:
     get():
         return corner_translation_duration / animation_speed
 
 @export var turn_duration: float = 0.3
-var turn_duration_scaled:
+var turn_duration_scaled: float:
     get():
         return turn_duration / animation_speed
 
 @export var animation_speed: float = 1.0
-var animation_speed_scaled:
+var animation_speed_scaled: float:
     get():
         return animation_speed / animation_speed

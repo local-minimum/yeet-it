@@ -30,7 +30,7 @@ func _orient_entity(new_down: CardinalDirections.CardinalDirection, gravity: Car
         if !CardinalDirections.is_parallell(new_down, gravity):
             entity.look_direction = gravity
         else:
-            entity.look_direction = CardinalDirections.orthogonals(new_down).pick_random()
+            entity.look_direction = CardinalDirections.random_orthogonal(new_down)
 
     entity.down = new_down
 

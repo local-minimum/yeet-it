@@ -75,6 +75,7 @@ class EntityParameters:
                 push_error("[Entity Parameters] Colinear look direction and down are invalid %s" % [summarize()])
 
                 return Transform3D.IDENTITY.looking_at(
+                    # Note: This should be deterministic and not random or things could go very wrong
                     Vector3(CardinalDirections.direction_to_vectori(CardinalDirections.orthogonals(down)[0])),
                     Vector3(CardinalDirections.direction_to_vectori(CardinalDirections.invert(down))),
                 ).basis.get_rotation_quaternion()

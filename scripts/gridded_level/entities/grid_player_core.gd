@@ -73,8 +73,7 @@ func _sync_level_entry() -> void:
         look_direction = entry.entry_lookdirection
         if look_direction == CardinalDirections.CardinalDirection.NONE:
             push_warning("[Grid Player] Level entry %s doesn't have a proper look direction set, picking one on random" % [entry])
-            var orthos: Array[CardinalDirections.CardinalDirection] = CardinalDirections.orthogonals(down)
-            look_direction = orthos.pick_random()
+            look_direction = CardinalDirections.random_orthogonal(down)
         spawn_node = entry.get_grid_node()
         if spawn_node != null:
             spawn_anchor = spawn_node.get_grid_anchor(down)

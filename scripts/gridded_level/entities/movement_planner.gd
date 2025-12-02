@@ -261,7 +261,7 @@ func _create_translate_land_simple(
                 evented_plan.from = EntityParameters.from_entity(entity)
                 evented_plan.to = EntityParameters.new(
                     node.coordinates,
-                    entity.look_direction if !CardinalDirections.is_parallell(move_direction, entity.look_direction) else CardinalDirections.orthogonals(move_direction).pick_random(),
+                    entity.look_direction if !CardinalDirections.is_parallell(move_direction, entity.look_direction) else CardinalDirections.random_orthogonal(move_direction),
                     move_direction,
                     move_direction,
                     PositionMode.EVENT_CONTROLLED,
@@ -286,7 +286,7 @@ func _create_translate_land_simple(
 
             plan.from = EntityParameters.from_entity(entity)
             if CardinalDirections.is_parallell(look_direction, down):
-                look_direction = CardinalDirections.orthogonals(down).pick_random()
+                look_direction = CardinalDirections.random_orthogonal(down)
 
             plan.to = EntityParameters.new(
                 node.coordinates,
@@ -347,7 +347,7 @@ func _create_translate_fall_diagonal(
                         evented_plan.from = EntityParameters.from_entity(entity)
                         evented_plan.to = EntityParameters.new(
                             neighbour.coordinates,
-                            entity.look_direction if !CardinalDirections.is_parallell(move_direction, entity.look_direction) else CardinalDirections.orthogonals(move_direction).pick_random(),
+                            entity.look_direction if !CardinalDirections.is_parallell(move_direction, entity.look_direction) else CardinalDirections.random_orthogonal(move_direction),
                             move_direction,
                             move_direction,
                             PositionMode.EVENT_CONTROLLED,
@@ -424,7 +424,7 @@ func _create_translate_fall_diagonal(
                     evented_plan.from = EntityParameters.from_entity(entity)
                     evented_plan.to = EntityParameters.new(
                         target.coordinates,
-                        entity.look_direction if !CardinalDirections.is_parallell(move_direction, entity.look_direction) else CardinalDirections.orthogonals(move_direction).pick_random(),
+                        entity.look_direction if !CardinalDirections.is_parallell(move_direction, entity.look_direction) else CardinalDirections.random_orthogonal(move_direction),
                         move_direction,
                         CardinalDirections.CardinalDirection.NONE,
                         PositionMode.EVENT_CONTROLLED,
@@ -639,7 +639,7 @@ func _create_translate_outer_corner(
 
     var target_down: CardinalDirections.CardinalDirection = target_anchor.calculate_anchor_down(gravity, updated_directions[1])
     if target_down != target_anchor.direction:
-        var look_direction: CardinalDirections.CardinalDirection = target_anchor.direction if !CardinalDirections.is_parallell(target_down, target_anchor.direction) else CardinalDirections.orthogonals(target_down).pick_random()
+        var look_direction: CardinalDirections.CardinalDirection = target_anchor.direction if !CardinalDirections.is_parallell(target_down, target_anchor.direction) else CardinalDirections.random_orthogonal(target_down)
 
         plan.to = EntityParameters.new(
             from.coordinates,
@@ -712,7 +712,7 @@ func _create_translate_inner_corner(
 
     var target_down: CardinalDirections.CardinalDirection = target_anchor.calculate_anchor_down(gravity, updated_directions[1])
     if target_down != target_anchor.direction:
-        var look_direction: CardinalDirections.CardinalDirection = target_anchor.direction if !CardinalDirections.is_parallell(target_down, target_anchor.direction) else CardinalDirections.orthogonals(target_down).pick_random()
+        var look_direction: CardinalDirections.CardinalDirection = target_anchor.direction if !CardinalDirections.is_parallell(target_down, target_anchor.direction) else CardinalDirections.random_orthogonal(target_down)
 
         plan.to = EntityParameters.new(
             from.coordinates,

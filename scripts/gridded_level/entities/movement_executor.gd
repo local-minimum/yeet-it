@@ -13,7 +13,7 @@ var _active_plan_b: MovementPlannerBase.MovementPlan
 var _active_plan_prio_b: int
 var _tween_b: Tween
 
-var _plans: Dictionary[MovementPlannerBase.MovementPlan, Tween] = {}
+var _tweening_plans: Dictionary[MovementPlannerBase.MovementPlan, Tween] = {}
 
 var active_plan_prio: int:
     get():
@@ -36,10 +36,12 @@ var has_concurrency_slot: bool:
         )
 
 func abort_plan(plan: MovementPlannerBase.MovementPlan) -> void:
-    var tween = _plans.get(plan, null)
+    var tween: Tween = _tweening_plans.get(plan, null)
     if tween:
         tween.kill()
-        _plans.erase(plan)
+        @warning_ignore_start("return_value_discarded")
+        _tweening_plans.erase(plan)
+        @warning_ignore_restore("return_value_discarded")
 
 func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurrent: bool) -> void:
     if _verbose:
@@ -64,7 +66,7 @@ func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurr
             _active_plan_a = plan
             _active_plan_prio_a = priority
             if _start_plan(plan, _tween_a):
-                pass
+                _tweening_plans[plan] = _tween_a
         else:
             if _tween_b != null && _tween_b.is_running():
                 _tween_b.kill()
@@ -72,7 +74,8 @@ func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurr
             _tween_b = create_tween()
             _active_plan_b = plan
             _active_plan_prio_b = priority
-            _start_plan(plan, _tween_b)
+            if _start_plan(plan, _tween_b):
+                _tweening_plans[plan] = _tween_b
 
     else:
         if _tween_a != null && _tween_a.is_running():
@@ -84,7 +87,8 @@ func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurr
         _tween_a = create_tween()
         _active_plan_a = plan
         _active_plan_prio_a = priority
-        _start_plan(plan, _tween_a)
+        if _start_plan(plan, _tween_a):
+            _tweening_plans[plan] = _tween_a
 
 func _trigger_grid_events(plan: MovementPlannerBase.MovementPlan) -> void:
     var to: GridNode = _get_node(plan.to)
@@ -277,7 +281,7 @@ func _create_rotation_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan
         func () -> void:
             GridEntity.orient(_entity)
             _entity.complete_plan(plan)
-            _plans.erase(plan)
+            _tweening_plans.erase(plan)
     )
     @warning_ignore_restore("return_value_discarded")
 
@@ -302,7 +306,9 @@ func _make_linear_translation_tween(
     )
 
     if !_settings.tank_movement && !force_tank_movement:
+        @warning_ignore_start("return_value_discarded")
         method_tweener.set_trans(tween_trans).set_ease(tween_ease)
+        @warning_ignore_restore("return_value_discarded")
 
     return tween
 
@@ -333,7 +339,9 @@ func _make_midpoint_translation_tween(
     )
 
     if !_settings.tank_movement && !force_tank_movement:
+        @warning_ignore_start("return_value_discarded")
         method_tweener.set_trans(tween_trans).set_ease(tween_ease)
+        @warning_ignore_restore("return_value_discarded")
 
     if bounce_back:
         method_tweener = tween.tween_method(
@@ -344,7 +352,9 @@ func _make_midpoint_translation_tween(
         )
 
     if !_settings.tank_movement && !force_tank_movement:
+        @warning_ignore_start("return_value_discarded")
         method_tweener.set_trans(tween_trans).set_ease(tween_ease)
+        @warning_ignore_restore("return_value_discarded")
 
     return tween
 
@@ -357,17 +367,25 @@ func _create_translate_planar_tween(tween: Tween, plan: MovementPlannerBase.Move
         plan.from.mode == MovementPlannerBase.PositionMode.AIRBOURNE,
     )
 
-    tween.finished.connect(
+    if tween.finished.connect(
         func () -> void:
             _entity.sync_position()
             _entity.remove_concurrent_movement_block()
             _entity.complete_plan(plan)
-            _plans.erase(plan)
-    )
+            @warning_ignore_start("return_value_discarded")
+            _tweening_plans.erase(plan)
+            @warning_ignore_restore("return_value_discarded")
+    ) != OK:
+        push_error("[Movement Exectuor %s of %s] Could not connect on complete tween" % [
+            name,
+            _entity.name,
+        ])
 
 func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
     if plan.from.quaternion != plan.to.quaternion:
+        @warning_ignore_start("return_value_discarded")
         _make_rotation_tween(tween.parallel(), plan)
+        @warning_ignore_restore("return_value_discarded")
 
         # This should not be in finished since we update to new down right as we start the animation
         _entity.look_direction = plan.to.look_direction
@@ -379,7 +397,7 @@ func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: Mov
                 _entity.sync_position()
                 _entity.remove_concurrent_movement_block()
                 _entity.complete_plan(plan)
-                _plans.erase(plan)
+                _tweening_plans.erase(plan)
         )
         return
 
@@ -388,7 +406,7 @@ func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: Mov
             _entity.sync_position()
             _entity.remove_concurrent_movement_block()
             _entity.complete_plan(plan)
-            _plans.erase(plan)
+            _tweening_plans.erase(plan)
     )
     @warning_ignore_restore("return_value_discarded")
 
@@ -455,7 +473,7 @@ func _create_translate_corner_tween(tween: Tween, plan: MovementPlannerBase.Move
             _entity.sync_position()
             _entity.remove_concurrent_movement_block()
             _entity.complete_plan(plan)
-            _plans.erase(plan)
+            _tweening_plans.erase(plan)
     )
     @warning_ignore_restore("return_value_discarded")
 

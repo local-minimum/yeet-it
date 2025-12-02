@@ -65,7 +65,7 @@ func _animate_manual_crash(
 
     if CardinalDirections.is_parallell(new_down, new_look):
         print_debug("[Catapult %s] %s adjusting crash look direction because parallel to crash down" % [coordinates(), entity.name])
-        new_look = CardinalDirections.orthogonals(new_down).pick_random()
+        new_look = CardinalDirections.random_orthogonal(new_down)
 
     @warning_ignore_start("return_value_discarded")
     tween.tween_property(
