@@ -17,13 +17,20 @@ var _dialogue_playing: bool:
 
 var dialogue_busy: bool:
     get():
-        return !_queue.get(BUS_DIALOGUE, []).is_empty() || !_dialogue_running.is_empty()
+        if _dialogue_playing:
+            return true
+
+        if _queue.has(BUS_DIALOGUE):
+            return !_queue[BUS_DIALOGUE].is_empty()
+
+        return false
 
 @export var music_players: int = 2
 var _music_available: Array[AudioStreamPlayer]
 var _music_running: Array[AudioStreamPlayer]
 
 func _ready() -> void:
+    @warning_ignore_start("return_value_discarded")
     for _i: int in range(sfx_players):
         _create_player(BUS_SFX, _sfx_available)
 
@@ -32,6 +39,7 @@ func _ready() -> void:
 
     for _i: int in range(music_players):
         _create_player(BUS_MUSIC, _music_available, _music_running)
+    @warning_ignore_restore("return_value_discarded")
 
 func _create_player(
     bus: String,
@@ -58,7 +66,8 @@ func _handle_player_finished(player: AudioStreamPlayer, available: Array[AudioSt
     print_debug("[Audio HUB]%s done" % player)
 
     if running is Array[AudioStreamPlayer]:
-        (running as Array[AudioStreamPlayer]).erase(player)
+        var runnig_players: Array[AudioStreamPlayer] = running
+        runnig_players.erase(player)
 
     available.append(player)
 
@@ -124,7 +133,7 @@ func _delay_play(player: AudioStreamPlayer, delay_start: float) -> void:
 
     player.play()
 
-func _end_dialogue_players():
+func _end_dialogue_players() -> void:
     for player: AudioStreamPlayer in _dialogue_running:
         player.stop()
 
@@ -210,9 +219,10 @@ static func _fade_player(
 
     player.volume_linear = to_linear
     if on_complete is Callable:
-        (on_complete as Callable).call()
+        var callback: Callable = on_complete
+        callback.call()
 
-func _end_music_players():
+func _end_music_players() -> void:
     for player: AudioStreamPlayer in _music_running:
         player.stop()
 
@@ -226,7 +236,7 @@ var _oneshots: Dictionary[AudioStreamPlayer, Array]
 var _queue: Dictionary[String, Array]
 
 func _enqueue_stream(bus: String, sound_resource_path: String, on_finish: Variant, delay_start: float) -> void:
-    var queued = func () -> void:
+    var queued: Callable = func () -> void:
         play_dialogue(sound_resource_path, on_finish, false, false, delay_start)
 
     if _queue.has(bus):
@@ -245,14 +255,17 @@ func _check_oneshot_callbacks(player: AudioStreamPlayer, busy_property: String) 
 
     print_debug("[Audio Hub] Player %s checks for queued in %s if '%s' is false (%s)" % [player.bus, _queue, busy_property, get(busy_property)])
     if (busy_property.is_empty() || !bool(get(busy_property))) && _queue.has(player.bus):
-        var queued: Variant = _queue[player.bus].pop_front()
+        var queued: Callable = _queue[player.bus].pop_front()
         print_debug("[Audio Hub] Playes queued stream %s for bus %s" % [queued, player.bus])
         if queued is Callable:
-            (queued as Callable).call()
+            var callback: Callable = queued
+            callback.call()
 
 func _clear_bus_queue(bus: String) -> void:
     if _queue.has(bus):
         _queue[bus].clear()
 
 func _clear_callbacks(player: AudioStreamPlayer) -> void:
+    @warning_ignore_start("return_value_discarded")
     _oneshots.erase(player)
+    @warning_ignore_restore("return_value_discarded")

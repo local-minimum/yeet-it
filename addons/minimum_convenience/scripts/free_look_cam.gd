@@ -46,7 +46,7 @@ func _handle_level_pause(_level: GridLevelCore, paused: bool) -> void:
 
     _allow = !paused
 
-func _handle_toggle_freelook_camera(active: bool, cause: ToggleCause) -> void:
+func _handle_toggle_freelook_camera(active: bool, _cause: ToggleCause) -> void:
     if active != _looking:
         _looking = active
 
@@ -104,12 +104,14 @@ func _easeback() -> void:
 
     _easeback_tween = create_tween()
 
+    @warning_ignore_start("return_value_discarded")
     _easeback_tween.tween_method(
         _set_rotation,
         Vector2(_total_yaw, _total_pitch),
         Vector2.ZERO,
         _easeback_duration,
     )
+    @warning_ignore_restore("return_value_discarded")
 
 func _process(delta: float) -> void:
     if !_looking:
