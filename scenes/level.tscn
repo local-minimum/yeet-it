@@ -1,8 +1,9 @@
-[gd_scene load_steps=23 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=25 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
 [ext_resource type="Script" uid="uid://b8a6yvndcxtpa" path="res://scripts/gridded_level/transportation_mode.gd" id="3_2r41h"]
+[ext_resource type="Script" uid="uid://yjtiqbwbqcdd" path="res://addons/minimum_convenience/scripts/free_look_cam.gd" id="4_82cfe"]
 [ext_resource type="Script" uid="uid://v5vk4n110r8p" path="res://scripts/gridded_level/key_ring_core.gd" id="4_klq6b"]
 [ext_resource type="Environment" uid="uid://dl1d851qrk3dk" path="res://scenes/level_environment.tres" id="4_ux5qa"]
 [ext_resource type="Script" uid="uid://d1e0odws2w1g1" path="res://scripts/gridded_level/entities/movement_executor.gd" id="5_b121j"]
@@ -31,6 +32,11 @@ metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
 [sub_resource type="Resource" id="Resource_8iemx"]
 script = ExtResource("6_8c41q")
 metadata/_custom_type_script = "uid://crv5isbs0cdmp"
+
+[sub_resource type="Resource" id="Resource_ux5qa"]
+script = ExtResource("9_8iemx")
+type = 3
+metadata/_custom_type_script = "uid://dsq3qb6waenpd"
 
 [sub_resource type="Resource" id="Resource_fpun6"]
 script = ExtResource("9_8iemx")
@@ -64,6 +70,7 @@ metadata/_custom_type_script = "uid://dlbq7x82ejv6e"
 
 [node name="Head" type="Node3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0.75)
+script = ExtResource("4_82cfe")
 
 [node name="Camera3D" type="Camera3D" parent="Player/Head"]
 environment = ExtResource("4_ux5qa")
@@ -151,6 +158,8 @@ script = ExtResource("12_arp2o")
 id = "spawn"
 fail_exit_notice_title = ""
 fail_exit_notice_message = ""
+_activator_filter = SubResource("Resource_ux5qa")
+_passive = true
 metadata/_custom_type_script = "uid://cjhediv47ntbx"
 
 [node name="Node (0, 0, -2)" type="Node3D" parent="Geometry/Elevation 0" instance=ExtResource("7_wc255")]

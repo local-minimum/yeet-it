@@ -8,6 +8,9 @@ const GRID_EVENT_GROUP: String = "grid-events"
 ## Can be overridden by grid node side parent meta "repeatable"
 @export var _repeatable: bool = true
 
+## Passive events will never trigger by themselves
+@export var _passive: bool = false
+
 ## Can be overridden by grid node side parent meta "trigger_entire_node"
 @export var _trigger_entire_node: bool
 
@@ -33,7 +36,7 @@ func _ready() -> void:
     var side: GridNodeSide = GridNodeSide.find_node_side_parent(self, true)
     _repeatable = get_bool_override(side, "repeatable", _repeatable)
     _trigger_entire_node = get_bool_override(side, "trigger_entire_node", _trigger_entire_node)
-    if !_trigger_entire_node && _trigger_sides.is_empty():
+    if !_passive && !_trigger_entire_node && _trigger_sides.is_empty():
         push_warning("[Grid Event %s] Will never trigger because no side activates (Parentage: %s)" % [self, NodeUtils.parentage(self)])
 
 func get_bool_override(side: GridNodeSide, key: String, default: bool) -> bool:
@@ -60,7 +63,7 @@ func should_trigger(
     from_side: CardinalDirections.CardinalDirection,
     to_side: CardinalDirections.CardinalDirection,
 ) -> bool:
-    if !available() || !activates_for(feature):
+    if _passive || !available() || !activates_for(feature):
         return false
 
     if _trigger_entire_node:
