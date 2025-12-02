@@ -6,13 +6,16 @@ enum ToggleCause { MOVEMENT, KEYBOARD_ACTIVATOR, MOUSE_ACTIVATOR }
 @export var _yaw_limit_degrees: float = 90
 @export var _pitch_limit_degrees: float = 80
 @export var _easeback_duration: float = 0.5
-@export var mouse_sensitivity_factor: float = 0.3
+@export_category("Keyboard")
 @export var keyboard_sensitivity: float = 60
-@export var _keyboard_activation_toggle: String = "toggle_free_look_cam"
+@export var _keyboard_activation_toggle: String = "toggle_free_look_cam_keyb"
 @export var _keyboard_up: String = "crawl_forward"
 @export var _keyboard_down: String = "crawl_backward"
 @export var _keyboard_left: String = "crawl_strafe_left"
 @export var _keyboard_right: String = "crawl_strafe_right"
+@export_category("Mouse")
+@export var mouse_sensitivity_factor: float = 0.3
+@export var _mouse_activation_toggle: String = "toggle_free_look_cam_mouse"
 
 var _mouse_offset: Vector2 = Vector2.ZERO
 var _keyboard_direction: Vector2 = Vector2.ZERO
@@ -52,28 +55,20 @@ func _handle_toggle_freelook_camera(active: bool, cause: ToggleCause) -> void:
     else:
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
+func _check_toggle(event: InputEvent, action: String, cause: ToggleCause) -> void:
+    if event.is_action_pressed(action):
+        _looking = true
+        __SignalBus.on_toggle_freelook_camera.emit(_looking, cause)
+    elif event.is_action_released(action):
+        _looking = false
+        __SignalBus.on_toggle_freelook_camera.emit(_looking, cause)
+
 func _input(event: InputEvent) -> void:
     if !_allow:
         return
 
-    if event is InputEventMouseButton:
-        var mouse_btn_event: InputEventMouseButton = event
-        if event.button_index == MOUSE_BUTTON_RIGHT:
-            if event.pressed:
-                _looking = true
-                __SignalBus.on_toggle_freelook_camera.emit(_looking, ToggleCause.MOUSE_ACTIVATOR)
-            elif event.is_released():
-                _looking = false
-                __SignalBus.on_toggle_freelook_camera.emit(_looking, ToggleCause.MOUSE_ACTIVATOR)
-        return
-
-    if event.is_action_pressed(_keyboard_activation_toggle):
-        _looking = true
-        __SignalBus.on_toggle_freelook_camera.emit(_looking, ToggleCause.KEYBOARD_ACTIVATOR)
-
-    elif event.is_action_released(_keyboard_activation_toggle):
-        _looking = false
-        __SignalBus.on_toggle_freelook_camera.emit(_looking, ToggleCause.KEYBOARD_ACTIVATOR)
+    _check_toggle(event, _mouse_activation_toggle, ToggleCause.MOUSE_ACTIVATOR)
+    _check_toggle(event, _keyboard_activation_toggle, ToggleCause.KEYBOARD_ACTIVATOR)
 
     if !_looking:
         return

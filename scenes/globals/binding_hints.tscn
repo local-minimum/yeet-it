@@ -4,3 +4,4 @@
 
 [node name="Binding Hints" type="Node"]
 script = ExtResource("1_lasa4")
+metadata/_custom_type_script = "uid://dn88c6xiunk4h"

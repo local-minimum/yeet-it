@@ -4,3 +4,4 @@
 
 [node name="Audio Hub" type="Node"]
 script = ExtResource("1_nnc5e")
+metadata/_custom_type_script = "uid://1keqjvpsekq7"

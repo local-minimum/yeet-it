@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6rml76oe0t15"]
+
+[ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
+
+[node name="Level" type="Node3D" node_paths=PackedStringArray("level_geometry", "zones_parent", "broadcasts_parent")]
+script = ExtResource("1_2q6dc")
+level_id = "demo"
+level_geometry = NodePath("Geometry")
+zones_parent = NodePath("Zones")
+broadcasts_parent = NodePath("Broadcasts")
+metadata/_custom_type_script = "uid://c74xugjiqdyyk"
+
+[node name="Geometry" type="Node3D" parent="."]
+
+[node name="Zones" type="Node3D" parent="."]
+
+[node name="Broadcasts" type="Node" parent="."]
