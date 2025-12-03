@@ -81,7 +81,7 @@ func _create_player(
     return player
 
 func _handle_player_finished(player: AudioStreamPlayer, available: Array[AudioStreamPlayer], running: Variant, bus: Bus) -> void:
-    print_debug("[Audio HUB]%s done" % player)
+    print_debug("[Audio Hub] %s done" % player)
 
     if running is Array[AudioStreamPlayer]:
         var runnig_players: Array[AudioStreamPlayer] = running
@@ -262,7 +262,7 @@ func _enqueue_stream(bus: Bus, sound_resource_path: String, on_finish: Variant, 
     else:
         _queue[bus] = [queued]
 
-    print_debug("[Audio Hub] Enqueued dialog '%s' for bus %s" % [sound_resource_path, bus])
+    print_debug("[Audio Hub] Enqueued dialog '%s' for bus %s" % [sound_resource_path, Bus.find_key(bus)])
 
 func _check_oneshot_callbacks(player: AudioStreamPlayer, bus: Bus) -> void:
     var callbacks: Array = _oneshots.get(player, [])
@@ -271,10 +271,10 @@ func _check_oneshot_callbacks(player: AudioStreamPlayer, bus: Bus) -> void:
     for callback: Callable in callbacks:
         callback.call()
 
-    print_debug("[Audio Hub] Player %s checks for queued in %s if '%s' is false (%s)" % [player.bus, _queue, Bus.find_key(bus), is_busy(bus)])
-    if !is_busy(bus) && _queue.has(player.bus):
-        var queued: Callable = _queue[bus].pop_front()
-        print_debug("[Audio Hub] Playes queued stream %s for bus %s" % [queued, player.bus])
+    print_debug("[Audio Hub] Player %s checks for queued in %s if '%s' is false (%s)" % [player.name, _queue, Bus.find_key(bus), is_busy(bus)])
+    if !is_busy(bus) && _queue.has(bus):
+        var queued: Variant = _queue[bus].pop_front()
+        print_debug("[Audio Hub] Playes queued stream %s for bus %s" % [queued, Bus.find_key(bus)])
         if queued is Callable:
             var callback: Callable = queued
             callback.call()
