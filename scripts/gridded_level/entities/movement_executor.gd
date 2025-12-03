@@ -319,7 +319,6 @@ func _make_midpoint_translation_tween(
     tween_trans: Tween.TransitionType = Tween.TRANS_SINE,
     tween_ease: Tween.EaseType = Tween.EASE_IN_OUT,
     force_tank_movement: bool = false,
-    bounce_back: bool = false,
 ) -> Tween:
     var from: Vector3 = _get_position(plan.from)
     var to: Vector3 = _get_position(plan.to)
@@ -335,21 +334,13 @@ func _make_midpoint_translation_tween(
         translation_method,
         plan.progress,
         1.0,
-        duration if !bounce_back else duration * 0.5,
+        duration,
     )
 
     if !_settings.tank_movement && !force_tank_movement:
         @warning_ignore_start("return_value_discarded")
         method_tweener.set_trans(tween_trans).set_ease(tween_ease)
         @warning_ignore_restore("return_value_discarded")
-
-    if bounce_back:
-        method_tweener = tween.tween_method(
-            translation_method,
-            1.0,
-            0.0,
-            duration * 0.5,
-        )
 
     if !_settings.tank_movement && !force_tank_movement:
         @warning_ignore_start("return_value_discarded")
@@ -524,7 +515,6 @@ func _create_translate_refuse_tween(tween: Tween, plan: MovementPlannerBase.Move
         origin.lerp(edge, distance),
         Tween.TRANS_SINE,
         Tween.EASE_IN,
-        true,
         true,
     )
     _add_rotation_and_finalize_simple_translation_tween(tween, plan)
