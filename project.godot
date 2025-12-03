@@ -23,8 +23,8 @@ buses/default_bus_layout="uid://bvatvbn34a8pn"
 
 __SignalBus="*res://scripts/signal_bus_core.gd"
 __GlobalGameState="*res://scenes/globals/global_game_state.tscn"
-__AudioHub="*res://scenes/globals/audio_hub.tscn"
 __BindingHints="*res://scenes/globals/binding_hints.tscn"
+__AudioHub="*res://addons/minimum_convenience/scripts/audio_hub.gd"
 
 [debug]
 

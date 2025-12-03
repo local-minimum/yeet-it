@@ -1,16 +1,11 @@
 extends Node
 class_name AudioHub
 
-const BUS_SFX: String = "SFX"
-const BUS_DIALOGUE: String = "Dialogue"
-const BUS_MUSIC: String = "Music"
-
 enum Bus { SFX, DIALGUE, MUSIC }
 
-@export var sfx_players: int = 4
+var _config: AudioHubConfig
 var _sfx_available: Array[AudioStreamPlayer]
 
-@export var dialogue_players: int = 2
 var _dialogue_available: Array[AudioStreamPlayer]
 var _dialogue_running: Array[AudioStreamPlayer]
 var _dialogue_playing: bool:
@@ -27,19 +22,21 @@ var dialogue_busy: bool:
 
         return false
 
-@export var music_players: int = 2
 var _music_available: Array[AudioStreamPlayer]
 var _music_running: Array[AudioStreamPlayer]
 
+func _enter_tree() -> void:
+    _config = load("res://audio_hub_config.tres")
+
 func _ready() -> void:
     @warning_ignore_start("return_value_discarded")
-    for _i: int in range(sfx_players):
+    for _i: int in range(_config.sfx_players):
         _create_player(Bus.SFX, _sfx_available)
 
-    for _i: int in range(dialogue_players):
+    for _i: int in range(_config.dialogue_players):
         _create_player(Bus.DIALGUE, _dialogue_available, _dialogue_running, true)
 
-    for _i: int in range(music_players):
+    for _i: int in range(_config.music_players):
         _create_player(Bus.MUSIC, _music_available, _music_running)
     @warning_ignore_restore("return_value_discarded")
 
@@ -51,11 +48,11 @@ func is_busy(bus: Bus) -> bool:
 func _bus_name(bus: Bus) -> String:
     match bus:
         Bus.DIALGUE:
-            return BUS_DIALOGUE
+            return _config.dialogue_bus_name
         Bus.SFX:
-            return BUS_SFX
+            return _config.sfx_bus_name
         Bus.MUSIC:
-            return BUS_MUSIC
+            return _config.music_bus_name
         _:
             push_error("Unknown bus %s" % Bus.find_key(bus))
             return ""
@@ -98,8 +95,8 @@ func play_sfx(sound_resource_path: String, volume: float = 1) -> void:
     var player: AudioStreamPlayer = _sfx_available.pop_back()
     if player == null:
         player = _create_player(Bus.SFX, _sfx_available, null, false)
-        sfx_players += 1
-        push_warning("Extending '%s' with a %sth player because all busy" % [_bus_name(Bus.SFX), sfx_players])
+        _config.sfx_players += 1
+        push_warning("Extending '%s' with a %sth player because all busy" % [_bus_name(Bus.SFX), _config.sfx_players])
 
     player.stream = load(sound_resource_path)
     player.volume_linear = volume
@@ -131,8 +128,8 @@ func play_dialogue(
     var player: AudioStreamPlayer = _dialogue_available.pop_back()
     if player == null:
         player = _create_player(Bus.DIALGUE, _dialogue_available, _dialogue_running, false)
-        dialogue_players += 1
-        push_warning("Extending '%s' with a %sth player because all busy" % [_bus_name(Bus.DIALGUE), dialogue_players])
+        _config.dialogue_players += 1
+        push_warning("Extending '%s' with a %sth player because all busy" % [_bus_name(Bus.DIALGUE), _config.dialogue_players])
 
     if on_finish != null && on_finish is Callable:
         if _oneshots.has(player):
@@ -193,8 +190,8 @@ func play_music(
     var player: AudioStreamPlayer = _music_available.pop_back()
     if player == null:
         player = _create_player(Bus.MUSIC, _music_available, _music_running, false)
-        music_players += 1
-        push_warning("Extending '%s' with a %sth player because all busy" % [_bus_name(Bus.MUSIC) ,music_players])
+        _config.music_players += 1
+        push_warning("Extending '%s' with a %sth player because all busy" % [_bus_name(Bus.MUSIC), _config.music_players])
 
     player.stream = load(sound_resource_path)
     player.play()
