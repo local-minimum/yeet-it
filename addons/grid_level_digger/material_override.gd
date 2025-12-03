@@ -23,8 +23,9 @@ func apply(root: Node) -> void:
         push_error("[Material Override] MeshInstance3D surface index must not be a negative numbe")
         return
 
+    var node: Node
     if !known_usage_path.is_empty():
-        var node: Node = root.get_node(known_usage_path)
+        node = root.get_node(known_usage_path)
         if node != null && node.scene_file_path == target_scene_file_path:
             if _apply(node):
                 print_debug("[Material Override] Applied %s to %s surface %s using known path" % [override_material, node, surface_idx])
@@ -43,7 +44,7 @@ func apply(root: Node) -> void:
                 target_scene_file_path,
             ])
 
-    var node: Node = ResourceUtils.find_first_node_using_resource(root, target_scene_file_path, true)
+    node = ResourceUtils.find_first_node_using_resource(root, target_scene_file_path, true)
     if node != null:
         if _apply(node):
             print_debug("[Material Override] Applied %s to %s surface %s" % [override_material, node, surface_idx])

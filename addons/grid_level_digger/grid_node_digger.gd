@@ -20,16 +20,19 @@ class_name GridNodeDigger
 @export var cam_offset_z: SpinBox
 @export var place_node_btn: Button
 
+func _enter_tree() -> void:
+    if style.on_style_updated.connect(_sync_features) != OK:
+        push_error("Failed to connect style updated")
+
+    if nav.on_update_nav.connect(_handle_update_nav) != OK:
+        push_error("Failed to connect update nav")
+
+
 func _ready() -> void:
     if auto_clear_sides != null:
         auto_clear_sides.button_pressed = true
     if auto_add_sides != null:
         auto_add_sides.button_pressed = true
-
-    style.on_style_updated.connect(_sync_features)
-
-    if nav.on_update_nav.connect(_handle_update_nav) != OK:
-        push_error("Failed to connect update nav")
 
 func _handle_update_nav(_coordinates: Vector3i, _look_direction: CardinalDirections.CardinalDirection) -> void:
     if _auto_dig:
@@ -56,8 +59,6 @@ func _sync_features() -> void:
         place_node_btn.tooltip_text = "Put a node at %s" % panel.coordinates
 
 func sync() -> void:
-    var node: GridNode = panel.get_grid_node()
-
     if !_cam_offset_synced:
         _cam_offset_syncing = true
         cam_offset_x.value = _cam_offset.x
@@ -118,7 +119,7 @@ func _perform_auto_dig(dig_direction: CardinalDirections.CardinalDirection, igno
         return
 
     var level: GridLevelCore = panel.level
-    var target_node = panel.get_focus_node()
+    var target_node: GridNode = panel.get_focus_node()
     var may_wall: bool = true
     var node_resource: Resource = style.get_node_resource()
 
@@ -139,10 +140,12 @@ func _perform_auto_dig(dig_direction: CardinalDirections.CardinalDirection, igno
     for dir: CardinalDirections.CardinalDirection in CardinalDirections.ALL_DIRECTIONS:
         var neighbor: GridNode = panel.get_grid_node_at(CardinalDirections.translate(panel.coordinates, dir))
 
-        var is_traversed = CardinalDirections.invert(dig_direction) == dir
+        var is_traversed: bool = CardinalDirections.invert(dig_direction) == dir
         if (_auto_clear_walls || is_traversed) && neighbor != null && (!_preserve_vertical || CardinalDirections.is_planar_cardinal(dir) || is_traversed):
+            @warning_ignore_start("return_value_discarded")
             remove_node_side(target_node, dir)
             remove_node_side(neighbor, CardinalDirections.invert(dir))
+            @warning_ignore_restore("return_value_discarded")
 
         if _auto_add_sides && may_wall:
             var side_resource: Resource = style.get_resource_from_direction(dir)
@@ -170,7 +173,7 @@ func swap_node_side(
         push_error("[GLD Digger] Cannot swap side if node is null")
         return false
 
-    var side = GridNodeSide.get_node_side(node, side_direction)
+    var side: GridNodeSide = GridNodeSide.get_node_side(node, side_direction)
     if side == null || side.scene_file_path == resource_path || !ResourceUtils.valid_abs_resource_path(resource_path):
         if side == null:
             push_error("[GLD Digger] Cannot swap side if side %s is null of %s" % [CardinalDirections.name(side_direction), node])
@@ -197,7 +200,7 @@ func remove_node_side(
     if node == null:
         return false
 
-    var side = GridNodeSide.get_node_side(node, side_direction)
+    var side: GridNodeSide = GridNodeSide.get_node_side(node, side_direction)
     if side != null:
         panel.undo_redo.create_action("GridLevelDigger: Remove %s @ %s %s" % [side.name, node.coordinates, CardinalDirections.name(side_direction)])
 
@@ -256,7 +259,7 @@ func add_node_side(
     panel.undo_redo.commit_action()
 
 func _do_remove_side_from_node(node: GridNode, side_direction: CardinalDirections.CardinalDirection) -> void:
-    var side = GridNodeSide.get_node_side(node, side_direction)
+    var side: GridNodeSide = GridNodeSide.get_node_side(node, side_direction)
     if side != null:
         _do_remove_node_side(side)
 
@@ -265,18 +268,23 @@ func _do_add_node_side(
     level: GridLevelCore,
     node: GridNode,
     side_direction: CardinalDirections.CardinalDirection,
-    treat_elevation_as_separate: bool,
+    _treat_elevation_as_separate: bool,
 ) -> void:
     if node == null || resource == null:
         print_debug("[GLD Digger] Refused wall because lacking resouces or node")
         return
 
-    var side = GridNodeSide.get_node_side(node, side_direction)
+    var side: GridNodeSide = GridNodeSide.get_node_side(node, side_direction)
     if side != null:
         print_debug("[GLD Digger] Refused adding side because already exist %s" % [side.name])
         return
 
-    var raw_node: Node = resource.instantiate()
+    if resource is not PackedScene:
+        push_error("Cannot instantiate if not scene")
+        return
+
+    var scene: PackedScene = resource
+    var raw_node: Node = scene.instantiate()
     if raw_node is not GridNodeSide:
         push_error("[GLD Digger] Grid Node template is not a GridNode")
         raw_node.queue_free()
@@ -301,7 +309,11 @@ func _do_add_node_side(
     EditorInterface.mark_scene_as_unsaved()
 
 func _do_auto_dig_node(level: GridLevelCore, grid_node_resource: Resource, coordinates: Vector3i) -> void:
-    var raw_node: Node = grid_node_resource.instantiate()
+    if grid_node_resource is not PackedScene:
+        push_error("Cannot instantiate if not packed scene")
+
+    var scene: PackedScene = grid_node_resource
+    var raw_node: Node = scene.instantiate()
     if raw_node is not GridNode:
         push_error("[GLD Digger] Grid Node template is not a GridNode")
         raw_node.queue_free()
@@ -337,9 +349,9 @@ func _undo_auto_dig_node(coordinates: Vector3i) -> void:
 
 func _sync_viewport_camera() -> void:
     if _follow_cam:
-        var position: Vector3 = GridLevelCore.node_position_from_coordinates(panel.level, panel.coordinates)
-        var target: Vector3 = position + CardinalDirections.direction_to_vector(nav.look_direction)
-        var cam_position: Vector3 = position + CardinalDirections.direction_to_planar_rotation(nav.look_direction) * _cam_offset
+        var updated_pos: Vector3 = GridLevelCore.node_position_from_coordinates(panel.level, panel.coordinates)
+        var target: Vector3 = updated_pos + CardinalDirections.direction_to_vector(panel.look_direction)
+        var cam_position: Vector3 = updated_pos + CardinalDirections.direction_to_planar_rotation(panel.look_direction) * _cam_offset
 
         # TODO: Figure out how to know which viewport to update
         var view: SubViewport = EditorInterface.get_editor_viewport_3d(0)
@@ -385,11 +397,13 @@ func _spawn_window(title: String) -> void:
         _popup_window.queue_free()
 
     _popup_window = Window.new()
-    _popup_window.close_requested.connect(
+    if _popup_window.close_requested.connect(
         func() -> void:
             _popup_window.queue_free()
             _popup_window = null
-    )
+    ) != OK:
+        push_error("Failed to connect window close")
+
     _popup_window.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_SCREEN_WITH_KEYBOARD_FOCUS
     _popup_window.popup_window = true
 

@@ -35,15 +35,17 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
     if container.visible && input.has_focus():
         if event is InputEventKey:
-            _handle_input_key(event)
+            var key_evt: InputEventKey = event
+            _handle_input_key(key_evt)
     else:
         if event.is_action_pressed("toggle_dev_console"):
             toggle_visible()
             get_viewport().set_input_as_handled()
         elif container.visible && event is InputEventKey:
-            _handle_input_key(event)
+            var key_evt: InputEventKey = event
+            _handle_input_key(key_evt)
 
-func _handle_input_key(key: InputEventKey):
+func _handle_input_key(key: InputEventKey) -> void:
     if key.is_pressed() && !key.is_echo():
         match key.keycode:
             KEY_ESCAPE:

@@ -13,7 +13,7 @@ class_name MinimumDevCommand
 ##     console.set_context(command)
 ##     return true
 ## [/code]
-func execute(parameters: String, console: MinimumDevConsole) -> bool:
+func execute(parameters: String, _console: MinimumDevConsole) -> bool:
     push_error("[Minimum Dev Command] %s doesn't handle command its execution, ignoring message \"%s\"" % [command, parameters])
     return false
 
@@ -27,7 +27,7 @@ func in_context(context: Array[String]) -> bool:
 
     return true
 
-func is_context(context) -> bool:
+func is_context(context: Array[String]) -> bool:
     return in_context(context) && context.size() == command.size()
 
 func is_command(context: Array[String], cmd: String) -> bool:
@@ -63,5 +63,5 @@ func get_subcommand(context_depth: int) -> String:
     push_error("[Minimum Dev Command] %s doesn't have enough depth %s" % [command, context_depth])
     return ""
 
-func strip_cmd(cmd: String, context: Array[String]):
+func strip_cmd(cmd: String, context: Array[String]) -> String:
     return cmd.substr(" ".join(command.slice(context.size())).length() + 1).strip_edges()

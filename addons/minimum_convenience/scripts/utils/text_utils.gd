@@ -57,6 +57,8 @@ static func word_wrap(
     var cursor: int = 0
     var length: int = message.length()
 
+    var line: String
+
     while cursor + 1 < length:
         var next_cursor: int = -1
         for sep: String in separators:
@@ -69,23 +71,27 @@ static func word_wrap(
 
         if next_cursor == -1 && cursor == line_start:
             # print_debug("no safe linebreak")
-            var line = message.substr(line_start)
+            line = message.substr(line_start)
             if line.length() > max_width:
                 line = message.substr(line_start, max_width - 1)
                 next_cursor = line_start + line.length()
                 line_start = next_cursor
-                lines.append("%s-" % line)
+                if !lines.append("%s-" % line):
+                    push_error("Failed to add line %s" % line)
 
             else:
                 # print_debug("Hit end of line")
                 if !line.is_empty():
-                    lines.append(line)
+                    if !lines.append(line):
+                        push_error("Failed to add line %s" % line)
                 return lines
 
         elif next_cursor - line_start > max_width:
-            var line = message.substr(line_start, cursor - line_start).strip_edges(false, true)
+            line = message.substr(line_start, cursor - line_start).strip_edges(false, true)
             # print_debug("Adding line '%s' from %s to %s" % [line, line_start, cursor])
-            lines.append(line)
+            if !lines.append(line):
+                push_error("Failed to add line %s" % line)
+
             line_start = cursor
             next_cursor = cursor
 
@@ -97,8 +103,9 @@ static func word_wrap(
         #])
         cursor = maxi(cursor + 1, next_cursor + 1)
 
-    var line = message.substr(line_start).strip_edges(false, true)
+    line = message.substr(line_start).strip_edges(false, true)
     if !line.is_empty():
-        lines.append(line)
+        if !lines.append(line):
+            push_error("Failed to append line %s" % line)
 
     return lines

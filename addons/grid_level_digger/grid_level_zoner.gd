@@ -96,7 +96,7 @@ func _handle_select_zone(id: int) -> void:
     selected_zone = zone
     print_debug("[Grid Level Zoner] Selected zone from popup")
 
-func _handle_update_level(level: GridLevelCore) -> void:
+func _handle_update_level(_level: GridLevelCore) -> void:
     _selected_nodes.clear()
     selected_zone = null
 
@@ -124,7 +124,12 @@ func _do_create_zone(resource: Resource, nodes: Array[GridNode]) -> void:
         push_error("Cannot create zone without a resource to instance")
         return
 
-    var zone: LevelZone = resource.instantiate()
+    if resource is not PackedScene:
+        push_error("Cannot create resource since not scene")
+        return
+
+    var packed_scene: PackedScene = resource
+    var zone: LevelZone = packed_scene.instantiate()
 
     zone.nodes = nodes
 
@@ -137,7 +142,9 @@ func _do_create_zone(resource: Resource, nodes: Array[GridNode]) -> void:
     EditorInterface.mark_scene_as_unsaved()
     print_debug("[Grid Level Zoner] Added new zone %s" % _name_zone(zone))
 
-func _name_zone(zone: LevelZone) -> String: return "%s [%s]: %s node%s" % [zone.name, zone.get_script().get_global_name(), zone.nodes.size(), "" if zone.nodes.size() == 1 else "s"]
+func _name_zone(zone: LevelZone) -> String:
+    var script: Script = zone.get_script()
+    return "%s [%s]: %s node%s" % [zone.name, script.get_global_name(), zone.nodes.size(), "" if zone.nodes.size() == 1 else "s"]
 
 const NO_ZONE: int = 99999
 

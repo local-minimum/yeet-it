@@ -159,7 +159,7 @@ static func box(
 static func sphere(
     node: Node3D,
     pos: Vector3,
-    color = Color.WHITE_SMOKE,
+    color: Color = Color.WHITE_SMOKE,
     radius: float = 0.075,
 ) -> MeshInstance3D:
     if node == null:
@@ -168,18 +168,18 @@ static func sphere(
         return null
 
     var mesh: MeshInstance3D = MeshInstance3D.new()
-    var sphere: SphereMesh = SphereMesh.new()
+    var sphere_mesh: SphereMesh = SphereMesh.new()
     var mat: ORMMaterial3D = ORMMaterial3D.new()
 
-    mesh.mesh = sphere
+    mesh.mesh = sphere_mesh
     mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
     mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     mat.albedo_color = color
 
-    sphere.radius = radius
-    sphere.height = 2 * radius
-    sphere.material = mat
+    sphere_mesh.radius = radius
+    sphere_mesh.height = 2 * radius
+    sphere_mesh.material = mat
 
     if _safe_add_mech_to_root(node, mesh):
         mesh.global_position = pos
@@ -190,7 +190,7 @@ static func arrow(
     node: Node3D,
     origin: Vector3,
     target: Vector3,
-    color = Color.WHITE_SMOKE,
+    color: Color = Color.WHITE_SMOKE,
     shaft_width: float = 0.1,
     head_width: float = 0.2,
     head_proportion: float = 0.15,

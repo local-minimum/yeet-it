@@ -40,11 +40,11 @@ func add_override(target: MeshInstance3D, surface_idx: int, material: Material) 
         return false
 
     var existing: int = _overrides.find_custom(
-        func (override: MaterialOverride) -> bool:
+        func (overriding_mat: MaterialOverride) -> bool:
             return (
-                override.target_scene_file_path == target_scene_file_path &&
-                override.relative_path == target_path &&
-                override.surface_idx == surface_idx
+                overriding_mat.target_scene_file_path == target_scene_file_path &&
+                overriding_mat.relative_path == target_path &&
+                overriding_mat.surface_idx == surface_idx
             )
     )
 

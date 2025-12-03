@@ -83,7 +83,7 @@ static func opposite_surface_point(box: AABB, point: Vector3) -> Vector3:
 static func create_around(center: Vector3, size: Vector3) -> AABB:
     return AABB(center - size * 0.5, size)
 
-static func create_around_coordinates(coordinates: Vector3i, size: Vector3i, node_size: Vector3, node_spacing) -> AABB:
+static func create_around_coordinates(coordinates: Vector3i, size: Vector3i, node_size: Vector3, node_spacing: Vector3) -> AABB:
     var unit: Vector3 = node_spacing + node_size
     var centerf: Vector3 = Vector3(coordinates) * unit + node_size.y * Vector3.UP * 0.5
     var sizef: Vector3 = Vector3(size) * unit

@@ -24,7 +24,8 @@ var _close: Callable
 
 func _init() -> void:
     _regexp = RegEx.new()
-    _regexp.compile("(\\.|_[^_]+\\.)(.+$)")
+    if _regexp.compile("(\\.|_[^_]+\\.)(.+$)") != OK:
+        push_error("Failed to compile grid level variant maker regex")
 
 func _exit_tree() -> void:
     if _highlight != null:
@@ -64,7 +65,7 @@ func _find_copy_work(side: GridNodeSide) -> void:
         var parts: Array[Array] = ResourceUtils.list_resource_parentage(m_instance, side.get_path())
         parts.reverse()
         print_debug("[GLD Variant Maker] Found Mesh '%s' with parentage depth %s" % [m_instance.name, parts.size()])
-        var idx = -1
+        var idx: int = -1
         for part: Array[String] in parts:
             idx += 1
             if idx == 0:
@@ -94,7 +95,7 @@ func _on_create_pressed(set_style: bool = false) -> void:
     _start_with_suffix = ""
     _swaps.clear()
     level_scene = EditorInterface.get_edited_scene_root().scene_file_path
-    var suffix: String = suffix.placeholder_text if suffix.text.is_empty() else suffix.text
+    var new_suffix: String = suffix.placeholder_text if suffix.text.is_empty() else suffix.text
 
     _to_copy.sort_custom(func (a: Array, b: Array) -> bool:
         var a_path: String = a[1]
@@ -109,11 +110,12 @@ func _on_create_pressed(set_style: bool = false) -> void:
     )
 
     for part: Array in _to_copy:
-        var target: String = _get_target_path(part[0], suffix)
+        var path: String = part[0]
+        var target: String = _get_target_path(path, new_suffix)
         if part[2]:
-            _make_duplicate(part[0], target)
+            _make_duplicate(path, target)
         else:
-            _make_new_inherited(part[0], target)
+            _make_new_inherited(path, target)
 
     for new_scene: String in _swaps.values():
         print_debug("[GLD Variant Maker] Wanting to close newly created scene '%s' with parentage %s" % [new_scene, _roots[new_scene].get_path()])
@@ -148,7 +150,9 @@ func _on_create_pressed(set_style: bool = false) -> void:
                         direction,
                         new_resource,
                     ):
-                        EditorInterface.save_scene()
+                        if EditorInterface.save_scene() != OK:
+                            push_error("Failed to save scene")
+
                         EditorInterface.reload_scene_from_path(panel.edited_scene_root.scene_file_path)
                     else:
                         push_error("[GLD Variant Maker] Failed to swap out %s's %s side for '%s'" % [
@@ -167,8 +171,8 @@ func _on_variant_suffix_text_changed(new_text: String) -> void:
     _sync_suffix(suffix.placeholder_text if new_text.is_empty() else new_text)
 
 
-func _sync_suffix(suffix: String) -> void:
-    if suffix.is_empty():
+func _sync_suffix(new_suffix: String) -> void:
+    if new_suffix.is_empty():
         warning.text = "You must have a suffix"
         warning.show()
         create_files_list.hide()
@@ -181,8 +185,9 @@ func _sync_suffix(suffix: String) -> void:
 
     for part: Array in _to_copy:
         var _action: String = "DUPLICATE" if part[2] else "NEW INHERIT"
+        var path: String = part[0]
 
-        var target: String = _get_target_path(part[0], suffix)
+        var target: String = _get_target_path(path, new_suffix)
         var dir: DirAccess = DirAccess.open(target.get_base_dir())
 
         if !dir:
@@ -211,7 +216,7 @@ func _sync_buttons(disabled: bool) -> void:
     for btn: Button in create_buttons:
         btn.disabled = disabled
 
-func _get_target_path(path: String, suffix: String) -> String:
+func _get_target_path(path: String, target_suffix: String) -> String:
     var basedir: String = path.get_base_dir()
     var filename: String = path.get_file()
 
@@ -220,11 +225,9 @@ func _get_target_path(path: String, suffix: String) -> String:
         push_error("[GLD Variant Maker] could not match regex on file '%s'" % filename)
         return path
 
+    return "%s/%s%s.tscn" % [basedir, filename.substr(0, r_match.get_start(1)), target_suffix]
 
-    r_match.get_start(1)
-    return "%s/%s%s.tscn" % [basedir, filename.substr(0, r_match.get_start(1)), suffix]
-
-func _make_duplicate(path: String, new_path: String):
+func _make_duplicate(path: String, new_path: String) -> void:
     print_debug("[GLD Variant Maker] make duplicate scene form '%s'" % path)
 
     var resource: Resource = load(path)
@@ -246,7 +249,7 @@ func _make_duplicate(path: String, new_path: String):
 
                 var replacement_resouce: PackedScene = load(_swaps[node.scene_file_path])
                 var replacement: Node = replacement_resouce.instantiate()
-                var name: String = node.name
+                var node_name: String = node.name
 
                 node.get_parent().add_child(replacement)
                 replacement.owner = node.get_tree().edited_scene_root
@@ -262,12 +265,12 @@ func _make_duplicate(path: String, new_path: String):
 
                 print_debug("[GLD Variant Maker] Swapping out '%s' @ '%s' for scene from %s" % [node.name, _panel.edited_scene_root.get_path_to(node), replacement.scene_file_path])
                 node.free()
-                replacement.name = name
+                replacement.name = node_name
 
     EditorInterface.save_scene_as(new_path, true)
     print_debug("[GLD Variant Maker] made duplicate scene '%s'" % new_path)
 
-func _make_new_inherited(path: String, new_path: String):
+func _make_new_inherited(path: String, new_path: String) -> void:
     print_debug("[GLD Variant Maker] make new inherited scene form '%s'" % path)
 
     _swaps[path] = new_path
@@ -279,7 +282,9 @@ func _make_new_inherited(path: String, new_path: String):
 
     _roots[new_path] = _panel.edited_scene_root
 
-    _make_all_meshes_unique(new_path)
+    if !_make_all_meshes_unique(new_path):
+        push_warning("Failed to make all meshes unique")
+
     EditorInterface.save_scene_as(new_path, true)
 
     print_debug("[GLD Variant Maker] made new inherited scene '%s'" % new_path)
@@ -300,7 +305,7 @@ func _make_all_meshes_unique(path: String) -> bool:
 
     return true
 
-func _wait_for_scene(path: String, timeeout: int = 5000):
+func _wait_for_scene(path: String, timeeout: int = 5000) -> void:
     var dir: DirAccess = DirAccess.open(path.get_base_dir())
     if dir == null:
         return

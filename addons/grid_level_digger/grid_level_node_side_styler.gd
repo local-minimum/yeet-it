@@ -39,7 +39,6 @@ func configure(side: GridNodeSide, panel: GridLevelDiggerPanel) -> void:
     _key_lookup.clear()
 
     for key: String in _used_materials:
-        var idx: int = _key_lookup.size()
         _key_lookup.append(key)
         popup.add_radio_check_item(_humanize_key(key))
 
@@ -67,8 +66,6 @@ func _humanize_key(path: String) -> String:
             return "[Invalid surface: %s of %s]" % [surface, m_instance.name]
         else:
             return "%s [Surface %s]" % [m_instance.name, surface]
-
-    return path
 
 var _key: String
 var used_mat: Material
@@ -172,7 +169,7 @@ func gather_available_materials() -> Array[Material]:
 
     return mats
 
-func _do_set_override(side: GridNodeSide, key: String, material: Material) -> void:
+func _do_set_override(side: GridNodeSide, key: String, new_material: Material) -> void:
     var target: MeshInstance3D = GridNodeSide.get_meshinstance_from_override_path(side, key)
     var surface_idx: int = GridNodeSide.get_meshinstance_surface_index_from_override_path(side, key)
 
@@ -186,7 +183,7 @@ func _do_set_override(side: GridNodeSide, key: String, material: Material) -> vo
             push_error("We cannot set an override without having a level")
             return
 
-        var overrides = LevelMaterialOverrides.new()
+        var overrides: LevelMaterialOverrides = LevelMaterialOverrides.new()
         overrides.name = "Material Overrides"
         overrides.level = level
         level.add_child(overrides)
@@ -196,10 +193,10 @@ func _do_set_override(side: GridNodeSide, key: String, material: Material) -> vo
     if _panel.material_overrides.add_override(
         target,
         surface_idx,
-        material,
+        new_material,
     ):
-        used_mat = material
-        _used_materials[key] = material.resource_path
+        used_mat = new_material
+        _used_materials[key] = new_material.resource_path
 
         _update_listing()
 
@@ -266,7 +263,8 @@ func _sync_highlights(shown: bool) -> void:
 
     for node: Node in ResourceUtils.find_all_nodes_using_resource(_panel.level.level_geometry, target_scene_file_path):
         if node is Node3D:
-            var bounds: AABB = AABBUtils.bounding_box(node).grow(0.1)
+            var n3: Node3D = node
+            var bounds: AABB = AABBUtils.bounding_box(n3).grow(0.1)
 
             var box: MeshInstance3D = DebugDraw.box(
                 _panel.level,

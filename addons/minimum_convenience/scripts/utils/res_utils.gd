@@ -27,11 +27,15 @@ static func find_resources(
     if !valid_abs_resource_path(root):
         return result
 
+    var filt: Callable = _everything_goes
+    if filter is Callable:
+        filt = filter
+
     _find_resources(
         result,
         root,
         _pattern_filter(pattern),
-        filter if filter is Callable else _everything_goes,
+        filt,
         allow_hidden,
     )
 
@@ -55,18 +59,18 @@ static func _pattern_filter(pattern: Variant) -> Callable:
 
     if pattern is RegEx:
         var reg: RegEx = pattern
-        return func (path: String) -> bool: return reg.search(pattern) != null
+        return func (path: String) -> bool: return reg.search(path) != null
 
     if pattern != null:
         push_warning("Don't know how to convert %s to a pattern filter function" % pattern)
 
     return _everything_goes
 
-static func _everything_goes(path: String) -> bool: return true
+static func _everything_goes(_path: String) -> bool: return true
 
 static func _find_resources(
     results: PackedStringArray,
-    directory_path,
+    directory_path: String,
     filename_filter: Callable,
     filter: Callable,
     allow_hidden: bool,
@@ -78,27 +82,29 @@ static func _find_resources(
     dir.include_hidden = allow_hidden
     dir.include_navigational = false
 
-    dir.list_dir_begin()
-    for file: String in dir.get_files():
-        var full_file_path: String = "%s/%s" % [dir.get_current_dir(), file]
-        if filename_filter.call(full_file_path) && filter.call(full_file_path):
-            results.push_back(full_file_path)
+    if dir.list_dir_begin() == OK:
+        for file: String in dir.get_files():
+            var full_file_path: String = "%s/%s" % [dir.get_current_dir(), file]
+            if filename_filter.call(full_file_path) && filter.call(full_file_path):
+                if !results.push_back(full_file_path):
+                    push_warning("Could not add %s to results" % full_file_path)
+
     dir.list_dir_end()
 
-    dir.list_dir_begin()
-    for dir_path: String in dir.get_directories():
-        if !allow_hidden && dir_path.begins_with("."):
-            continue
+    if dir.list_dir_begin() == OK:
+        for dir_path: String in dir.get_directories():
+            if !allow_hidden && dir_path.begins_with("."):
+                continue
 
-        var full_dir_path: String = ("%s%s" % [dir.get_current_dir(), dir_path]) if dir.get_current_dir().ends_with("//") else ("%s/%s" % [dir.get_current_dir(), dir_path])
+            var full_dir_path: String = ("%s%s" % [dir.get_current_dir(), dir_path]) if dir.get_current_dir().ends_with("//") else ("%s/%s" % [dir.get_current_dir(), dir_path])
 
-        _find_resources(
-            results,
-            full_dir_path,
-            filename_filter,
-            filter,
-            allow_hidden,
-        )
+            _find_resources(
+                results,
+                full_dir_path,
+                filename_filter,
+                filter,
+                allow_hidden,
+            )
 
 
 ## Returns an array of [Node Path, Node Scene File Path]:s
