@@ -44,7 +44,7 @@ func _on_set_all_wall_rotations_pressed() -> void:
 func _on_refresh_level_nodes_pressed() -> void:
     panel.refresh_level_nodes()
 
-func sync_ui():
+func sync_ui() -> void:
     info.text = "Level: %s nodes" % panel.all_level_nodes.size()
 
 func _on_organize_nodes_button_pressed() -> void:
@@ -67,7 +67,8 @@ func organize_level() -> void:
     var level_elevation_children: Dictionary[int, Node3D] = {}
 
     var pattern: RegEx = RegEx.new()
-    pattern.compile(_ELEVATION_NODE_PATTERN)
+    if pattern.compile(_ELEVATION_NODE_PATTERN) != OK:
+        push_error("Failed to compile elevation pattern")
 
     for child: Node in geometry_root.get_children():
         if child is not Node3D or child is GridNode:
@@ -106,7 +107,7 @@ func organize_level() -> void:
 
     var child_idx: int = 0
     for elevation: int in elevations:
-        var enode = level_elevation_children[elevation]
+        var enode: Node3D = level_elevation_children[elevation]
         geometry_root.move_child(enode, child_idx)
         child_idx += 1
 
@@ -116,7 +117,8 @@ static func get_or_add_elevation_parent(level: GridLevelCore, elevation: int) ->
     var geometry_root: Node3D = GridLevelCore.get_level_geometry_root(level)
 
     var pattern: RegEx = RegEx.new()
-    pattern.compile(_ELEVATION_NODE_PATTERN)
+    if pattern.compile(_ELEVATION_NODE_PATTERN) != OK:
+        push_error("Failed to compile elevation pattern")
 
     for child: Node in geometry_root.get_children():
         if child is not Node3D or child is GridNode:

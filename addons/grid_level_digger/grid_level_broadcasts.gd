@@ -2,7 +2,7 @@
 extends Control
 class_name GridLevelBroadcasts
 
-const NO_CONTRACT = 99999
+const NO_CONTRACT: int = 99999
 @export var panel: GridLevelDiggerPanel
 @export var new_help: Control
 @export var create_new_info: Label
@@ -73,7 +73,7 @@ func _handle_selection_change(selected_nodes: Array[Node]) -> void:
     _sync_change_broadcaster()
     _sync_new_reciever()
 
-func _handle_update_level(level: GridLevelCore) -> void:
+func _handle_update_level(_level: GridLevelCore) -> void:
     _sync_known_contracts()
     _selected_contract = null
 
@@ -98,7 +98,7 @@ func _on_create_contract_pressed() -> void:
     if panel.level == null:
         push_error("Cannot create contracts outside grid levels")
 
-    var contract = BroadcastContract.new()
+    var contract: BroadcastContract = BroadcastContract.new()
     contract._broadcaster = _selection
     panel.level.broadcasts_parent.add_child(contract, true)
     contract.owner = panel.level.get_tree().edited_scene_root
@@ -410,7 +410,7 @@ func _sync_protocol_highlight() -> void:
     if _selected_contract == null || level == null:
         return
 
-    var caster: Node = BroadcastContract.get_broadcaster(_selected_contract)
+    var caster: Broadcaster = BroadcastContract.get_broadcaster(_selected_contract)
     var caster_bounds: AABB
     var faulty_caster: bool
     if caster != null:

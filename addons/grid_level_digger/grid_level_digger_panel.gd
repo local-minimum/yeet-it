@@ -43,7 +43,8 @@ var preview_style_targets: bool:
         var general: Dictionary = DictionaryUtils.safe_getd(_stored_settings, _GENERAL_KEY, {}, false)
         general[_PREVIEW_STYLE_TARGETS_KEY] = value
         _stored_settings[_GENERAL_KEY] = general
-        settings_storage.store_data(0, _stored_settings)
+        if !settings_storage.store_data(0, _stored_settings):
+            push_warning("Failed to store updated preview style targets value")
 
 var digout_size: Vector3i:
     get():
@@ -63,12 +64,13 @@ var digout_preserve: bool:
             false,
         )
 
-func set_digout_settings(size: Vector3i, preserve: bool) -> void:
+func set_digout_settings(new_size: Vector3i, preserve: bool) -> void:
         var general: Dictionary = DictionaryUtils.safe_getd(_stored_settings, _GENERAL_KEY, {}, false)
         general[_DIGOUT_PRESERVE] = preserve
-        general[_DIGOUT_SIZE] = size.maxi(1)
+        general[_DIGOUT_SIZE] = new_size.maxi(1)
         _stored_settings[_GENERAL_KEY] = general
-        settings_storage.store_data(0, _stored_settings)
+        if !settings_storage.store_data(0, _stored_settings):
+            push_warning("Failed to store digout setting")
 
 var boxin_size: Vector3i:
     get():
@@ -88,12 +90,13 @@ var boxin_preserve: bool:
             false,
         )
 
-func set_boxin_settings(size: Vector3i, preserve: bool) -> void:
+func set_boxin_settings(new_size: Vector3i, preserve: bool) -> void:
         var general: Dictionary = DictionaryUtils.safe_getd(_stored_settings, _GENERAL_KEY, {}, false)
         general[_BOXIN_PRESERVE] = preserve
-        general[_BOXIN_SIZE] = size.maxi(1)
+        general[_BOXIN_SIZE] = new_size.maxi(1)
         _stored_settings[_GENERAL_KEY] = general
-        settings_storage.store_data(0, _stored_settings)
+        if !settings_storage.store_data(0, _stored_settings):
+            push_warning("Failed to store new box in setting")
 
 var _node: GridNode
 var _anchor: GridAnchor
@@ -121,7 +124,8 @@ var _edited_scene_getter: Variant
 var edited_scene_root: Node:
     get():
         if _edited_scene_getter is Callable:
-            return _edited_scene_getter.call()
+            var getter: Callable = _edited_scene_getter
+            return getter.call()
         return null
 
 var all_level_nodes: Array[GridNode] = []
@@ -196,8 +200,8 @@ func get_level() -> GridLevelCore:
 func get_grid_node() -> GridNode:
     return _node
 
-func get_grid_node_at(coordinates: Vector3i) -> GridNode:
-    var idx = all_level_nodes.find_custom(func (n: GridNode) -> bool: return n.coordinates == coordinates)
+func get_grid_node_at(node_coords: Vector3i) -> GridNode:
+    var idx: int = all_level_nodes.find_custom(func (n: GridNode) -> bool: return n.coordinates == node_coords)
     if idx < 0:
         return null
     return all_level_nodes[idx]
@@ -218,9 +222,9 @@ func remove_grid_node(node: GridNode) -> void:
 func get_grid_anchor() -> GridAnchor:
     return _anchor
 
-func set_level(level: GridLevelCore) -> void:
-    if self.level != level:
-        self.level = level
+func set_level(new_level: GridLevelCore) -> void:
+    if level != new_level:
+        level = new_level
     _node = null
     _anchor = null
     inside_level = true
@@ -230,7 +234,7 @@ func set_level(level: GridLevelCore) -> void:
 
     sync_ui()
 
-func refresh_level_nodes():
+func refresh_level_nodes() -> void:
     all_level_nodes.clear()
 
     if level != null:
@@ -238,21 +242,23 @@ func refresh_level_nodes():
 
 
 func _update_level_if_needed(grid_node: GridNode) -> bool:
-    var level: GridLevelCore = GridLevelCore.find_level_parent(grid_node)
-    if self.level != level:
-        self.level = level
+    var new_level: GridLevelCore = GridLevelCore.find_level_parent(grid_node)
+    if level != new_level:
+        level = new_level
 
         refresh_level_nodes()
         return true
 
     elif all_level_nodes.size() == 0:
-        all_level_nodes.append_array(level.find_children("", "GridNode"))
+        all_level_nodes.append_array(new_level.find_children("", "GridNode"))
 
     return false
 
 func set_grid_node(grid_node: GridNode) -> void:
     if grid_node == _node:
+        @warning_ignore_start("return_value_discarded")
         _update_level_if_needed(grid_node)
+        @warning_ignore_restore("return_value_discarded")
         if !inside_level:
             inside_level = true
             sync_ui()
@@ -393,7 +399,8 @@ const _BOXIN_PRESERVE: String = "boxin-preserve"
 
 func _handle_style_updated() -> void:
     _stored_settings[_STYLE_KEY] = styles.collect_save_data()
-    settings_storage.store_data(0, _stored_settings)
+    if !settings_storage.store_data(0, _stored_settings):
+        push_warning("Failed to update style")
 
 func _load_settings() -> void:
     _stored_settings = settings_storage.retrieve_data(0, true)

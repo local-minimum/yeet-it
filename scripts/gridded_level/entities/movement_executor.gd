@@ -359,10 +359,13 @@ func _make_midpoint_translation_tween(
     return tween
 
 func _create_translate_planar_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
+    if _verbose:
+        print_debug("[Movement Executor %s of %s] Making planar translation" % [name, _entity.name])
     tween = _make_linear_translation_tween(
         tween,
         plan,
-        Tween.TRANS_SINE,
+        Tween.TRANS_LINEAR,
+        # Tween.TRANS_SINE,
         Tween.EASE_IN_OUT,
         plan.from.mode == MovementPlannerBase.PositionMode.AIRBOURNE,
     )
@@ -383,6 +386,8 @@ func _create_translate_planar_tween(tween: Tween, plan: MovementPlannerBase.Move
 
 func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
     if plan.from.quaternion != plan.to.quaternion:
+        if _verbose:
+            print_debug("[Movement Executor %s of %s] Movement includes rotation" % [name, _entity.name])
         @warning_ignore_start("return_value_discarded")
         _make_rotation_tween(tween.parallel(), plan)
         @warning_ignore_restore("return_value_discarded")
@@ -488,6 +493,9 @@ func _create_translate_fall_lateral_tween(tween: Tween, plan: MovementPlannerBas
     _add_rotation_and_finalize_simple_translation_tween(tween, plan)
 
 func _create_translate_refuse_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
+    if _verbose:
+        print_debug("[Movement Executor %s of %s] Refusing movment" % [name, _entity.name])
+
     var node: GridNode = _get_node(plan.from)
     if node == null:
         return

@@ -28,7 +28,7 @@ func set_node(node: Node, remove: Variant = null, move_up: Variant = null, move_
     _move_down = move_down
     _remove = remove
 
-    _node_field.text = node.name if node != null else _empty_text
+    _node_field.text = String(node.name) if node != null else _empty_text
     _move_up_button.disabled = node == null || move_up == null || !allow_up
     _move_down_button.disabled = node == null || move_down == null || !allow_down
     _remove_button.disabled = node == null || remove == null || !allow_remove

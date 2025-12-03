@@ -75,16 +75,16 @@ func _handle_nav(coordinates: Vector3i, _look_directoin: CardinalDirections.Card
     )
 
 func _on_erase_out_pressed() -> void:
-    var min: Vector3i = _panel.coordinates - (_size - Vector3i.ONE) / 2
+    var min_coords: Vector3i = _panel.coordinates - (_size - Vector3i.ONE) / 2
     var preexisting: Dictionary[Vector3i, GridNode]
-    for coords: Vector3i in VectorUtils.all_coordinates_within(min, _size):
+    for coords: Vector3i in VectorUtils.all_coordinates_within(min_coords, _size):
         var node: GridNode = _panel.get_grid_node_at(coords)
         if node != null:
             preexisting[coords] = node
 
     var hull: Dictionary[Vector3i, GridNode]
     if _preserve.button_pressed:
-        for coords: Vector3i in VectorUtils.all_surrounding_coordinates(min, _size):
+        for coords: Vector3i in VectorUtils.all_surrounding_coordinates(min_coords, _size):
             var node: GridNode = _panel.get_grid_node_at(coords)
             if node != null:
                 hull[coords] = node
@@ -116,9 +116,9 @@ func _on_dig_out_pressed() -> void:
         push_error("[GLD Dig-Out] Must have at least a grid node active and selected in the style tab to dig-out!")
         return
 
-    var min: Vector3i = _panel.coordinates - (_size - Vector3i.ONE) / 2
+    var min_coords: Vector3i = _panel.coordinates - (_size - Vector3i.ONE) / 2
     var preexisting: Dictionary[Vector3i, GridNode]
-    var to_dig: Array[Vector3i] = VectorUtils.all_coordinates_within(min, _size)
+    var to_dig: Array[Vector3i] = VectorUtils.all_coordinates_within(min_coords, _size)
     for coords: Vector3i in to_dig:
         var node: GridNode = _panel.get_grid_node_at(coords)
         if node != null:
@@ -128,7 +128,7 @@ func _on_dig_out_pressed() -> void:
         for coords: Vector3i in preexisting:
             to_dig.erase(coords)
 
-    for coords: Vector3i in VectorUtils.all_surrounding_coordinates(min, _size):
+    for coords: Vector3i in VectorUtils.all_surrounding_coordinates(min_coords, _size):
         var node: GridNode = _panel.get_grid_node_at(coords)
         if node != null:
             preexisting[coords] = node
@@ -219,6 +219,6 @@ func _add_side_to_node(node: GridNode, side_direction: CardinalDirections.Cardin
     if side.infer_direction_from_rotation:
         GridNodeSide.set_direction_from_rotation(side)
 
-func _on_preserve_existing_toggled(toggled_on:bool) -> void:
+func _on_preserve_existing_toggled(_toggled_on:bool) -> void:
     # If we want to highlight preserving differently then we should do so from here
     pass

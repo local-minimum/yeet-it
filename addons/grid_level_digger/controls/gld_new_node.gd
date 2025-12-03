@@ -19,13 +19,13 @@ var editable: bool:
     set(value):
         _node_field.editable = value
 
-func _ready():
+func _ready() -> void:
     _node_field.editable = false
 
 func set_node(node: Node, callback: Callable) -> void:
     _callback = callback
     _node = node
-    _node_field.text = node.name if node != null else _nothing_selected_text
+    _node_field.text = String(node.name) if node != null else _nothing_selected_text
     _add_button.disabled = node == null
     _called = false
     _text_mode = false

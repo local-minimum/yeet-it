@@ -10,14 +10,14 @@ class_name MaterialSelectionListing
 var _on_use: Variant
 var mat: Material
 
-func configure(material: Material, color: Color, on_use: Variant) -> void:
-    mat = material
+func configure(new_material: Material, color: Color, on_use: Variant) -> void:
+    mat = new_material
 
-    _label.text = material.resource_path
+    _label.text = new_material.resource_path
     update(color, on_use)
 
-    if material is StandardMaterial3D:
-        var std_mat: StandardMaterial3D = material
+    if new_material is StandardMaterial3D:
+        var std_mat: StandardMaterial3D = new_material
         if std_mat.albedo_texture == null:
             _texture.texture = _fallback_texture
         else:
@@ -26,7 +26,7 @@ func configure(material: Material, color: Color, on_use: Variant) -> void:
         _texture.modulate = std_mat.albedo_color
 
     else:
-        print_debug("[GLD Material Selection Listing] Don't know how to preview %s" % material)
+        print_debug("[GLD Material Selection Listing] Don't know how to preview %s" % new_material)
         _texture.texture = _fallback_texture
 
 func update(color: Color, on_use: Variant) -> void:
@@ -37,4 +37,5 @@ func update(color: Color, on_use: Variant) -> void:
 
 func _on_use_pressed() -> void:
     if _on_use is Callable:
-        _on_use.call()
+        var callback: Callable = _on_use
+        callback.call()

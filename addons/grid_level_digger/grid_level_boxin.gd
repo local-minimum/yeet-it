@@ -92,7 +92,7 @@ func _add_side_to_node(node: GridNode, side_direction: CardinalDirections.Cardin
     if side.infer_direction_from_rotation:
         GridNodeSide.set_direction_from_rotation(side)
 
-func _on_preserve_existing_toggled(toggled_on:bool) -> void:
+func _on_preserve_existing_toggled(_toggled_on:bool) -> void:
     # If we want to highlight preserving differently then we should do so from here
     pass
 
@@ -101,9 +101,9 @@ func _on_box_in_pressed() -> void:
         push_error("[GLD Box In] Must have at least a grid node active and selected in the style tab to box in!")
         return
 
-    var min: Vector3i = _panel.coordinates - (_size - Vector3i.ONE) / 2
+    var min_coords: Vector3i = _panel.coordinates - (_size - Vector3i.ONE) / 2
     var preexisting: Dictionary[Vector3i, GridNode]
-    var to_dig: Array[Vector3i] = VectorUtils.all_surrounding_coordinates(min, _size, true)
+    var to_dig: Array[Vector3i] = VectorUtils.all_surrounding_coordinates(min_coords, _size, true)
 
     for coords: Vector3i in to_dig:
         var node: GridNode = _panel.get_grid_node_at(coords)
@@ -116,8 +116,8 @@ func _on_box_in_pressed() -> void:
 
     # Inside the shell
     var inside: Dictionary[Vector3i, GridNode]
-    min = _panel.coordinates - (_size - 2 * Vector3i.ONE) / 2
-    for coords: Vector3i in VectorUtils.all_surrounding_coordinates(min, _size, true):
+    min_coords = _panel.coordinates - (_size - 2 * Vector3i.ONE) / 2
+    for coords: Vector3i in VectorUtils.all_surrounding_coordinates(min_coords, _size, true):
         var node: GridNode = _panel.get_grid_node_at(coords)
         if node != null:
             inside[coords] = node
@@ -137,15 +137,16 @@ func _do_boxin(center: Vector3i, to_dig: Array[Vector3i], preexisting: Dictionar
                 continue
 
             for side_direction: CardinalDirections.CardinalDirection in CardinalDirections.ALL_DIRECTIONS:
+                var node_side: GridNodeSide
                 var neighbor: Vector3i = CardinalDirections.translate(coords, side_direction)
                 if VectorUtils.manhattan_distance(neighbor, center) >= VectorUtils.manhattan_distance(coords, center) || to_dig.has(coords) || preexisting.has(coords):
-                    var node_side: GridNodeSide = GridNodeSide.get_node_side(preexisting[coords], side_direction)
+                    node_side = GridNodeSide.get_node_side(preexisting[coords], side_direction)
                     if node_side != null:
                         node_side.queue_free()
 
                     continue
 
-                var node_side: GridNodeSide = GridNodeSide.get_node_side(preexisting[coords], side_direction)
+                node_side = GridNodeSide.get_node_side(preexisting[coords], side_direction)
                 if node_side == null:
                     _add_side_to_node(preexisting[coords], side_direction, styles, level)
 

@@ -4,7 +4,7 @@ class_name GridLevelDigger
 
 @export
 var panel: GridLevelDiggerPanel
-const TOOL_PANEL: Resource = preload("res://addons/grid_level_digger/grid_level_digger_panel.tscn")
+const TOOL_PANEL: PackedScene = preload("res://addons/grid_level_digger/grid_level_digger_panel.tscn")
 
 var editor_selection: EditorSelection
 
@@ -15,14 +15,15 @@ func _enter_tree() -> void:
 
     add_control_to_container(EditorPlugin.CONTAINER_INSPECTOR_BOTTOM, panel)
 
-    editor_selection = get_editor_interface().get_selection()
-    editor_selection.connect("selection_changed", _on_selection_change)
+    editor_selection = EditorInterface.get_selection()
+    if editor_selection.selection_changed.connect(_on_selection_change) != OK:
+        push_error("Failed to connect to selection changed")
 
     # Get the proper initial state
     _on_selection_change()
 
 func _get_edited_scene_root() -> Node:
-    return get_editor_interface().get_edited_scene_root()
+    return EditorInterface.get_edited_scene_root()
 
 func _exit_tree() -> void:
     remove_control_from_container(EditorPlugin.CONTAINER_INSPECTOR_BOTTOM, panel)

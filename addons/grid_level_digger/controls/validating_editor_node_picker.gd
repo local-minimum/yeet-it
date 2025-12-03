@@ -17,5 +17,6 @@ func is_valid(resource: Resource) -> bool:
             return false
         var root_script_raw: Variant = scene_state.get_node_property_value(0, 0)
         if root_script_raw is Script:
-            return root_script_raw.get_global_name() == root_class_name
+            var script: Script = root_script_raw
+            return script.get_global_name() == root_class_name
     return false
