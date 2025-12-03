@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://blehla63sdvhq"]
-
-[ext_resource type="Script" uid="uid://cbu73rwsxo1dy" path="res://scripts/global_game_state_core.gd" id="1_e05ku"]
-
-[node name="Global Game State" type="Node"]
-script = ExtResource("1_e05ku")
-metadata/_custom_type_script = "uid://cbu73rwsxo1dy"

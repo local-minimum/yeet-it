@@ -3,14 +3,10 @@ class_name BindingHints
 
 enum InputMode { NONE, KEYBOARD_AND_MOUSE, CONTROLLER }
 
-@export var _key_icons: Dictionary[Key, Texture2D]
-@export var _mouse_button_icons: Dictionary[MouseButton, Texture2D]
-@export var _mouse_motion_icon: Texture
-@export var _mouse_button_translation_keys: Dictionary[MouseButton, String]
-@export var _joypad_button_icons: Dictionary[JoyButton, Texture2D]
-@export var _joypad_button_translation_keys: Dictionary[JoyButton, String]
-@export var _joy_axis_icons: Dictionary[JoyAxis, Texture2D]
-@export var _joy_axis_translation_keys: Dictionary[JoyAxis, String]
+var _config: BindingHintsConfig
+
+func _enter_tree() -> void:
+    _config = load("res://binding_hints_config.tres")
 
 var mode: InputMode = InputMode.KEYBOARD_AND_MOUSE:
     set(value):
@@ -41,38 +37,38 @@ func _get_event_hint(evt: InputEvent) -> Variant:
     if evt is InputEventKey:
         var key: InputEventKey = evt
         var keycode: Key = DisplayServer.keyboard_get_keycode_from_physical(key.physical_keycode)
-        if _key_icons.has(keycode):
-            return _key_icons[keycode]
+        if _config.key_icons.has(keycode):
+            return _config.key_icons[keycode]
         return OS.get_keycode_string(keycode)
 
     if evt is InputEventMouseButton:
         var mouse_btn: InputEventMouseButton = evt
-        if _mouse_button_icons.has(mouse_btn.button_index):
-            return _mouse_button_icons[mouse_btn.button_index]
+        if _config.mouse_button_icons.has(mouse_btn.button_index):
+            return _config.mouse_button_icons[mouse_btn.button_index]
 
-        var btn_key: String = _mouse_button_translation_keys.get(mouse_btn.button_index, "MOUSE_BTN_%s" % mouse_btn.button_index)
+        var btn_key: String = _config.mouse_button_translation_keys.get(mouse_btn.button_index, "MOUSE_BTN_%s" % mouse_btn.button_index)
         return tr(btn_key)
 
     if evt is InputEventMouseMotion:
-        if _mouse_motion_icon != null:
-            return _mouse_motion_icon
+        if _config.mouse_motion_icon != null:
+            return _config.mouse_motion_icon
 
         return tr("MOUSE_MOTION")
 
     if evt is InputEventJoypadButton:
         var joy_btn: InputEventJoypadButton = evt
-        if _joypad_button_icons.has(joy_btn.button_index):
-            return _joypad_button_icons[joy_btn.button_index]
+        if _config.joypad_button_icons.has(joy_btn.button_index):
+            return _config.joypad_button_icons[joy_btn.button_index]
 
-        var btn_key: String = _joypad_button_translation_keys.get(joy_btn.button_index, "JOY_BTN_%s" % joy_btn.button_index)
+        var btn_key: String = _config.joypad_button_translation_keys.get(joy_btn.button_index, "JOY_BTN_%s" % joy_btn.button_index)
         return tr(btn_key)
 
     if evt is InputEventJoypadMotion:
         var motion: InputEventJoypadMotion = evt
-        if _joy_axis_icons.has(motion.axis):
-            return _joy_axis_icons[motion.axis]
+        if _config.joy_axis_icons.has(motion.axis):
+            return _config.joy_axis_icons[motion.axis]
 
-        var axis_key: String = _joy_axis_translation_keys.get(motion.axis, "JOY_AXIS_%s" % motion.axis)
+        var axis_key: String = _config.joy_axis_translation_keys.get(motion.axis, "JOY_AXIS_%s" % motion.axis)
         return tr(axis_key)
 
     return null
