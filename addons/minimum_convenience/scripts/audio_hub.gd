@@ -3,7 +3,18 @@ class_name AudioHub
 
 enum Bus { SFX, DIALGUE, MUSIC }
 
-var _config: AudioHubConfig
+const _CONF_PATH: String = "res://audio_hub_config.tres"
+
+var _config: AudioHubConfig:
+    get():
+        if _config == null:
+            _config = load(_CONF_PATH)
+            if _config == null:
+                push_warning("Didn't find any audio hub config at '%s', using defaults" % _CONF_PATH)
+                _config = AudioHubConfig.new()
+
+        return _config
+
 var _sfx_available: Array[AudioStreamPlayer]
 
 var _dialogue_available: Array[AudioStreamPlayer]
@@ -24,9 +35,6 @@ var dialogue_busy: bool:
 
 var _music_available: Array[AudioStreamPlayer]
 var _music_running: Array[AudioStreamPlayer]
-
-func _enter_tree() -> void:
-    _config = load("res://audio_hub_config.tres")
 
 func _ready() -> void:
     @warning_ignore_start("return_value_discarded")

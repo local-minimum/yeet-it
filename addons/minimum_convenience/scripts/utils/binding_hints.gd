@@ -3,10 +3,16 @@ class_name BindingHints
 
 enum InputMode { NONE, KEYBOARD_AND_MOUSE, CONTROLLER }
 
-var _config: BindingHintsConfig
+const _CONF_PATH: String = "res://binding_hints_config.tres"
+var _config: BindingHintsConfig:
+    get():
+        if _config == null:
+            _config = load(_CONF_PATH)
+            if _config == null:
+                push_warning("Didn't find any binding hints config at '%s', using defaults" % _CONF_PATH)
+                _config = BindingHintsConfig.new()
 
-func _enter_tree() -> void:
-    _config = load("res://binding_hints_config.tres")
+        return _config
 
 var mode: InputMode = InputMode.KEYBOARD_AND_MOUSE:
     set(value):
