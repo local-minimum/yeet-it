@@ -35,9 +35,11 @@ func bounding_box() -> AABB:
 
     return AABB(_collission_shape.global_position - size * 0.5, size)
 
+## Determines if player should be presented with it as an interaction option
 func _in_range(_event_position: Vector3) -> bool:
     return true
 
+## Determines if when interacting, it should be allowed or refused
 func check_allow_interact() -> bool:
     return true
 

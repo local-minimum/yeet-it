@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Loot" load_steps=2 format=3 uid="uid://n0xwmmg6yhqg"]
+
+[ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_kemiq"]
+
+[resource]
+script = ExtResource("1_kemiq")
+id = "brick"
+stack_size = 5
+tags = Array[int]([0])
+metadata/_custom_type_script = "uid://crv68xkjq7tqq"

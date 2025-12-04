@@ -41,6 +41,9 @@ func remove_cinematic_cause(cause: Node) -> void:
         __SignalBus.on_cinematic.emit(self, false)
 
 
+## Mid/core of entity
+@export var center: Node3D
+
 @export var look_direction: CardinalDirections.CardinalDirection = CardinalDirections.CardinalDirection.NORTH:
     set(value):
         _old_look_direction = look_direction

@@ -21,9 +21,9 @@ buses/default_bus_layout="uid://bvatvbn34a8pn"
 
 [autoload]
 
-__SignalBus="*res://scripts/signal_bus_core.gd"
-__AudioHub="*res://addons/minimum_convenience/scripts/audio_hub.gd"
+__SignalBus="*res://scripts/yeet/signal_bus.gd"
 __GlobalGameState="*res://scripts/global_game_state_core.gd"
+__AudioHub="*res://addons/minimum_convenience/scripts/audio_hub.gd"
 __BindingHints="*res://addons/minimum_convenience/scripts/utils/binding_hints.gd"
 
 [debug]
@@ -110,3 +110,7 @@ toggle_free_look_cam_mouse={
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":2,"position":Vector2(505, 40),"global_position":Vector2(519, 113),"factor":1.0,"button_index":2,"canceled":false,"pressed":true,"double_click":false,"script":null)
 ]
 }
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://resources/loot.en.translation", "res://resources/loot.sv.translation", "res://resources/containers.en.translation", "res://resources/containers.sv.translation")

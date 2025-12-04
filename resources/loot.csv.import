@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://b2mu2ffqw2shk"
+
+[deps]
+
+files=["res://resources/loot.en.translation", "res://resources/loot.sv.translation"]
+
+source_file="res://resources/loot.csv"
+dest_files=["res://resources/loot.en.translation", "res://resources/loot.sv.translation"]
+
+[params]
+
+compress=true
+delimiter=0
