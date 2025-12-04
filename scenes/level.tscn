@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=30 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://bypywet16d5f" path="res://scripts/yeet/loot/loot_container.gd" id="14_gunhw"]
 [ext_resource type="Script" uid="uid://c4pg72ybhpmj0" path="res://scripts/yeet/loot/loot_slot.gd" id="15_8gofh"]
 [ext_resource type="Resource" uid="uid://n0xwmmg6yhqg" path="res://resources/loot/brick.tres" id="16_h6wmr"]
+[ext_resource type="ArrayMesh" uid="uid://bv5o08mrc0rai" path="res://models/stuff/box.obj" id="17_8gofh"]
 
 [sub_resource type="Resource" id="Resource_olg7q"]
 script = ExtResource("3_2r41h")
@@ -231,11 +232,14 @@ direction = 4
 [node name="Side DOWN" parent="Geometry/Elevation 0/Node (1, 0, -4)" instance=ExtResource("11_gunhw")]
 
 [node name="LootContainer" type="Node3D" parent="Geometry/Elevation 0/Node (1, 0, -4)"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.51971483, 0, -0.738163)
+transform = Transform3D(-0.11862926, 0, -0.99293864, 0, 1, 0, 0.99293864, 0, -0.11862926, -0.52, 0.1, -0.7379999)
 script = ExtResource("14_gunhw")
 category_id = "box"
 slots = Array[ExtResource("15_8gofh")]([SubResource("Resource_pqd0y"), SubResource("Resource_5k0ak"), SubResource("Resource_wu01b")])
 metadata/_custom_type_script = "uid://bypywet16d5f"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer"]
+mesh = ExtResource("17_8gofh")
 
 [node name="Node (0, 0, -4)" parent="Geometry/Elevation 0" instance=ExtResource("7_wc255")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
