@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=31 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
@@ -58,6 +58,9 @@ metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
 [sub_resource type="Resource" id="Resource_wu01b"]
 script = ExtResource("15_8gofh")
 metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8gofh"]
+size = Vector3(0.4550476, 0.31207275, 0.67089844)
 
 [sub_resource type="Resource" id="Resource_fpun6"]
 script = ExtResource("9_8iemx")
@@ -240,6 +243,12 @@ metadata/_custom_type_script = "uid://bypywet16d5f"
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer"]
 mesh = ExtResource("17_8gofh")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer/StaticBody3D"]
+transform = Transform3D(1, 0, -2.3097678e-07, 0, 1, 0, 2.3097678e-07, 0, 1, -0.00694561, 0.14486694, 0.009275794)
+shape = SubResource("BoxShape3D_8gofh")
 
 [node name="Node (0, 0, -4)" parent="Geometry/Elevation 0" instance=ExtResource("7_wc255")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)

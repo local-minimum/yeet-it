@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Loot" load_steps=2 format=3 uid="uid://i2kqfnxx7lvm"]
+
+[ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_lk3ii"]
+
+[resource]
+script = ExtResource("1_lk3ii")
+id = "playing_card"
+stack_size = 50
+tags = Array[int]([7, 5])
+metadata/_custom_type_script = "uid://crv68xkjq7tqq"

@@ -104,6 +104,7 @@ func _draw() -> void:
 
         idx += 1
 
+## Index starts at 1
 func _get_key_id(idx: int) -> String: return "hot_key_%s" % idx
 
 func _calculate_within_reach() -> Array[Interactable]:
