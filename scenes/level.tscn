@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=34 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
@@ -17,9 +17,11 @@
 [ext_resource type="PackedScene" uid="uid://okbxlrrdo6j5" path="res://scenes/cube sides/floor.tscn" id="11_gunhw"]
 [ext_resource type="Script" uid="uid://cjhediv47ntbx" path="res://scripts/gridded_level/level_features/level_portal.gd" id="12_arp2o"]
 [ext_resource type="Script" uid="uid://bypywet16d5f" path="res://scripts/yeet/loot/loot_container.gd" id="14_gunhw"]
+[ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="15_5k0ak"]
 [ext_resource type="Script" uid="uid://c4pg72ybhpmj0" path="res://scripts/yeet/loot/loot_slot.gd" id="15_8gofh"]
 [ext_resource type="Resource" uid="uid://n0xwmmg6yhqg" path="res://resources/loot/brick.tres" id="16_h6wmr"]
 [ext_resource type="ArrayMesh" uid="uid://bv5o08mrc0rai" path="res://models/stuff/box.obj" id="17_8gofh"]
+[ext_resource type="Resource" uid="uid://i2kqfnxx7lvm" path="res://resources/loot/playing_card.tres" id="17_pqd0y"]
 [ext_resource type="PackedScene" uid="uid://4n8i8kbl7c32" path="res://models/stuff/shelf.blend" id="18_h6wmr"]
 
 [sub_resource type="Resource" id="Resource_olg7q"]
@@ -47,17 +49,17 @@ metadata/_custom_type_script = "uid://dsq3qb6waenpd"
 [sub_resource type="Resource" id="Resource_pqd0y"]
 script = ExtResource("15_8gofh")
 loot = ExtResource("16_h6wmr")
-count = 2
+count = 3
 metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
 
 [sub_resource type="Resource" id="Resource_5k0ak"]
 script = ExtResource("15_8gofh")
-loot = ExtResource("16_h6wmr")
-count = 1
 metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
 
 [sub_resource type="Resource" id="Resource_wu01b"]
 script = ExtResource("15_8gofh")
+loot = ExtResource("17_pqd0y")
+count = 25
 metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8gofh"]
@@ -82,10 +84,11 @@ broadcasts_parent = NodePath("Broadcasts")
 player = NodePath("Player")
 metadata/_custom_type_script = "uid://c74xugjiqdyyk"
 
-[node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("camera", "key_ring", "executor")]
+[node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("camera", "key_ring", "center", "executor")]
 script = ExtResource("2_w7c3h")
 camera = NodePath("Head/Camera3D")
 key_ring = NodePath("KeyRingCore")
+center = NodePath("Center")
 transportation_mode = SubResource("Resource_olg7q")
 transportation_abilities = SubResource("Resource_t1rx8")
 can_jump_off_floor = true
@@ -117,6 +120,9 @@ metadata/_custom_type_script = "uid://d1e0odws2w1g1"
 [node name="OmniLight3D" type="OmniLight3D" parent="Player"]
 omni_range = 7.0
 omni_attenuation = 0.3
+
+[node name="Center" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0612761, 0)
 
 [node name="Enemies" type="Node3D" parent="."]
 
@@ -235,11 +241,13 @@ direction = 4
 
 [node name="Side DOWN" parent="Geometry/Elevation 0/Node (1, 0, -4)" instance=ExtResource("11_gunhw")]
 
-[node name="LootContainer" type="Node3D" parent="Geometry/Elevation 0/Node (1, 0, -4)"]
+[node name="LootContainer" type="Node3D" parent="Geometry/Elevation 0/Node (1, 0, -4)" node_paths=PackedStringArray("_collission_shape")]
 transform = Transform3D(-0.11862926, 0, -0.99293864, 0, 1, 0, 0.99293864, 0, -0.11862926, -0.017581701, 1.0250722, -0.91268826)
 script = ExtResource("14_gunhw")
 category_id = "box"
+ui_icon = ExtResource("15_5k0ak")
 slots = Array[ExtResource("15_8gofh")]([SubResource("Resource_pqd0y"), SubResource("Resource_5k0ak"), SubResource("Resource_wu01b")])
+_collission_shape = NodePath("Loot Box Body/Loot Box Shape")
 metadata/_custom_type_script = "uid://bypywet16d5f"
 
 [node name="Loot Box Mesh" type="MeshInstance3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer"]

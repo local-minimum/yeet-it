@@ -114,6 +114,9 @@ func _calculate_within_reach() -> Array[Interactable]:
     )
 
 func _input(event: InputEvent) -> void:
+    if _cinematic:
+        return
+
     if event.is_action_pressed("crawl_search"):
         if _moving:
             _requested = true

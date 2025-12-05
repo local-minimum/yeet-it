@@ -6,6 +6,7 @@ var _max_distance_sq: float = 2.5
 
 ## Used for look up of
 @export var category_id: String
+@export var ui_icon: Texture2D
 @export var slots: Array[LootSlot]
 
 var localized_name: String:
@@ -31,6 +32,9 @@ func _exit_tree() -> void:
         p.remove_cinematic_cause(self)
 
     super._exit_tree()
+
+func _ready() -> void:
+    is_interactable = true
 
 func _handle_level_unloaded(level: GridLevelCore) -> void:
     if _level == level:
@@ -60,5 +64,5 @@ func check_allow_interact() -> bool:
     return true
 
 func execute_interation() -> void:
-    _level.player.cause_cinematic(self)
+    # _level.player.cause_cinematic(self)
     __SignalBus.on_open_container.emit(self)

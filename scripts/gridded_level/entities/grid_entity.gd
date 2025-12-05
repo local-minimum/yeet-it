@@ -42,7 +42,11 @@ func remove_cinematic_cause(cause: Node) -> void:
 
 
 ## Mid/core of entity
-@export var center: Node3D
+@export var center: Node3D:
+    get():
+        if center == null:
+            return self
+        return center
 
 @export var look_direction: CardinalDirections.CardinalDirection = CardinalDirections.CardinalDirection.NORTH:
     set(value):

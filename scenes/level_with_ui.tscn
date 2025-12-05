@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://di3gn5h4u8hpg"]
+
+[ext_resource type="PackedScene" uid="uid://c6rml76oe0t15" path="res://scenes/level.tscn" id="1_7im60"]
+[ext_resource type="Script" uid="uid://bvqfk07xb2q3f" path="res://scripts/ui/interaction_ui.gd" id="2_6677a"]
+[ext_resource type="FontFile" uid="uid://4lokhton1m6v" path="res://fonts/PanopticMonospace-Bold.otf" id="3_ndbn4"]
+[ext_resource type="Script" uid="uid://77nh0gjhx8lb" path="res://scripts/ui/interaction_ui_viz_outline.gd" id="3_nkn4f"]
+
+[sub_resource type="Resource" id="Resource_ndbn4"]
+script = ExtResource("3_nkn4f")
+_color = Color(0, 0.82604903, 0.83972096, 1)
+_font = ExtResource("3_ndbn4")
+_font_size = 18
+_gap_padding = 4
+_hint_y_offset = -0.30000000000000004
+_text_hint_x_offset = 0
+metadata/_custom_type_script = "uid://77nh0gjhx8lb"
+
+[node name="Level With UI" type="Node"]
+
+[node name="Level" parent="." instance=ExtResource("1_7im60")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="InteractionUI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_6677a")
+_max_interactables = 3
+_viz = SubResource("Resource_ndbn4")
+metadata/_custom_type_script = "uid://bvqfk07xb2q3f"
