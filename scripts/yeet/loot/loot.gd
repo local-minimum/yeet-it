@@ -1,7 +1,7 @@
 extends Resource
 class_name Loot
 
-enum Tag { Stone, Plastic, Glass, Flammable, Liquid, Sharp, Heavy, Light }
+enum Tag { Stone, Plastic, Glass, Flammable, Liquid, Sharp, Heavy, Light, Flesh }
 
 ## Reference used in tracking / saving / key-gen for localized names and descriptions
 @export var id: String
