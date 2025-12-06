@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=25 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
@@ -16,12 +16,7 @@
 [ext_resource type="Script" uid="uid://bpoh6yp18x1ne" path="res://scripts/gridded_level/entities/movement_planner_settings.gd" id="10_64w2a"]
 [ext_resource type="PackedScene" uid="uid://okbxlrrdo6j5" path="res://scenes/cube sides/floor.tscn" id="11_gunhw"]
 [ext_resource type="Script" uid="uid://cjhediv47ntbx" path="res://scripts/gridded_level/level_features/level_portal.gd" id="12_arp2o"]
-[ext_resource type="Script" uid="uid://bypywet16d5f" path="res://scripts/yeet/loot/loot_container.gd" id="14_gunhw"]
-[ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="15_5k0ak"]
-[ext_resource type="Script" uid="uid://c4pg72ybhpmj0" path="res://scripts/yeet/loot/loot_slot.gd" id="15_8gofh"]
-[ext_resource type="Resource" uid="uid://n0xwmmg6yhqg" path="res://resources/loot/brick.tres" id="16_h6wmr"]
-[ext_resource type="ArrayMesh" uid="uid://bv5o08mrc0rai" path="res://models/stuff/box.obj" id="17_8gofh"]
-[ext_resource type="Resource" uid="uid://i2kqfnxx7lvm" path="res://resources/loot/playing_card.tres" id="17_pqd0y"]
+[ext_resource type="PackedScene" uid="uid://bbtbwtc4t56xm" path="res://scenes/container_box.tscn" id="14_82cfe"]
 [ext_resource type="PackedScene" uid="uid://4n8i8kbl7c32" path="res://models/stuff/shelf.blend" id="18_h6wmr"]
 
 [sub_resource type="Resource" id="Resource_olg7q"]
@@ -45,25 +40,6 @@ metadata/_custom_type_script = "uid://crv5isbs0cdmp"
 script = ExtResource("9_8iemx")
 type = 3
 metadata/_custom_type_script = "uid://dsq3qb6waenpd"
-
-[sub_resource type="Resource" id="Resource_pqd0y"]
-script = ExtResource("15_8gofh")
-loot = ExtResource("16_h6wmr")
-count = 3
-metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
-
-[sub_resource type="Resource" id="Resource_5k0ak"]
-script = ExtResource("15_8gofh")
-metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
-
-[sub_resource type="Resource" id="Resource_wu01b"]
-script = ExtResource("15_8gofh")
-loot = ExtResource("17_pqd0y")
-count = 25
-metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_8gofh"]
-size = Vector3(0.4550476, 0.31207275, 0.67089844)
 
 [sub_resource type="Resource" id="Resource_fpun6"]
 script = ExtResource("9_8iemx")
@@ -241,23 +217,8 @@ direction = 4
 
 [node name="Side DOWN" parent="Geometry/Elevation 0/Node (1, 0, -4)" instance=ExtResource("11_gunhw")]
 
-[node name="LootContainer" type="Node3D" parent="Geometry/Elevation 0/Node (1, 0, -4)" node_paths=PackedStringArray("_collission_shape")]
+[node name="LootContainer" parent="Geometry/Elevation 0/Node (1, 0, -4)" instance=ExtResource("14_82cfe")]
 transform = Transform3D(-0.11862926, 0, -0.99293864, 0, 1, 0, 0.99293864, 0, -0.11862926, -0.017581701, 1.0250722, -0.91268826)
-script = ExtResource("14_gunhw")
-category_id = "box"
-ui_icon = ExtResource("15_5k0ak")
-slots = Array[ExtResource("15_8gofh")]([SubResource("Resource_pqd0y"), SubResource("Resource_5k0ak"), SubResource("Resource_wu01b")])
-_collission_shape = NodePath("Loot Box Body/Loot Box Shape")
-metadata/_custom_type_script = "uid://bypywet16d5f"
-
-[node name="Loot Box Mesh" type="MeshInstance3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer"]
-mesh = ExtResource("17_8gofh")
-
-[node name="Loot Box Body" type="StaticBody3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer"]
-
-[node name="Loot Box Shape" type="CollisionShape3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/LootContainer/Loot Box Body"]
-transform = Transform3D(1, 0, -2.3097678e-07, 0, 1, 0, 2.3097678e-07, 0, 1, -0.00694561, 0.14486694, 0.009275794)
-shape = SubResource("BoxShape3D_8gofh")
 
 [node name="shelf" parent="Geometry/Elevation 0/Node (1, 0, -4)" instance=ExtResource("18_h6wmr")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 1.0248576, -0.9506235)

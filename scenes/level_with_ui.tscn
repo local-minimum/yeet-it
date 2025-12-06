@@ -1,11 +1,14 @@
-[gd_scene load_steps=9 format=3 uid="uid://di3gn5h4u8hpg"]
+[gd_scene load_steps=11 format=3 uid="uid://di3gn5h4u8hpg"]
 
 [ext_resource type="PackedScene" uid="uid://c6rml76oe0t15" path="res://scenes/level.tscn" id="1_7im60"]
 [ext_resource type="Script" uid="uid://bvqfk07xb2q3f" path="res://scripts/ui/interaction_ui.gd" id="2_6677a"]
 [ext_resource type="FontFile" uid="uid://4lokhton1m6v" path="res://fonts/PanopticMonospace-Bold.otf" id="3_ndbn4"]
 [ext_resource type="Script" uid="uid://77nh0gjhx8lb" path="res://scripts/ui/interaction_ui_viz_outline.gd" id="3_nkn4f"]
-[ext_resource type="Texture2D" uid="uid://bt2orqv6wbwd4" path="res://models/stuff/playing_card.png" id="5_eom5v"]
+[ext_resource type="PackedScene" uid="uid://dnsqi3cemtvu6" path="res://scenes/ui/container_slot.tscn" id="5_eom5v"]
+[ext_resource type="Script" uid="uid://c55tt8elrah4g" path="res://scripts/yeet/loot/loot_container_ui.gd" id="5_lf224"]
 [ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="6_lf224"]
+[ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="8_mprp7"]
+[ext_resource type="Texture2D" uid="uid://26yo2tqk3od3" path="res://addons/grid_level_digger/sprites/kenney game icons/PNG/White/2x/cross.png" id="9_jixd2"]
 
 [sub_resource type="Resource" id="Resource_ndbn4"]
 script = ExtResource("3_nkn4f")
@@ -16,13 +19,6 @@ _gap_padding = 8
 _hint_y_offset = -0.30000000000000004
 _text_hint_x_offset = -4
 metadata/_custom_type_script = "uid://77nh0gjhx8lb"
-
-[sub_resource type="LabelSettings" id="LabelSettings_mprp7"]
-font = ExtResource("3_ndbn4")
-font_size = 12
-font_color = Color(1, 0.21960784, 1, 1)
-outline_size = 2
-outline_color = Color(0.5568628, 1, 1, 1)
 
 [node name="Level With UI" type="Node"]
 
@@ -47,7 +43,7 @@ metadata/_custom_type_script = "uid://bvqfk07xb2q3f"
 [node name="Loot UI" type="CanvasLayer" parent="."]
 layer = 50
 
-[node name="PanelContainer" type="PanelContainer" parent="Loot UI"]
+[node name="Loot Container UI" type="PanelContainer" parent="Loot UI" node_paths=PackedStringArray("container_icon", "container_name", "slots_root")]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -55,60 +51,56 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("5_lf224")
+slot_scene = ExtResource("5_eom5v")
+container_icon = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Texture")
+container_name = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Name")
+slots_root = NodePath("MarginContainer/HBoxContainer/Slots Panel/MarginContainer/Slots Root")
 
-[node name="MarginContainer" type="MarginContainer" parent="Loot UI/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Loot Container UI"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Loot UI/PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Loot UI/Loot Container UI/MarginContainer"]
 layout_mode = 2
 
-[node name="Slots" type="PanelContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer"]
+[node name="Slots Panel" type="PanelContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Slots"]
+[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Slots Panel"]
 layout_mode = 2
 
-[node name="HFlowContainer" type="HFlowContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Slots/MarginContainer"]
+[node name="Slots Root" type="HFlowContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Slots Panel/MarginContainer"]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 
-[node name="Slot 1" type="PanelContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Slots/MarginContainer/HFlowContainer"]
-custom_minimum_size = Vector2(64, 64)
+[node name="Container Info" type="PanelContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="Slot Padding" type="MarginContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Slots/MarginContainer/HFlowContainer/Slot 1"]
+[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Container Info"]
 layout_mode = 2
 
-[node name="Slot Icon" type="TextureRect" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Slots/MarginContainer/HFlowContainer/Slot 1/Slot Padding"]
-modulate = Color(0.4392157, 1, 1, 1)
-layout_mode = 2
-texture = ExtResource("5_eom5v")
-expand_mode = 2
-stretch_mode = 4
-
-[node name="Slot Count Label" type="Label" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Slots/MarginContainer/HFlowContainer/Slot 1/Slot Padding"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-text = "11"
-label_settings = SubResource("LabelSettings_mprp7")
-vertical_alignment = 1
-
-[node name="Container Info" type="PanelContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Container Info"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Container Info/MarginContainer"]
-layout_mode = 2
-
-[node name="Container Texture" type="TextureRect" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Container Info/MarginContainer/VBoxContainer"]
+[node name="Container Texture" type="TextureRect" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Container Info/MarginContainer"]
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 texture = ExtResource("6_lf224")
 expand_mode = 2
 stretch_mode = 5
 
-[node name="Container Name" type="Label" parent="Loot UI/PanelContainer/MarginContainer/HBoxContainer/Container Info/MarginContainer/VBoxContainer"]
+[node name="Container Name" type="Label" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Container Info/MarginContainer"]
 layout_mode = 2
+size_flags_vertical = 0
+label_settings = ExtResource("8_mprp7")
+
+[node name="Close Loot UI Btn" type="TextureButton" parent="Loot UI/Loot Container UI/MarginContainer"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+texture_normal = ExtResource("9_jixd2")
+texture_pressed = ExtResource("9_jixd2")
+texture_hover = ExtResource("9_jixd2")
+texture_focused = ExtResource("9_jixd2")
+ignore_texture_size = true
+stretch_mode = 0
+
+[connection signal="pressed" from="Loot UI/Loot Container UI/MarginContainer/Close Loot UI Btn" to="Loot UI/Loot Container UI" method="_on_close_loot_ui_btn_pressed"]

@@ -1,0 +1,10 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://dx8tttrmii71q"]
+
+[ext_resource type="FontFile" uid="uid://4lokhton1m6v" path="res://fonts/PanopticMonospace-Bold.otf" id="1_aem2h"]
+
+[resource]
+font = ExtResource("1_aem2h")
+font_size = 12
+font_color = Color(1, 0.21960784, 1, 1)
+outline_size = 2
+outline_color = Color(0.5568628, 1, 1, 1)

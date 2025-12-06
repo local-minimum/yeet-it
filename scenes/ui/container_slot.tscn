@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://dnsqi3cemtvu6"]
+
+[ext_resource type="Script" uid="uid://74spf2pq86sw" path="res://scripts/yeet/loot/loot_container_slot_ui.gd" id="1_njfs1"]
+[ext_resource type="Theme" uid="uid://biqomxqun7b0d" path="res://scenes/ui/loot_ui_theme.tres" id="1_yb5kx"]
+[ext_resource type="Texture2D" uid="uid://bt2orqv6wbwd4" path="res://models/stuff/playing_card.png" id="2_yb5kx"]
+[ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="3_njfs1"]
+
+[node name="Container Slot" type="PanelContainer" node_paths=PackedStringArray("_count_label", "_item_texture")]
+custom_minimum_size = Vector2(64, 64)
+theme = ExtResource("1_yb5kx")
+script = ExtResource("1_njfs1")
+_count_label = NodePath("Slot Padding/Slot Count Label")
+_item_texture = NodePath("Slot Padding/Slot Icon")
+
+[node name="Slot Padding" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="Slot Icon" type="TextureRect" parent="Slot Padding"]
+modulate = Color(0.4392157, 1, 1, 1)
+layout_mode = 2
+texture = ExtResource("2_yb5kx")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Slot Count Label" type="Label" parent="Slot Padding"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+text = "11"
+label_settings = ExtResource("3_njfs1")
+vertical_alignment = 1
