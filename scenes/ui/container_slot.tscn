@@ -14,10 +14,12 @@ _item_texture = NodePath("Slot Padding/Slot Icon")
 
 [node name="Slot Padding" type="MarginContainer" parent="."]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Slot Icon" type="TextureRect" parent="Slot Padding"]
 modulate = Color(0.4392157, 1, 1, 1)
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("2_yb5kx")
 expand_mode = 2
 stretch_mode = 4
@@ -29,3 +31,7 @@ size_flags_vertical = 8
 text = "11"
 label_settings = ExtResource("3_njfs1")
 vertical_alignment = 1
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

@@ -19,3 +19,18 @@ var loot_slot: LootSlot:
             tooltip_text = value.loot.localized_name
             show()
         loot_slot = value
+
+var _hovered: bool
+
+func _on_mouse_entered() -> void:
+    _hovered = true
+    Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
+
+
+func _on_mouse_exited() -> void:
+    _hovered = false
+    Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+
+
+func _on_gui_input(event: InputEvent) -> void:
+    pass # Replace with function body.
