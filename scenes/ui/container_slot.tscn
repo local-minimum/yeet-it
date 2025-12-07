@@ -5,28 +5,39 @@
 [ext_resource type="Texture2D" uid="uid://bt2orqv6wbwd4" path="res://models/stuff/playing_card.png" id="2_yb5kx"]
 [ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="3_njfs1"]
 
-[node name="Container Slot" type="PanelContainer" node_paths=PackedStringArray("_count_label", "_item_texture")]
+[node name="Container Slot" type="PanelContainer" node_paths=PackedStringArray("_count_label", "_item_texture", "_content_root")]
 custom_minimum_size = Vector2(64, 64)
 mouse_default_cursor_shape = 2
 theme = ExtResource("1_yb5kx")
 script = ExtResource("1_njfs1")
-_count_label = NodePath("Slot Padding/Slot Count Label")
-_item_texture = NodePath("Slot Padding/Slot Icon")
+_count_label = NodePath("Slot Padding/Slot Content/Slot Count Label")
+_item_texture = NodePath("Slot Padding/Slot Content/Slot Icon")
+_content_root = NodePath("Slot Padding/Slot Content")
 
 [node name="Slot Padding" type="MarginContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Slot Icon" type="TextureRect" parent="Slot Padding"]
-modulate = Color(0.4392157, 1, 1, 1)
+[node name="Slot Content" type="Control" parent="Slot Padding"]
+custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
+mouse_filter = 2
+
+[node name="Slot Icon" type="TextureRect" parent="Slot Padding/Slot Content"]
+modulate = Color(0.4392157, 1, 1, 1)
+layout_mode = 0
+offset_right = 52.0
+offset_bottom = 52.0
 mouse_filter = 2
 texture = ExtResource("2_yb5kx")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Slot Count Label" type="Label" parent="Slot Padding"]
-layout_mode = 2
+[node name="Slot Count Label" type="Label" parent="Slot Padding/Slot Content"]
+layout_mode = 0
+offset_top = 41.0
+offset_right = 37.0
+offset_bottom = 52.0
 size_flags_horizontal = 0
 size_flags_vertical = 8
 text = "11"

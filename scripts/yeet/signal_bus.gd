@@ -6,5 +6,8 @@ class_name SignalBus
 # Loot
 signal on_open_container(container: LootContainer)
 signal on_close_container(container: LootContainer)
+signal on_drag_loot_start(slot_ui: LootContainerSlotUI)
+signal on_drag_loot(slot_ui: LootContainerSlotUI, mouse_position: Vector2)
+signal on_drag_loot_end(slot_ui: LootContainerSlotUI, origin: Vector2)
 
 @warning_ignore_restore("unused_signal")

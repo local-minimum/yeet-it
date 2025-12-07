@@ -59,12 +59,12 @@ func _on_static_body_3d_input_event(
     if _in_range(event_position):
         if !_showing_cursor_hand:
             print_debug("[Interactable %s] Showing cursor hand" % self)
-            Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
+            InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
             _showing_cursor_hand = true
     else:
         if _showing_cursor_hand:
             print_debug("[Interactable %s] Return to cursor arrow" % self)
-            Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+            InputCursorHelper.remove_state(self, InputCursorHelper.State.HOVER)
             _showing_cursor_hand = false
 
         return
@@ -78,13 +78,13 @@ func _on_static_body_3d_input_event(
 
 func _on_static_body_3d_mouse_entered() -> void:
     _hovered = true
+    InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
     if is_interactable && _in_range(_collission_shape.global_position):
         print_debug("[Interactable %s] Showing cursor hand (entered)" % self)
-        Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
         _showing_cursor_hand = true
 
 func _on_static_body_3d_mouse_exited() -> void:
     _hovered = false
     _showing_cursor_hand = false
+    InputCursorHelper.remove_state(self, InputCursorHelper.State.HOVER)
     print_debug("[Interactable %s] Showing cursor arrow (exit)" % self)
-    Input.set_default_cursor_shape(Input.CURSOR_ARROW)

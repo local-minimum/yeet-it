@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://di3gn5h4u8hpg"]
+[gd_scene load_steps=13 format=3 uid="uid://di3gn5h4u8hpg"]
 
 [ext_resource type="PackedScene" uid="uid://c6rml76oe0t15" path="res://scenes/level.tscn" id="1_7im60"]
 [ext_resource type="Script" uid="uid://bvqfk07xb2q3f" path="res://scripts/ui/interaction_ui.gd" id="2_6677a"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="6_lf224"]
 [ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="8_mprp7"]
 [ext_resource type="Texture2D" uid="uid://26yo2tqk3od3" path="res://addons/grid_level_digger/sprites/kenney game icons/PNG/White/2x/cross.png" id="9_jixd2"]
+[ext_resource type="Script" uid="uid://c11ypqdp7r3i6" path="res://scripts/yeet/loot/dragged_loot.gd" id="10_cnq33"]
+[ext_resource type="Texture2D" uid="uid://bt2orqv6wbwd4" path="res://models/stuff/playing_card.png" id="10_oopir"]
 
 [sub_resource type="Resource" id="Resource_ndbn4"]
 script = ExtResource("3_nkn4f")
@@ -102,5 +104,36 @@ texture_hover = ExtResource("9_jixd2")
 texture_focused = ExtResource("9_jixd2")
 ignore_texture_size = true
 stretch_mode = 0
+
+[node name="Dragged Slot" type="Control" parent="Loot UI" node_paths=PackedStringArray("icon", "count_label")]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("10_cnq33")
+icon = NodePath("Slot Icon")
+count_label = NodePath("Slot Count Label")
+tween_back_speed = 2000.0
+
+[node name="Slot Icon" type="TextureRect" parent="Loot UI/Dragged Slot"]
+modulate = Color(0.4392157, 1, 1, 1)
+layout_mode = 0
+offset_right = 52.0
+offset_bottom = 52.0
+mouse_filter = 2
+texture = ExtResource("10_oopir")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Slot Count Label" type="Label" parent="Loot UI/Dragged Slot"]
+layout_mode = 0
+offset_top = 41.0
+offset_right = 37.0
+offset_bottom = 52.0
+size_flags_horizontal = 0
+size_flags_vertical = 8
+text = "11"
+label_settings = ExtResource("8_mprp7")
+vertical_alignment = 1
 
 [connection signal="pressed" from="Loot UI/Loot Container UI/MarginContainer/Close Loot UI Btn" to="Loot UI/Loot Container UI" method="_on_close_loot_ui_btn_pressed"]
