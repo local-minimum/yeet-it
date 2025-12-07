@@ -1,0 +1,106 @@
+[gd_scene load_steps=5 format=3 uid="uid://foxx08vvcu10"]
+
+[ext_resource type="Script" uid="uid://b6grqyjkqauxu" path="res://scripts/yeet/loot/player_loot_bar.gd" id="1_c34at"]
+[ext_resource type="Script" uid="uid://ds6tmo1kpgl8x" path="res://scripts/yeet/loot/player_loot_hot_action.gd" id="2_yd3um"]
+[ext_resource type="PackedScene" uid="uid://dnsqi3cemtvu6" path="res://scenes/ui/container_slot.tscn" id="3_jsmlg"]
+[ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="4_s1k8k"]
+
+[node name="Player Loot Bar" type="HBoxContainer" node_paths=PackedStringArray("ui_slots")]
+custom_minimum_size = Vector2(0, 100)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+script = ExtResource("1_c34at")
+ui_slots = [NodePath("Hotkey Action 1/CenterContainer/Container Slot"), NodePath("Hotkey Action 2/CenterContainer2/Container Slot"), NodePath("Hotkey Action 3/CenterContainer3/Container Slot"), NodePath("Player Loot Slot 4/Container Slot"), NodePath("Player Loot Slot 5/Container Slot"), NodePath("Player Loot Slot 6/Container Slot"), NodePath("Player Loot Slot 7/Container Slot"), NodePath("Player Loot Slot 8/Container Slot")]
+
+[node name="Hotkey Action 1" type="MarginContainer" parent="." node_paths=PackedStringArray("hot_key_label", "loot_slot_ui")]
+layout_mode = 2
+script = ExtResource("2_yd3um")
+hot_key_index = 1
+hot_key_label = NodePath("Hotkey hint Text")
+loot_slot_ui = NodePath("CenterContainer/Container Slot")
+
+[node name="CenterContainer" type="CenterContainer" parent="Hotkey Action 1"]
+layout_mode = 2
+
+[node name="Container Slot" parent="Hotkey Action 1/CenterContainer" instance=ExtResource("3_jsmlg")]
+layout_mode = 2
+
+[node name="Hotkey hint Text" type="Label" parent="Hotkey Action 1"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "1"
+label_settings = ExtResource("4_s1k8k")
+
+[node name="Hotkey Action 2" type="MarginContainer" parent="." node_paths=PackedStringArray("hot_key_label", "loot_slot_ui")]
+layout_mode = 2
+script = ExtResource("2_yd3um")
+hot_key_index = 2
+hot_key_label = NodePath("Hotkey hint Text")
+loot_slot_ui = NodePath("CenterContainer2/Container Slot")
+
+[node name="CenterContainer2" type="CenterContainer" parent="Hotkey Action 2"]
+layout_mode = 2
+
+[node name="Container Slot" parent="Hotkey Action 2/CenterContainer2" instance=ExtResource("3_jsmlg")]
+layout_mode = 2
+
+[node name="Hotkey hint Text" type="Label" parent="Hotkey Action 2"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "2"
+label_settings = ExtResource("4_s1k8k")
+
+[node name="Hotkey Action 3" type="MarginContainer" parent="." node_paths=PackedStringArray("hot_key_label", "loot_slot_ui")]
+layout_mode = 2
+script = ExtResource("2_yd3um")
+hot_key_index = 3
+hot_key_label = NodePath("Hotkey hint Text")
+loot_slot_ui = NodePath("CenterContainer3/Container Slot")
+
+[node name="CenterContainer3" type="CenterContainer" parent="Hotkey Action 3"]
+layout_mode = 2
+
+[node name="Container Slot" parent="Hotkey Action 3/CenterContainer3" instance=ExtResource("3_jsmlg")]
+layout_mode = 2
+
+[node name="Hotkey hint Text" type="Label" parent="Hotkey Action 3"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "3"
+label_settings = ExtResource("4_s1k8k")
+
+[node name="Player Loot Slot 4" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="Container Slot" parent="Player Loot Slot 4" instance=ExtResource("3_jsmlg")]
+layout_mode = 2
+
+[node name="Player Loot Slot 5" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="Container Slot" parent="Player Loot Slot 5" instance=ExtResource("3_jsmlg")]
+layout_mode = 2
+
+[node name="Player Loot Slot 6" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="Container Slot" parent="Player Loot Slot 6" instance=ExtResource("3_jsmlg")]
+layout_mode = 2
+
+[node name="Player Loot Slot 7" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="Container Slot" parent="Player Loot Slot 7" instance=ExtResource("3_jsmlg")]
+layout_mode = 2
+
+[node name="Player Loot Slot 8" type="CenterContainer" parent="."]
+layout_mode = 2
+
+[node name="Container Slot" parent="Player Loot Slot 8" instance=ExtResource("3_jsmlg")]
+layout_mode = 2

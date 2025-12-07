@@ -1,0 +1,69 @@
+[gd_scene load_steps=6 format=3 uid="uid://rllj05ukwjgg"]
+
+[ext_resource type="Script" uid="uid://c55tt8elrah4g" path="res://scripts/yeet/loot/loot_container_ui.gd" id="1_7baso"]
+[ext_resource type="PackedScene" uid="uid://dnsqi3cemtvu6" path="res://scenes/ui/container_slot.tscn" id="2_qf63m"]
+[ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="3_pvpuq"]
+[ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="4_k6q7d"]
+[ext_resource type="Texture2D" uid="uid://26yo2tqk3od3" path="res://addons/grid_level_digger/sprites/kenney game icons/PNG/White/2x/cross.png" id="5_svens"]
+
+[node name="Loot Container UI" type="PanelContainer" node_paths=PackedStringArray("container_icon", "container_name", "slots_root")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7baso")
+slot_scene = ExtResource("2_qf63m")
+container_icon = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Texture")
+container_name = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Name")
+slots_root = NodePath("MarginContainer/HBoxContainer/Slots Panel/MarginContainer/Slots Root")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Slots Panel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/Slots Panel"]
+layout_mode = 2
+
+[node name="Slots Root" type="HFlowContainer" parent="MarginContainer/HBoxContainer/Slots Panel/MarginContainer"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+
+[node name="Container Info" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/Container Info"]
+layout_mode = 2
+
+[node name="Container Texture" type="TextureRect" parent="MarginContainer/HBoxContainer/Container Info/MarginContainer"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+texture = ExtResource("3_pvpuq")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Container Name" type="Label" parent="MarginContainer/HBoxContainer/Container Info/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+label_settings = ExtResource("4_k6q7d")
+
+[node name="Close Loot UI Btn" type="TextureButton" parent="MarginContainer"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+texture_normal = ExtResource("5_svens")
+texture_pressed = ExtResource("5_svens")
+texture_hover = ExtResource("5_svens")
+texture_focused = ExtResource("5_svens")
+ignore_texture_size = true
+stretch_mode = 0
+
+[connection signal="pressed" from="MarginContainer/Close Loot UI Btn" to="." method="_on_close_loot_ui_btn_pressed"]
