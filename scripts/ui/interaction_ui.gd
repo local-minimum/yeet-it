@@ -104,7 +104,7 @@ func _draw() -> void:
             push_warning("Cannot show interactable %s because exceeding limit of %s at a time" % [interactable, _max_interactables])
             continue
 
-        var id_key: String = _get_key_id(idx)
+        var id_key: String = get_key_id(idx)
         _active[id_key] = interactable
 
         _viz.draw_interactable_ui(self, id_key, interactable)
@@ -112,7 +112,7 @@ func _draw() -> void:
         idx += 1
 
 ## Index starts at 1
-func _get_key_id(idx: int) -> String: return "hot_key_%s" % idx
+static func get_key_id(idx: int) -> String: return "hot_key_%s" % idx
 
 func _calculate_within_reach() -> Array[Interactable]:
     return _interactables.filter(
@@ -135,13 +135,13 @@ func _input(event: InputEvent) -> void:
 
     elif _interacting:
         for idx: int in range(1, _max_interactables + 1):
-            var key: String = _get_key_id(idx)
+            var key: String = get_key_id(idx)
             if event.is_action_pressed(key):
                 _activate_hotkey_interaction(idx)
                 break
 
 func _activate_hotkey_interaction(idx: int) -> void:
-    var interactable: Interactable = _active.get(_get_key_id(idx), null)
+    var interactable: Interactable = _active.get(get_key_id(idx), null)
     if interactable != null:
         if interactable.check_allow_interact():
             interactable.execute_interation()

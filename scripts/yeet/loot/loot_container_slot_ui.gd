@@ -38,7 +38,8 @@ static var _shown_as_dragging: bool
 func _on_mouse_entered() -> void:
     print_debug("[Slot UI %s] Hover enter" % name)
     _hovered = self
-    InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
+    if !is_empty:
+        InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
 
 
 func _on_mouse_exited() -> void:
@@ -65,14 +66,15 @@ func _on_gui_input(event: InputEvent) -> void:
         var m_button: InputEventMouseButton = event
         if m_button.button_index == MOUSE_BUTTON_LEFT:
             if m_button.is_pressed():
-                _dragged = self
-                _drag_origin = _content_root.global_position
-                _shown_as_dragging = false
+                if !is_empty:
+                    _dragged = self
+                    _drag_origin = _content_root.global_position
+                    _shown_as_dragging = false
             else:
                 var self_was_dragged: bool = _dragged == self
 
                 if _dragged == null:
-                    push_warning("[Interactable %s] Nothing dragged, so can't recieve anything" % name)
+                    print_debug("[Interactable %s] Nothing dragged, so can't recieve anything" % name)
                 elif _dragged == self && (_hovered == null || _hovered == self):
                     _return_dragged_to_origin()
                 elif _hovered != null:
@@ -101,6 +103,7 @@ func _adopt_dragged_loot() -> void:
     print_debug("[Slot UI %s] Adopt dragged loot from %s" % [name, _dragged])
     if _dragged.loot_slot == null || _dragged.loot_slot.count < 1:
         _dragged = null
+        return
 
     if loot_slot.loot == null || loot_slot.count < 1:
         _swap_loot_with(_dragged)
@@ -128,6 +131,9 @@ func _adopt_dragged_loot() -> void:
         _swap_loot_with(_dragged)
 
     _dragged = null
+    if !is_empty:
+        InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
+
 
 func _swap_loot_with(other: LootContainerSlotUI) -> void:
     print_debug("[Slot UI %s] Swapping %s with %s %s" % [

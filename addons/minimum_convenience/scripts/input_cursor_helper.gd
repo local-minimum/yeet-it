@@ -14,7 +14,7 @@ static func add_state(node: Node, state: State) -> void:
             if !_dragged.has(node):
                 _dragged.append(node)
 
-    _sync_cursor()
+    _sync_cursor(node)
 
 static func remove_state(node: Node, state: State) -> void:
     match state:
@@ -23,13 +23,21 @@ static func remove_state(node: Node, state: State) -> void:
         State.DRAG:
             _dragged.erase(node)
 
-    _sync_cursor()
+    _sync_cursor(node)
 
 
-static func _sync_cursor() -> void:
+static func _sync_cursor(node: Node) -> void:
     if !_dragged.is_empty():
+        _sync_node_cursor(node, Control.CURSOR_DRAG)
         Input.set_default_cursor_shape(Input.CURSOR_DRAG)
     elif !_hovered.is_empty():
+        _sync_node_cursor(node, Control.CURSOR_POINTING_HAND)
         Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
     else:
+        _sync_node_cursor(node, Control.CURSOR_ARROW)
         Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+
+static func _sync_node_cursor(node: Node, shape: Control.CursorShape) -> void:
+    if node is Control:
+        var control: Control = node
+        control.mouse_default_cursor_shape = shape
