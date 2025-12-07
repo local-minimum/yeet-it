@@ -7,6 +7,7 @@
 
 [node name="Container Slot" type="PanelContainer" node_paths=PackedStringArray("_count_label", "_item_texture")]
 custom_minimum_size = Vector2(64, 64)
+mouse_default_cursor_shape = 2
 theme = ExtResource("1_yb5kx")
 script = ExtResource("1_njfs1")
 _count_label = NodePath("Slot Padding/Slot Count Label")

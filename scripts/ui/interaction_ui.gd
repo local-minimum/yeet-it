@@ -44,6 +44,13 @@ func _handle_cinematic(entity: GridEntity, cinematic: bool) -> void:
         return
 
     _cinematic = cinematic
+
+    print_debug("[Interactable %s] Setting cinematic to %s, was interacting %s" % [
+        name,
+        cinematic,
+        _interacting
+    ])
+
     if _interacting:
         _interacting = false
         queue_redraw()

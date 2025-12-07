@@ -26,6 +26,7 @@ func _get_slot_ui(idx: int) -> LootContainerSlotUI:
 
     var ui: LootContainerSlotUI = slot_scene.instantiate()
 
+    ui.name = "Slot container %s" % idx
     _slots.append(ui)
     slots_root.add_child(ui)
 

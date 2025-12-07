@@ -22,10 +22,13 @@ func _enter_tree() -> void:
         push_error("Failed to connect to level loaded")
     if __SignalBus.on_level_unloaded.connect(_handle_level_unloaded) != OK:
         push_error("Failed to connect to level unloaded")
+    if __SignalBus.on_close_container.connect(_handle_close_container) != OK:
+        push_error("Failed to connect to close container")
 
 func _exit_tree() -> void:
     __SignalBus.on_level_loaded.disconnect(_handle_level_loaded)
     __SignalBus.on_level_unloaded.disconnect(_handle_level_unloaded)
+    __SignalBus.on_close_container.disconnect(_handle_close_container)
 
     var p: GridPlayerCore = player
     if p != null && p.cinematic:
@@ -64,5 +67,8 @@ func check_allow_interact() -> bool:
     return true
 
 func execute_interation() -> void:
-    # _level.player.cause_cinematic(self)
+    var p: GridPlayerCore = player
+    if p != null:
+        p.cause_cinematic(self)
+
     __SignalBus.on_open_container.emit(self)
