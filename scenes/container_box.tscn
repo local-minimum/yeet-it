@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bbtbwtc4t56xm"]
+[gd_scene load_steps=13 format=3 uid="uid://bbtbwtc4t56xm"]
 
 [ext_resource type="Script" uid="uid://bypywet16d5f" path="res://scripts/yeet/loot/loot_container.gd" id="1_7yl8p"]
 [ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="2_beokn"]
@@ -23,6 +23,18 @@ loot = ExtResource("5_yes3v")
 count = 25
 metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
 
+[sub_resource type="Resource" id="Resource_7yl8p"]
+script = ExtResource("3_8odcb")
+loot = ExtResource("5_yes3v")
+count = 40
+metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
+
+[sub_resource type="Resource" id="Resource_beokn"]
+script = ExtResource("3_8odcb")
+loot = ExtResource("4_sg8ca")
+count = 1
+metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_8gofh"]
 size = Vector3(0.4550476, 0.31207275, 0.67089844)
 
@@ -31,7 +43,7 @@ transform = Transform3D(-0.11862926, 0, -0.99293864, 0, 1, 0, 0.99293864, 0, -0.
 script = ExtResource("1_7yl8p")
 category_id = "box"
 ui_icon = ExtResource("2_beokn")
-slots = Array[ExtResource("3_8odcb")]([SubResource("Resource_pqd0y"), SubResource("Resource_5k0ak"), SubResource("Resource_wu01b")])
+slots = Array[ExtResource("3_8odcb")]([SubResource("Resource_pqd0y"), SubResource("Resource_5k0ak"), SubResource("Resource_wu01b"), SubResource("Resource_7yl8p"), SubResource("Resource_beokn")])
 _collission_shape = NodePath("Loot Box Body/Loot Box Shape")
 metadata/_custom_type_script = "uid://bypywet16d5f"
 

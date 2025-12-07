@@ -6,19 +6,22 @@ class_name LootContainerSlotUI
 
 var loot_slot: LootSlot:
     set(value):
-        if value == null:
-            hide()
-        elif value.loot == null:
-            _count_label.text = ""
-            _item_texture.texture = null
-            tooltip_text = ""
-            show()
-        else:
-            _count_label.text = ("%s" % value.count) if value.count > 1 else ""
-            _item_texture.texture = value.loot.ui_texture
-            tooltip_text = value.loot.localized_name
-            show()
         loot_slot = value
+        _sync_slot()
+
+func _sync_slot() -> void:
+    if loot_slot == null:
+        hide()
+    elif loot_slot.loot == null || loot_slot.count < 1:
+        _count_label.text = ""
+        _item_texture.texture = null
+        tooltip_text = ""
+        show()
+    else:
+        _count_label.text = ("%s" % loot_slot.count) if loot_slot.count > 1 else ""
+        _item_texture.texture = loot_slot.loot.ui_texture
+        tooltip_text = loot_slot.loot.localized_name
+        show()
 
 static var _hovered: LootContainerSlotUI
 static var _dragged: LootContainerSlotUI
@@ -50,13 +53,71 @@ func _on_gui_input(event: InputEvent) -> void:
             if m_button.is_pressed():
                 _dragged = self
             else:
-                if _dragged == self && (_hovered == null || _hovered == self):
+                if _dragged == null:
+                    push_warning("[Interactable %s] Nothing dragged, so can't recieve anything" % name)
+                elif _dragged == self && (_hovered == null || _hovered == self):
                     _return_dragged_to_origin()
                 elif _hovered != null:
                     _hovered._adopt_dragged_loot()
 
 func _return_dragged_to_origin() -> void:
     print_debug("[Slot UI %s] Return dragged loot" % [name])
+    _dragged = null
 
 func _adopt_dragged_loot() -> void:
     print_debug("[Slot UI %s] Adopt dragged loot from %s" % [name, _dragged])
+    if _dragged.loot_slot == null || _dragged.loot_slot.count < 1:
+        _dragged = null
+
+    if loot_slot.loot == null || loot_slot.count < 1:
+        _swap_loot_with(_dragged)
+    elif loot_slot.loot == _dragged.loot_slot.loot:
+        var stackable: int = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
+        if stackable > 0:
+            var transfer_count: int = mini(stackable, _dragged.loot_slot.count)
+            loot_slot.count += transfer_count
+            _dragged.loot_slot.count -= transfer_count
+            _sync_slot()
+            _dragged._sync_slot()
+            if _dragged.loot_slot.count > 0:
+                _return_dragged_to_origin()
+            else:
+                print_debug("[Slot UI %s] Adopted %s from %s resulting in %s and %s" % [
+                    name,
+                    transfer_count,
+                    _dragged.name,
+                    loot_slot.summarize(),
+                    _dragged.loot_slot.summarize(),
+                ])
+        else:
+            _swap_loot_with(_dragged)
+    else:
+        _swap_loot_with(_dragged)
+
+    _dragged = null
+
+func _swap_loot_with(other: LootContainerSlotUI) -> void:
+    print_debug("[Slot UI %s] Swapping %s with %s %s" % [
+        self.name,
+        self.loot_slot.summarize(),
+        other.name,
+        other.loot_slot.summarize(),
+    ])
+    var my_loot: Loot = loot_slot.loot
+    var my_count: int = loot_slot.count
+
+    loot_slot.loot = other.loot_slot.loot
+    loot_slot.count = other.loot_slot.count
+    _sync_slot()
+
+    other.loot_slot.loot = my_loot
+    if my_loot != null:
+        other.loot_slot.count = my_count
+    other._sync_slot()
+
+    print_debug("[Slot UI %s] After swapping %s with %s %s" % [
+        self.name,
+        self.loot_slot.summarize(),
+        other.name,
+        other.loot_slot.summarize(),
+    ])
