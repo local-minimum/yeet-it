@@ -1,6 +1,8 @@
 extends Control
 class_name LootContainerSlotUI
 
+signal on_slot_clicked(slot: LootContainerSlotUI)
+
 @export var _show_as_dragging_sq_dist: float =  10.0
 
 @export var _count_label: Label
@@ -80,11 +82,15 @@ func _on_gui_input(event: InputEvent) -> void:
                 print_debug("[Slot UI %s] Double click" % [name])
                 if !is_empty:
                     __SignalBus.on_quick_transfer_loot.emit(self)
-            if m_button.is_pressed():
+            elif m_button.is_pressed():
                 if !is_empty:
                     _dragged = self
                     _drag_origin = _content_root.global_position
                     _shown_as_dragging = false
+            elif m_button.is_released() && !_shown_as_dragging:
+                if _dragged == self:
+                    on_slot_clicked.emit(self)
+                    _dragged = null
             else:
                 var self_was_dragged: bool = _dragged == self
 

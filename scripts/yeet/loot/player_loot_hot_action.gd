@@ -12,12 +12,20 @@ func _enter_tree() -> void:
         push_error("Could not connect to level loaded")
     if __SignalBus.on_level_unloaded.connect(_handle_level_unloaded) != OK:
         push_error("Could not connect to level unloaded")
+    if loot_slot_ui != null && loot_slot_ui.on_slot_clicked.connect(_handle_slot_click) != OK:
+        push_error("Could not connect to slot click")
 
 func _exit_tree() -> void:
     __SignalBus.on_level_loaded.disconnect(_handle_level_loaded)
     __SignalBus.on_level_unloaded.disconnect(_handle_level_unloaded)
+    if is_instance_valid(loot_slot_ui):
+        loot_slot_ui.on_slot_clicked.disconnect(_handle_slot_click)
 
 var _level: GridLevelCore
+
+func _handle_slot_click(slot: LootContainerSlotUI) -> void:
+    if _may_do_action && !slot.is_empty:
+        _enact_throw()
 
 func _handle_level_loaded(level: GridLevelCore) -> void:
     _level = level
@@ -25,7 +33,6 @@ func _handle_level_loaded(level: GridLevelCore) -> void:
 func _handle_level_unloaded(level: GridLevelCore) -> void:
     if _level == level:
         _level = null
-
 
 var _may_do_action: bool:
     get():
