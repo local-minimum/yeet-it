@@ -10,5 +10,6 @@ id = "brick"
 stack_size = 5
 world_model = ExtResource("3_seb1g")
 ui_texture = ExtResource("2_seb1g")
+cooldown = 1.0
 tags = Array[int]([0])
 metadata/_custom_type_script = "uid://crv68xkjq7tqq"

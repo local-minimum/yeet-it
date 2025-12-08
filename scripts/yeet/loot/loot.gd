@@ -15,6 +15,9 @@ enum Tag { Stone, Plastic, Glass, Flammable, Liquid, Sharp, Heavy, Light, Flesh,
 ## UI representation
 @export var ui_texture: Texture2D
 
+## Default cooldown before loot can be thrown again
+@export var cooldown: float = 0.4
+
 ## Qualifiers that determine how the thing interacts with the world
 @export var tags: Array[Tag]
 
