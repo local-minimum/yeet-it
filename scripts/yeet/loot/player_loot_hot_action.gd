@@ -6,6 +6,7 @@ class_name PlayerLootHotAction
 @export var loot_slot_ui: LootContainerSlotUI
 @export var throw_lateral_offset: float = 0.5
 @export var throw_target_default_distance: float = 4
+@export var throw_max_target_distance: float = 12
 @export var cooldown_overlay: Control
 
 func _enter_tree() -> void:
@@ -81,10 +82,32 @@ func _enact_throw() -> void:
 func _throw_body(body: LootProjectile, loot: Loot) -> void:
     _level.add_child(body)
     var player: GridPlayerCore = _level.player
+
     var player_right: CardinalDirections.CardinalDirection = CardinalDirections.yaw_cw(player.look_direction, player.down)[0]
     body.global_position = player.center.global_position + CardinalDirections.direction_to_vector(player_right) * throw_lateral_offset
-    var target: Vector3 = player.center.global_position + CardinalDirections.direction_to_vector(player.look_direction) * throw_target_default_distance
+
+    var target: Vector3 = _get_throw_target(player)
+
     body.launch(loot.tags, (target - body.global_position).normalized())
+
+func _get_throw_target(player: GridPlayerCore) -> Vector3:
+    var ray_origin: Vector3 = player.center.global_position
+    var ray_direction: Vector3 = CardinalDirections.direction_to_vector(player.look_direction) * throw_target_default_distance
+    var space: PhysicsDirectSpaceState3D = player.get_world_3d().direct_space_state
+    # TODO: Supply a mask to avoid some collisions. E.g. with self
+    var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_direction * throw_max_target_distance)
+    # query.collide_with_areas = true
+    var result: Dictionary = space.intersect_ray(query)
+    var collides: bool = result.get("collides", null) != null
+    var target: Vector3 = ray_origin + ray_direction * throw_target_default_distance
+    if collides:
+        target = result.get("position", target)
+        print_debug("[Hot Action %s] Found target %s setting target position to %s" % [
+            hot_key_index,
+            result,
+            target,
+        ])
+    return target
 
 func _animate_cooldown() -> void:
     cooldown_overlay.show()
