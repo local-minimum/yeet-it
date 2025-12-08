@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="Loot" load_steps=4 format=3 uid="uid://n0xwmmg6yhqg"]
 
 [ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_kemiq"]
-[ext_resource type="PackedScene" uid="uid://bg3q7fdhy0peb" path="res://models/stuff/brick.blend" id="2_erlvj"]
 [ext_resource type="Texture2D" uid="uid://b1drh8rb5cifb" path="res://models/stuff/brick.png" id="2_seb1g"]
+[ext_resource type="PackedScene" uid="uid://pjt8wuhkyvma" path="res://scenes/loot/brick.tscn" id="3_seb1g"]
 
 [resource]
 script = ExtResource("1_kemiq")
 id = "brick"
 stack_size = 5
-world_model = ExtResource("2_erlvj")
+world_model = ExtResource("3_seb1g")
 ui_texture = ExtResource("2_seb1g")
 tags = Array[int]([0])
 metadata/_custom_type_script = "uid://crv68xkjq7tqq"

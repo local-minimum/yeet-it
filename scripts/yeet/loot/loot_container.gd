@@ -51,6 +51,11 @@ func _handle_close_container(container: LootContainer) -> void:
 
     if container == self && p != null:
         p.remove_cinematic_cause(self)
+        print_debug("[Loot Container %s] Closed myself, player %s is now cinematic=%s" % [
+            p.name,
+            name,
+            p.cinematic,
+        ])
 
 func _in_range(_event_position: Vector3) -> bool:
     var p: GridPlayerCore = player

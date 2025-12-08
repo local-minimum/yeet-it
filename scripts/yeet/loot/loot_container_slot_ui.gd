@@ -7,12 +7,14 @@ class_name LootContainerSlotUI
 @export var _item_texture: TextureRect
 @export var _content_root: Control
 
+var _paused: bool
+
 var loot_slot: LootSlot:
     set(value):
         loot_slot = value
-        _sync_slot()
+        sync_slot()
 
-func _sync_slot() -> void:
+func sync_slot() -> void:
     if loot_slot == null:
         hide()
     elif loot_slot.loot == null || loot_slot.count < 1:
@@ -36,6 +38,9 @@ static var _drag_origin: Vector2
 static var _shown_as_dragging: bool
 
 func _on_mouse_entered() -> void:
+    if _paused:
+        return
+
     print_debug("[Slot UI %s] Hover enter" % name)
     _hovered = self
     if !is_empty:
@@ -54,17 +59,27 @@ var _active_slot: bool:
     get():
         return _hovered == self || _dragged == self
 
-
 func show_content() -> void:
     _content_root.show()
 
+func _enter_tree() -> void:
+    if __SignalBus.on_level_pause.connect(_handle_level_pause) != OK:
+        push_error("Failed to connect to level pause")
+
+func  _exit_tree() -> void:
+    __SignalBus.on_level_pause.disconnect(_handle_level_pause)
+
 func _on_gui_input(event: InputEvent) -> void:
-    if event.is_echo() || !_active_slot:
+    if event.is_echo() || !_active_slot || _paused:
         return
 
     if event is InputEventMouseButton:
         var m_button: InputEventMouseButton = event
         if m_button.button_index == MOUSE_BUTTON_LEFT:
+            if m_button.double_click:
+                print_debug("[Slot UI %s] Double click" % [name])
+                if !is_empty:
+                    __SignalBus.on_quick_transfer_loot.emit(self)
             if m_button.is_pressed():
                 if !is_empty:
                     _dragged = self
@@ -74,7 +89,7 @@ func _on_gui_input(event: InputEvent) -> void:
                 var self_was_dragged: bool = _dragged == self
 
                 if _dragged == null:
-                    print_debug("[Interactable %s] Nothing dragged, so can't recieve anything" % name)
+                    print_debug("[Slot UI %s] Nothing dragged, so can't recieve anything" % name)
                 elif _dragged == self && (_hovered == null || _hovered == self):
                     _return_dragged_to_origin()
                 elif _hovered != null:
@@ -95,26 +110,29 @@ func _on_gui_input(event: InputEvent) -> void:
 
         __SignalBus.on_drag_loot.emit(self, get_global_mouse_position())
 
+func _handle_level_pause(_level: GridLevelCore, paused: bool) -> void:
+    _paused = paused
+
 func _return_dragged_to_origin() -> void:
     print_debug("[Slot UI %s] Return dragged loot" % [name])
     _dragged = null
 
 func _adopt_dragged_loot() -> void:
-    print_debug("[Slot UI %s] Adopt dragged loot from %s" % [name, _dragged])
+    # print_debug("[Slot UI %s] Adopt dragged loot from %s" % [name, _dragged])
     if _dragged.loot_slot == null || _dragged.loot_slot.count < 1:
         _dragged = null
         return
 
     if loot_slot.loot == null || loot_slot.count < 1:
-        _swap_loot_with(_dragged)
+        swap_loot_with(_dragged)
     elif loot_slot.loot == _dragged.loot_slot.loot:
         var stackable: int = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
         if stackable > 0:
             var transfer_count: int = mini(stackable, _dragged.loot_slot.count)
             loot_slot.count += transfer_count
             _dragged.loot_slot.count -= transfer_count
-            _sync_slot()
-            _dragged._sync_slot()
+            sync_slot()
+            _dragged.sync_slot()
             if _dragged.loot_slot.count > 0:
                 _return_dragged_to_origin()
             else:
@@ -126,16 +144,27 @@ func _adopt_dragged_loot() -> void:
                     _dragged.loot_slot.summarize(),
                 ])
         else:
-            _swap_loot_with(_dragged)
+            swap_loot_with(_dragged)
     else:
-        _swap_loot_with(_dragged)
+        swap_loot_with(_dragged)
 
     _dragged = null
     if !is_empty:
         InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
 
+func fill_up_with_loot_from(other: LootContainerSlotUI) -> bool:
+    var stackable: int = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
+    if stackable > 0:
+        var transfer_count: int = mini(stackable, other.loot_slot.count)
+        loot_slot.count += transfer_count
+        other.loot_slot.count -= transfer_count
+        sync_slot()
+        other.sync_slot()
+        return transfer_count > 0
+    return false
 
-func _swap_loot_with(other: LootContainerSlotUI) -> void:
+
+func swap_loot_with(other: LootContainerSlotUI) -> void:
     print_debug("[Slot UI %s] Swapping %s with %s %s" % [
         self.name,
         self.loot_slot.summarize(),
@@ -147,12 +176,12 @@ func _swap_loot_with(other: LootContainerSlotUI) -> void:
 
     loot_slot.loot = other.loot_slot.loot
     loot_slot.count = other.loot_slot.count
-    _sync_slot()
+    sync_slot()
 
     other.loot_slot.loot = my_loot
     if my_loot != null:
         other.loot_slot.count = my_count
-    other._sync_slot()
+    other.sync_slot()
 
     print_debug("[Slot UI %s] After swapping %s with %s %s" % [
         self.name,

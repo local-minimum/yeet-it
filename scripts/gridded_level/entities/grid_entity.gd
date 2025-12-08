@@ -18,10 +18,11 @@ var cinematic: bool:
         return !_cinematics.is_empty()
 
     set (value):
-        if true:
+        if value:
             cause_cinematic(self)
         else:
             remove_cinematic_cause(self)
+
         push_warning("%s is cinematic %s due to unspecific cause" % [name, cinematic])
 
 func cause_cinematic(cause: Node) -> void:

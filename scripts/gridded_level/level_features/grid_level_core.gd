@@ -77,8 +77,8 @@ func _ready() -> void:
     active_level = self
 
 func _input(event: InputEvent) -> void:
-    if !paused && event.is_action_pressed("crawl_pause"):
-        paused = true
+    if event.is_action_pressed("crawl_pause"):
+        paused = !paused
 
 func _process(_delta: float) -> void:
     if emit_loaded:

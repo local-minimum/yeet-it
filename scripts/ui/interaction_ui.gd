@@ -11,6 +11,7 @@ var _requested: bool
 var _moving: bool
 var _active: Dictionary[String, Interactable]
 var _cinematic: bool
+var _paused: bool
 var _mode: BindingHints.InputMode = BindingHints.InputMode.KEYBOARD_AND_MOUSE
 
 func _enter_tree() -> void:
@@ -32,12 +33,27 @@ func _enter_tree() -> void:
     if __SignalBus.on_update_input_mode.connect(_handle_update_input_mode) != OK:
         push_error("Failed to connect update input mode")
 
+    if __SignalBus.on_level_pause.connect(_handle_level_pause) != OK:
+        push_error("Failed to connect to level paused")
+
+func _exit_tree() -> void:
+    __SignalBus.on_allow_interactions.disconnect(_handle_allow_interaction)
+    __SignalBus.on_disallow_interactions.disconnect(_handle_disallow_interaction)
+    __SignalBus.on_move_start.disconnect(_handle_move_start)
+    __SignalBus.on_move_end.disconnect(_handle_move_end)
+    __SignalBus.on_cinematic.disconnect(_handle_cinematic)
+    __SignalBus.on_update_input_mode.disconnect(_handle_update_input_mode)
+    __SignalBus.on_level_pause.disconnect(_handle_level_pause)
+
 func _ready() -> void:
     _mode = (__BindingHints as BindingHints).mode
 
 func _handle_update_input_mode(mode: BindingHints.InputMode) -> void:
     _mode = mode
     queue_redraw()
+
+func _handle_level_pause(_level: GridLevelCore, paused: bool) -> void:
+    _paused = paused
 
 func _handle_cinematic(entity: GridEntity, cinematic: bool) -> void:
     if entity is not GridPlayerCore:
@@ -121,7 +137,7 @@ func _calculate_within_reach() -> Array[Interactable]:
     )
 
 func _input(event: InputEvent) -> void:
-    if _cinematic:
+    if _cinematic || _paused:
         return
 
     if event.is_action_pressed("crawl_search"):

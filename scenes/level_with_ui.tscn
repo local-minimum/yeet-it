@@ -1,18 +1,14 @@
-[gd_scene load_steps=15 format=3 uid="uid://di3gn5h4u8hpg"]
+[gd_scene load_steps=11 format=3 uid="uid://di3gn5h4u8hpg"]
 
 [ext_resource type="PackedScene" uid="uid://c6rml76oe0t15" path="res://scenes/level.tscn" id="1_7im60"]
 [ext_resource type="Script" uid="uid://bvqfk07xb2q3f" path="res://scripts/ui/interaction_ui.gd" id="2_6677a"]
 [ext_resource type="FontFile" uid="uid://4lokhton1m6v" path="res://fonts/PanopticMonospace-Bold.otf" id="3_ndbn4"]
 [ext_resource type="Script" uid="uid://77nh0gjhx8lb" path="res://scripts/ui/interaction_ui_viz_outline.gd" id="3_nkn4f"]
-[ext_resource type="PackedScene" uid="uid://dnsqi3cemtvu6" path="res://scenes/ui/container_slot.tscn" id="5_eom5v"]
-[ext_resource type="Script" uid="uid://c55tt8elrah4g" path="res://scripts/yeet/loot/loot_container_ui.gd" id="5_lf224"]
-[ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="6_lf224"]
+[ext_resource type="PackedScene" uid="uid://rllj05ukwjgg" path="res://scenes/ui/loot_container_ui.tscn" id="5_jixd2"]
+[ext_resource type="PackedScene" uid="uid://foxx08vvcu10" path="res://scenes/ui/player_loot_bar.tscn" id="6_oopir"]
 [ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="8_mprp7"]
-[ext_resource type="Texture2D" uid="uid://26yo2tqk3od3" path="res://addons/grid_level_digger/sprites/kenney game icons/PNG/White/2x/cross.png" id="9_jixd2"]
 [ext_resource type="Script" uid="uid://c11ypqdp7r3i6" path="res://scripts/yeet/loot/dragged_loot.gd" id="10_cnq33"]
 [ext_resource type="Texture2D" uid="uid://bt2orqv6wbwd4" path="res://models/stuff/playing_card.png" id="10_oopir"]
-[ext_resource type="Script" uid="uid://ds6tmo1kpgl8x" path="res://scripts/yeet/loot/player_loot_hot_action.gd" id="11_yymii"]
-[ext_resource type="Script" uid="uid://b6grqyjkqauxu" path="res://scripts/yeet/loot/player_loot_bar.gd" id="12_oxpuh"]
 
 [sub_resource type="Resource" id="Resource_ndbn4"]
 script = ExtResource("3_nkn4f")
@@ -47,165 +43,9 @@ metadata/_custom_type_script = "uid://bvqfk07xb2q3f"
 [node name="Loot UI" type="CanvasLayer" parent="."]
 layer = 50
 
-[node name="Loot Container UI" type="PanelContainer" parent="Loot UI" node_paths=PackedStringArray("container_icon", "container_name", "slots_root")]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("5_lf224")
-slot_scene = ExtResource("5_eom5v")
-container_icon = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Texture")
-container_name = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Name")
-slots_root = NodePath("MarginContainer/HBoxContainer/Slots Panel/MarginContainer/Slots Root")
+[node name="Loot Container UI" parent="Loot UI" instance=ExtResource("5_jixd2")]
 
-[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Loot Container UI"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Loot UI/Loot Container UI/MarginContainer"]
-layout_mode = 2
-
-[node name="Slots Panel" type="PanelContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Slots Panel"]
-layout_mode = 2
-
-[node name="Slots Root" type="HFlowContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Slots Panel/MarginContainer"]
-custom_minimum_size = Vector2(280, 0)
-layout_mode = 2
-
-[node name="Container Info" type="PanelContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Container Info"]
-layout_mode = 2
-
-[node name="Container Texture" type="TextureRect" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Container Info/MarginContainer"]
-custom_minimum_size = Vector2(256, 256)
-layout_mode = 2
-texture = ExtResource("6_lf224")
-expand_mode = 2
-stretch_mode = 5
-
-[node name="Container Name" type="Label" parent="Loot UI/Loot Container UI/MarginContainer/HBoxContainer/Container Info/MarginContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-label_settings = ExtResource("8_mprp7")
-
-[node name="Close Loot UI Btn" type="TextureButton" parent="Loot UI/Loot Container UI/MarginContainer"]
-custom_minimum_size = Vector2(20, 20)
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-texture_normal = ExtResource("9_jixd2")
-texture_pressed = ExtResource("9_jixd2")
-texture_hover = ExtResource("9_jixd2")
-texture_focused = ExtResource("9_jixd2")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Player Loot Bar" type="HBoxContainer" parent="Loot UI" node_paths=PackedStringArray("ui_slots")]
-custom_minimum_size = Vector2(0, 100)
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -100.0
-grow_horizontal = 2
-grow_vertical = 0
-alignment = 1
-script = ExtResource("12_oxpuh")
-ui_slots = [NodePath("Hotkey Action 1/CenterContainer/Container Slot"), NodePath("Hotkey Action 2/CenterContainer2/Container Slot"), NodePath("Hotkey Action 3/CenterContainer3/Container Slot"), NodePath("Player Loot Slot 4/Container Slot"), NodePath("Player Loot Slot 5/Container Slot"), NodePath("Player Loot Slot 6/Container Slot"), NodePath("Player Loot Slot 7/Container Slot"), NodePath("Player Loot Slot 8/Container Slot")]
-
-[node name="Hotkey Action 1" type="MarginContainer" parent="Loot UI/Player Loot Bar" node_paths=PackedStringArray("hot_key_label", "loot_slot_ui")]
-layout_mode = 2
-script = ExtResource("11_yymii")
-hot_key_index = 1
-hot_key_label = NodePath("Hotkey hint Text")
-loot_slot_ui = NodePath("CenterContainer/Container Slot")
-
-[node name="CenterContainer" type="CenterContainer" parent="Loot UI/Player Loot Bar/Hotkey Action 1"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Hotkey Action 1/CenterContainer" instance=ExtResource("5_eom5v")]
-layout_mode = 2
-
-[node name="Hotkey hint Text" type="Label" parent="Loot UI/Player Loot Bar/Hotkey Action 1"]
-layout_mode = 2
-size_flags_vertical = 0
-text = "1"
-label_settings = ExtResource("8_mprp7")
-
-[node name="Hotkey Action 2" type="MarginContainer" parent="Loot UI/Player Loot Bar" node_paths=PackedStringArray("hot_key_label", "loot_slot_ui")]
-layout_mode = 2
-script = ExtResource("11_yymii")
-hot_key_index = 2
-hot_key_label = NodePath("Hotkey hint Text")
-loot_slot_ui = NodePath("CenterContainer2/Container Slot")
-
-[node name="CenterContainer2" type="CenterContainer" parent="Loot UI/Player Loot Bar/Hotkey Action 2"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Hotkey Action 2/CenterContainer2" instance=ExtResource("5_eom5v")]
-layout_mode = 2
-
-[node name="Hotkey hint Text" type="Label" parent="Loot UI/Player Loot Bar/Hotkey Action 2"]
-layout_mode = 2
-size_flags_vertical = 0
-text = "2"
-label_settings = ExtResource("8_mprp7")
-
-[node name="Hotkey Action 3" type="MarginContainer" parent="Loot UI/Player Loot Bar" node_paths=PackedStringArray("hot_key_label", "loot_slot_ui")]
-layout_mode = 2
-script = ExtResource("11_yymii")
-hot_key_index = 3
-hot_key_label = NodePath("Hotkey hint Text")
-loot_slot_ui = NodePath("CenterContainer3/Container Slot")
-
-[node name="CenterContainer3" type="CenterContainer" parent="Loot UI/Player Loot Bar/Hotkey Action 3"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Hotkey Action 3/CenterContainer3" instance=ExtResource("5_eom5v")]
-layout_mode = 2
-
-[node name="Hotkey hint Text" type="Label" parent="Loot UI/Player Loot Bar/Hotkey Action 3"]
-layout_mode = 2
-size_flags_vertical = 0
-text = "3"
-label_settings = ExtResource("8_mprp7")
-
-[node name="Player Loot Slot 4" type="CenterContainer" parent="Loot UI/Player Loot Bar"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Player Loot Slot 4" instance=ExtResource("5_eom5v")]
-layout_mode = 2
-
-[node name="Player Loot Slot 5" type="CenterContainer" parent="Loot UI/Player Loot Bar"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Player Loot Slot 5" instance=ExtResource("5_eom5v")]
-layout_mode = 2
-
-[node name="Player Loot Slot 6" type="CenterContainer" parent="Loot UI/Player Loot Bar"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Player Loot Slot 6" instance=ExtResource("5_eom5v")]
-layout_mode = 2
-
-[node name="Player Loot Slot 7" type="CenterContainer" parent="Loot UI/Player Loot Bar"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Player Loot Slot 7" instance=ExtResource("5_eom5v")]
-layout_mode = 2
-
-[node name="Player Loot Slot 8" type="CenterContainer" parent="Loot UI/Player Loot Bar"]
-layout_mode = 2
-
-[node name="Container Slot" parent="Loot UI/Player Loot Bar/Player Loot Slot 8" instance=ExtResource("5_eom5v")]
-layout_mode = 2
+[node name="Player Loot Bar" parent="Loot UI" instance=ExtResource("6_oopir")]
 
 [node name="Dragged Slot" type="Control" parent="Loot UI" node_paths=PackedStringArray("icon", "count_label")]
 custom_minimum_size = Vector2(52, 52)
@@ -238,5 +78,3 @@ size_flags_vertical = 8
 text = "11"
 label_settings = ExtResource("8_mprp7")
 vertical_alignment = 1
-
-[connection signal="pressed" from="Loot UI/Loot Container UI/MarginContainer/Close Loot UI Btn" to="Loot UI/Loot Container UI" method="_on_close_loot_ui_btn_pressed"]

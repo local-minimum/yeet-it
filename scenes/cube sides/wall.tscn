@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://dak05kadf8dft"]
+[gd_scene load_steps=7 format=3 uid="uid://dak05kadf8dft"]
 
 [ext_resource type="Script" uid="uid://c6733p4qj68p" path="res://scripts/gridded_level/level_features/grid_node_side.gd" id="1_6sqy2"]
 [ext_resource type="Script" uid="uid://bsjvh2o2oob57" path="res://scripts/gridded_level/level_features/grid_anchor.gd" id="2_2vrb3"]
@@ -9,6 +9,9 @@
 script = ExtResource("3_38emk")
 mode = 8
 metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2vrb3"]
+size = Vector3(2.5005493, 3.0007935, 0.099975586)
 
 [node name="Wall" type="Node3D" node_paths=PackedStringArray("anchor")]
 script = ExtResource("1_6sqy2")
@@ -25,3 +28,9 @@ metadata/_custom_type_script = "uid://bsjvh2o2oob57"
 [node name="Mesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, -1.25)
 mesh = ExtResource("4_2vrb3")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00015258789, 1.4994812, -1.2002563)
+shape = SubResource("BoxShape3D_2vrb3")

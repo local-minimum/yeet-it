@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://okbxlrrdo6j5"]
+[gd_scene load_steps=7 format=3 uid="uid://okbxlrrdo6j5"]
 
 [ext_resource type="ArrayMesh" uid="uid://bmp2m04cg3wqb" path="res://models/debug_floor.obj" id="1_ynhl5"]
 [ext_resource type="Script" uid="uid://c6733p4qj68p" path="res://scripts/gridded_level/level_features/grid_node_side.gd" id="2_4yc0h"]
@@ -9,6 +9,9 @@
 script = ExtResource("4_ka53d")
 mode = 1
 metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kayte"]
+size = Vector3(2.5014496, 0.100860596, 2.517334)
 
 [node name="Floor" type="Node3D" node_paths=PackedStringArray("anchor")]
 script = ExtResource("2_4yc0h")
@@ -24,3 +27,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 script = ExtResource("3_kayte")
 required_transportation_mode = SubResource("Resource_61ncy")
 metadata/_custom_type_script = "uid://bsjvh2o2oob57"
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016021729, 0.049819946, 0.004272461)
+shape = SubResource("BoxShape3D_kayte")

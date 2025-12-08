@@ -4,6 +4,8 @@ class_name PlayerLootHotAction
 @export var hot_key_index: int
 @export var hot_key_label: Label
 @export var loot_slot_ui: LootContainerSlotUI
+@export var throw_lateral_offset: float = 0.5
+@export var throw_target_default_distance: float = 4
 
 func _enter_tree() -> void:
     if __SignalBus.on_level_loaded.connect(_handle_level_loaded) != OK:
@@ -32,8 +34,34 @@ var _may_do_action: bool:
 func _unhandled_input(event: InputEvent) -> void:
     if _may_do_action:
         if event.is_action_pressed(InteractionUI.get_key_id(hot_key_index)):
+            # TODO: Cooldown
             if loot_slot_ui.is_empty:
-                print_debug("[Loot Hot Key %s Action] Trying to throw nothing!" % [hot_key_index])
+                _warn_nothing_to_throw()
             else:
-                print_debug("[Loot Hot Key %s Action] Throwing %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id])
+                _enact_throw()
         return
+
+func _warn_nothing_to_throw() -> void:
+    print_debug("[Loot Hot Key %s Action] Trying to throw nothing!" % [hot_key_index])
+
+func _enact_throw() -> void:
+    print_debug("[Loot Hot Key %s Action] Throwing %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id])
+    var projectile: Node = loot_slot_ui.loot_slot.loot.world_model.instantiate()
+    var loot: Loot = loot_slot_ui.loot_slot.loot
+    loot_slot_ui.loot_slot.count -= 1
+    loot_slot_ui.sync_slot()
+
+    if projectile is LootProjectile:
+        var body: LootProjectile = projectile
+        _throw_body(body, loot)
+    else:
+        push_error("[Hot Action %s] Instanced loot '%s':s world object is not a loot projectile %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id, projectile])
+        projectile.queue_free()
+
+func _throw_body(body: LootProjectile, loot: Loot) -> void:
+    _level.add_child(body)
+    var player: GridPlayerCore = _level.player
+    var player_right: CardinalDirections.CardinalDirection = CardinalDirections.yaw_cw(player.look_direction, player.down)[0]
+    body.global_position = player.center.global_position + CardinalDirections.direction_to_vector(player_right) * throw_lateral_offset
+    var target: Vector3 = player.center.global_position + CardinalDirections.direction_to_vector(player.look_direction) * throw_target_default_distance
+    body.launch(loot.tags, (target - body.global_position).normalized())

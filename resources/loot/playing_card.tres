@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="Loot" load_steps=4 format=3 uid="uid://i2kqfnxx7lvm"]
 
 [ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_lk3ii"]
-[ext_resource type="PackedScene" uid="uid://72ccdwd5eojd" path="res://models/stuff/playing_card.blend" id="2_4nxni"]
 [ext_resource type="Texture2D" uid="uid://bt2orqv6wbwd4" path="res://models/stuff/playing_card.png" id="2_hxruu"]
+[ext_resource type="PackedScene" uid="uid://b5v6qsur1qutc" path="res://scenes/loot/playing_card.tscn" id="3_hxruu"]
 
 [resource]
 script = ExtResource("1_lk3ii")
 id = "playing_card"
 stack_size = 50
-world_model = ExtResource("2_4nxni")
+world_model = ExtResource("3_hxruu")
 ui_texture = ExtResource("2_hxruu")
 tags = Array[int]([7, 5])
 metadata/_custom_type_script = "uid://crv68xkjq7tqq"

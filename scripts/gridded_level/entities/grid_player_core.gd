@@ -221,6 +221,7 @@ func _animate_ducking_stand_up() -> void:
     @warning_ignore_restore("return_value_discarded")
 
 func enable_player() -> void:
+    print_debug("[Grid Player %s] Enabled" % name)
     set_process(true)
     # set_physics_process(true)
     set_process_input(true)
@@ -233,6 +234,7 @@ func enable_player() -> void:
     _repeat_movement.clear()
 
 func disable_player() -> void:
+    print_debug("[Grid Player %s] Disabled" % name)
     set_process(false)
     # set_physics_process(false)
     set_process_input(false)
