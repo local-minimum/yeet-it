@@ -16,39 +16,40 @@ size = Vector3(0.40076447, 0.38853455, 0.2501831)
 [sub_resource type="BoxShape3D" id="BoxShape3D_p03in"]
 size = Vector3(0.13919258, 0.13863754, 0.7375946)
 
-[sub_resource type="Animation" id="Animation_8o5j5"]
+[sub_resource type="Animation" id="Animation_p03in"]
 resource_name = "Idle"
+length = 2.2
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Arm Left:position")
+tracks/0/path = NodePath("Body:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5013911, 1),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.3, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.12997442), Vector3(0, 0, 0)]
+"values": [Vector3(0, 0, 0), Vector3(-0.1214051, 0, 0), Vector3(0.057327595, 0, 0), Vector3(0, 0, 0)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Arm Right:position")
+tracks/1/path = NodePath("Body:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.4, 1),
+"times": PackedFloat32Array(0, 0.34325063, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.09493661), Vector3(0, 0, 0)]
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.03074564), Vector3(0, 0, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_y8yd6"]
+[sub_resource type="Animation" id="Animation_y4uxq"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Arm Left:position")
+tracks/0/path = NodePath("Body:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -60,7 +61,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Arm Right:position")
+tracks/1/path = NodePath("Body:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -72,7 +73,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Head:rotation")
+tracks/2/path = NodePath("Body/Head:rotation")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -82,27 +83,27 @@ tracks/2/keys = {
 "values": [Vector3(0, 0, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_p03in"]
+[sub_resource type="Animation" id="Animation_jqxd4"]
 resource_name = "Stagger"
 length = 0.3
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Head:rotation")
+tracks/0/path = NodePath("Body/Head:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.10174929, 0.22311291, 0.3),
+"times": PackedFloat32Array(0, 0.1005234, 0.24150133, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector3(0, 0, 0), Vector3(0, 2.0077744, 0), Vector3(0, -1.1131444, 0), Vector3(0, 0, 0)]
+"values": [Vector3(0, 0, 0), Vector3(0, 2.5554414, 0), Vector3(0, -0.9751837, 0), Vector3(0, 0, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_y4uxq"]
 _data = {
-&"Idle": SubResource("Animation_8o5j5"),
-&"RESET": SubResource("Animation_y8yd6"),
-&"Stagger": SubResource("Animation_p03in")
+&"Idle": SubResource("Animation_p03in"),
+&"RESET": SubResource("Animation_y4uxq"),
+&"Stagger": SubResource("Animation_jqxd4")
 }
 
 [sub_resource type="Resource" id="Resource_jqxd4"]
@@ -123,37 +124,43 @@ _spawn_anchor_direction = 6
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0009317398, 0.36372566, 0.00049209595)
 shape = SubResource("BoxShape3D_y8yd6")
 
+[node name="Body" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
+
+[node name="Head" parent="Body" index="2"]
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
+
 [node name="Collision Wheel" type="CollisionShape3D" parent="." index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42911202, 0.23523325, -0.0026873052)
 shape = SubResource("BoxShape3D_y4uxq")
 
-[node name="Collision Wheel2" type="CollisionShape3D" parent="." index="4"]
+[node name="Collision Wheel2" type="CollisionShape3D" parent="." index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.423604, 0.23523325, -0.0026873052)
 shape = SubResource("BoxShape3D_y4uxq")
 
-[node name="Collision Head" type="CollisionShape3D" parent="." index="6"]
+[node name="Collision Head" type="CollisionShape3D" parent="." index="4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0006828308, 0.84007376, -3.0517578e-05)
 shape = SubResource("BoxShape3D_8o5j5")
 
-[node name="Collision Arm2" type="CollisionShape3D" parent="." index="8"]
+[node name="Collision Arm2" type="CollisionShape3D" parent="." index="5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3387366, 0.63594884, -0.31163546)
 shape = SubResource("BoxShape3D_p03in")
 
-[node name="Collision Arm" type="CollisionShape3D" parent="." index="10"]
+[node name="Collision Arm" type="CollisionShape3D" parent="." index="6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3336786, 0.63594884, -0.31163546)
 shape = SubResource("BoxShape3D_p03in")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="12"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="7"]
 libraries = {
 &"": SubResource("AnimationLibrary_y4uxq")
 }
 next/Idle = &"Idle"
 next/Stagger = &"Idle"
 
-[node name="Center" type="Node3D" parent="." index="13"]
+[node name="Center" type="Node3D" parent="." index="8"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.51106805, 0)
 
-[node name="MovementExecutor" type="Node" parent="." index="14" node_paths=PackedStringArray("_entity")]
+[node name="MovementExecutor" type="Node" parent="." index="9" node_paths=PackedStringArray("_entity")]
 script = ExtResource("2_p03in")
 _entity = NodePath("..")
 _settings = SubResource("Resource_jqxd4")
