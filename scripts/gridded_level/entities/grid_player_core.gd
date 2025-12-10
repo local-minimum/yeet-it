@@ -21,8 +21,6 @@ var camera_wanted_position: Vector3:
 
 @export var key_ring: KeyRingCore
 
-@export var caster: RayCast3D
-
 func _enter_tree() -> void:
     if __SignalBus.on_cinematic.connect(_handle_cinematic) != OK:
         push_error("Failed to connect to cinematic")

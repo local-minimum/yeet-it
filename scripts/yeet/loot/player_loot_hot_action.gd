@@ -71,18 +71,17 @@ func _enact_throw() -> void:
     loot_slot_ui.loot_slot.count -= 1
     loot_slot_ui.sync_slot()
 
-    if projectile is LootProjectile:
+    if projectile is LootProjectile && _level != null && _level.player is GridPlayer:
         var body: LootProjectile = projectile
-        _throw_body(body, loot)
+        _throw_body(body, loot, _level.player as GridPlayer)
     else:
         push_error("[Hot Action %s] Instanced loot '%s':s world object is not a loot projectile %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id, projectile])
         projectile.queue_free()
 
     _animate_cooldown()
 
-func _throw_body(body: LootProjectile, loot: Loot) -> void:
+func _throw_body(body: LootProjectile, loot: Loot, player: GridPlayer) -> void:
     _level.add_child(body)
-    var player: GridPlayerCore = _level.player
 
     var player_right: CardinalDirections.CardinalDirection = CardinalDirections.yaw_cw(player.look_direction, player.down)[0]
     body.global_position = player.center.global_position + CardinalDirections.direction_to_vector(player_right) * throw_lateral_offset
@@ -91,7 +90,7 @@ func _throw_body(body: LootProjectile, loot: Loot) -> void:
 
     body.launch(loot.tags, (target - body.global_position).normalized())
 
-func _get_throw_target(player: GridPlayerCore) -> Vector3:
+func _get_throw_target(player: GridPlayer) -> Vector3:
     var entity_target: GridEntity = _find_entity_target(player)
     if entity_target != null:
         print_debug("[Hot Key %s] Found entity target %s" % [hot_key_index, entity_target])
@@ -102,7 +101,7 @@ func _get_throw_target(player: GridPlayerCore) -> Vector3:
     var ray_direction: Vector3 = CardinalDirections.direction_to_vector(player.look_direction) * throw_target_default_distance
     var target: Vector3 = ray_origin + ray_direction * throw_target_default_distance
 
-    var caster: RayCast3D = player.caster
+    var caster: RayCast3D = player.body_center_forward_ray
     caster.target_position = caster.to_local(target)
     caster.force_raycast_update()
     if caster.is_colliding():
@@ -111,7 +110,7 @@ func _get_throw_target(player: GridPlayerCore) -> Vector3:
 
     return target
 
-func _find_entity_target(player: GridPlayerCore) -> GridEntity:
+func _find_entity_target(player: GridPlayer) -> GridEntity:
     if _level == null:
         push_warning("[Hot Action %s] We're not in a level!" % [hot_key_index])
         return
