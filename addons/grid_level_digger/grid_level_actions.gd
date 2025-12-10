@@ -177,6 +177,7 @@ func _on_position_all_enemies_pressed() -> void:
                 entity._spawn_node,
                 entity._spawn_anchor_direction,
                 find_grid_node,
+                true,
             )
 
             if spawn_anchor != null:

@@ -7,6 +7,7 @@ class_name PlayerLootHotAction
 @export var throw_lateral_offset: float = 0.5
 @export var throw_target_default_distance: float = 4
 @export var throw_max_target_distance: float = 12
+@export var target_search_distance_max: int = 3
 @export var cooldown_overlay: Control
 
 func _enter_tree() -> void:
@@ -91,15 +92,17 @@ func _throw_body(body: LootProjectile, loot: Loot) -> void:
     body.launch(loot.tags, (target - body.global_position).normalized())
 
 func _get_throw_target(player: GridPlayerCore) -> Vector3:
+    var entity_target: GridEntity = _find_enemy_target(player)
+    if entity_target != null:
+        return entity_target.center.global_position
+
+    # Throw something forward in general
     var ray_origin: Vector3 = player.center.global_position
     var ray_direction: Vector3 = CardinalDirections.direction_to_vector(player.look_direction) * throw_target_default_distance
-    var space: PhysicsDirectSpaceState3D = player.get_world_3d().direct_space_state
-    # TODO: Supply a mask to avoid some collisions. E.g. with self
-    var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_direction * throw_max_target_distance)
-    # query.collide_with_areas = true
-    var result: Dictionary = space.intersect_ray(query)
-    var collides: bool = result.get("collides", null) != null
     var target: Vector3 = ray_origin + ray_direction * throw_target_default_distance
+    var result: Dictionary = _ray_to(player, ray_origin + ray_direction * throw_max_target_distance)
+
+    var collides: bool = result.get("collider", null) != null
     if collides:
         target = result.get("position", target)
         print_debug("[Hot Action %s] Found target %s setting target position to %s" % [
@@ -108,6 +111,52 @@ func _get_throw_target(player: GridPlayerCore) -> Vector3:
             target,
         ])
     return target
+
+func _ray_to(
+    player: GridPlayerCore,
+    target: Vector3,
+) -> Dictionary:
+    var ray_origin: Vector3 = player.center.global_position
+    var space: PhysicsDirectSpaceState3D = player.get_world_3d().direct_space_state
+    # TODO: Supply a mask to avoid some collisions. E.g. with self
+    var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(ray_origin, target)
+    # query.collide_with_areas = true
+    return space.intersect_ray(query)
+
+func _find_enemy_target(player: GridPlayerCore) -> GridEntity:
+    if _level == null:
+        push_warning("[Hot Action %s] We're not in a level!" % [hot_key_index])
+        return
+
+    var options: Array[GridEntity]
+
+    var coords: Vector3i = player.coordinates()
+    var idx: int = 0
+    while idx < target_search_distance_max:
+        # Get next position
+        coords = CardinalDirections.translate(coords, player.look_direction)
+
+        print_debug("[Hot Action %s] Looking for entities at %s" % [hot_key_index, coords])
+        for entity: GridEntity in _level.grid_entities:
+            if entity is GridEnemyCore && entity.coordinates() == coords:
+                var result: Dictionary = _ray_to(player, entity.center.global_position)
+                print_debug("[Hot Action %s] Entity %s is in sought tile %s, ray cast gives %s" % [
+                    hot_key_index,
+                    entity.name,
+                    coords,
+                    result,
+                ])
+                var collider: Node = result.get("collider", null)
+                if GridEntity.find_entity_parent(collider, true) == entity:
+                    options.append(entity)
+                    print_debug("[Hot Action %s] Entity %s can be traced with ray" % [hot_key_index, entity.name])
+
+        if !options.is_empty():
+            return options.pick_random()
+
+        idx += 1
+
+    return null
 
 func _animate_cooldown() -> void:
     cooldown_overlay.show()

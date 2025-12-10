@@ -306,12 +306,13 @@ static func find_grid_anchor(
     node: GridNode,
     direction: CardinalDirections.CardinalDirection,
     find_grid_node: Callable,
+    include_disabled_anchor: bool = false,
 ) -> GridAnchor:
     for side: GridNodeSide in node.find_children("", "GridNodeSide"):
         if side.anchor == null:
             continue
 
-        if side.anchor.direction == direction && !side.anchor.disabled:
+        if side.anchor.direction == direction && (include_disabled_anchor || !side.anchor.disabled):
             return side.anchor
 
 

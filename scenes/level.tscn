@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=28 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://dlbq7x82ejv6e" path="res://scripts/gridded_level/entities/grid_player_core.gd" id="2_w7c3h"]
@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://okbxlrrdo6j5" path="res://scenes/cube sides/floor.tscn" id="11_gunhw"]
 [ext_resource type="Script" uid="uid://cjhediv47ntbx" path="res://scripts/gridded_level/level_features/level_portal.gd" id="12_arp2o"]
 [ext_resource type="PackedScene" uid="uid://bbtbwtc4t56xm" path="res://scenes/container_box.tscn" id="14_82cfe"]
+[ext_resource type="PackedScene" uid="uid://dwyp8wg7aoahf" path="res://scenes/entities/robohugger.tscn" id="16_gunhw"]
 [ext_resource type="PackedScene" uid="uid://4n8i8kbl7c32" path="res://models/stuff/shelf.blend" id="18_h6wmr"]
 
 [sub_resource type="Resource" id="Resource_olg7q"]
@@ -41,6 +42,15 @@ script = ExtResource("9_8iemx")
 type = 3
 metadata/_custom_type_script = "uid://dsq3qb6waenpd"
 
+[sub_resource type="Resource" id="Resource_gunhw"]
+script = ExtResource("3_2r41h")
+metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
+
+[sub_resource type="Resource" id="Resource_8gofh"]
+script = ExtResource("3_2r41h")
+mode = 1
+metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
+
 [sub_resource type="Resource" id="Resource_fpun6"]
 script = ExtResource("9_8iemx")
 metadata/_custom_type_script = "uid://dsq3qb6waenpd"
@@ -60,7 +70,8 @@ broadcasts_parent = NodePath("Broadcasts")
 player = NodePath("Player")
 metadata/_custom_type_script = "uid://c74xugjiqdyyk"
 
-[node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("camera", "key_ring", "center", "executor")]
+[node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("camera", "key_ring", "center", "executor", "_spawn_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("2_w7c3h")
 camera = NodePath("Head/Camera3D")
 key_ring = NodePath("KeyRingCore")
@@ -70,6 +81,7 @@ transportation_abilities = SubResource("Resource_t1rx8")
 can_jump_off_floor = true
 executor = NodePath("MovementExecutor")
 concurrent_turns = true
+_spawn_node = NodePath("../Geometry/Elevation 0/Node (0, 0, 0)")
 metadata/_custom_type_script = "uid://dlbq7x82ejv6e"
 
 [node name="Head" type="Node3D" parent="Player"]
@@ -99,8 +111,6 @@ omni_attenuation = 0.3
 
 [node name="Center" type="Node3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0612761, 0)
-
-[node name="Enemies" type="Node3D" parent="."]
 
 [node name="Geometry" type="Node3D" parent="."]
 
@@ -418,6 +428,14 @@ direction = 3
 [node name="Side DOWN" parent="Geometry/Elevation 0/Node (3, 0, -2)" instance=ExtResource("11_gunhw")]
 
 [node name="Zones" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="robohugger" parent="Enemies" node_paths=PackedStringArray("_spawn_node") instance=ExtResource("16_gunhw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.1, -5)
+transportation_mode = SubResource("Resource_gunhw")
+transportation_abilities = SubResource("Resource_8gofh")
+_spawn_node = NodePath("../../Geometry/Elevation 0/Node (4, 0, -2)")
 
 [node name="Broadcasts" type="Node" parent="."]
 

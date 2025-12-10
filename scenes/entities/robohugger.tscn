@@ -1,0 +1,160 @@
+[gd_scene load_steps=13 format=3 uid="uid://dwyp8wg7aoahf"]
+
+[ext_resource type="PackedScene" uid="uid://vb2hayc51nbm" path="res://models/entities/robohugger.blend" id="1_8o5j5"]
+[ext_resource type="Script" uid="uid://d1e0odws2w1g1" path="res://scripts/gridded_level/entities/movement_executor.gd" id="2_p03in"]
+[ext_resource type="Script" uid="uid://crv5isbs0cdmp" path="res://scripts/gridded_level/entities/movement_executor_settings.gd" id="3_y4uxq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y8yd6"]
+size = Vector3(0.7022419, 0.57473373, 0.5724106)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y4uxq"]
+size = Vector3(0.15985918, 0.46642637, 0.47156906)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8o5j5"]
+size = Vector3(0.40076447, 0.38853455, 0.2501831)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_p03in"]
+size = Vector3(0.13919258, 0.13863754, 0.7375946)
+
+[sub_resource type="Animation" id="Animation_8o5j5"]
+resource_name = "Idle"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Arm Left:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5013911, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.12997442), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Arm Right:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, -0.09493661), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_y8yd6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Arm Left:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Arm Right:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Head:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_p03in"]
+resource_name = "Stagger"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.10174929, 0.22311291, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 2.0077744, 0), Vector3(0, -1.1131444, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y4uxq"]
+_data = {
+&"Idle": SubResource("Animation_8o5j5"),
+&"RESET": SubResource("Animation_y8yd6"),
+&"Stagger": SubResource("Animation_p03in")
+}
+
+[sub_resource type="Resource" id="Resource_jqxd4"]
+script = ExtResource("3_y4uxq")
+tank_movement = true
+metadata/_custom_type_script = "uid://crv5isbs0cdmp"
+
+[node name="robohugger" node_paths=PackedStringArray("_animator", "center", "executor") instance=ExtResource("1_8o5j5")]
+_max_health = 40
+_health = 40
+_stagger_chance_factor = 1.5
+_animator = NodePath("AnimationPlayer")
+center = NodePath("Center")
+executor = NodePath("MovementExecutor")
+_spawn_anchor_direction = 6
+
+[node name="Collision Body" type="CollisionShape3D" parent="." index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0009317398, 0.36372566, 0.00049209595)
+shape = SubResource("BoxShape3D_y8yd6")
+
+[node name="Collision Wheel" type="CollisionShape3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42911202, 0.23523325, -0.0026873052)
+shape = SubResource("BoxShape3D_y4uxq")
+
+[node name="Collision Wheel2" type="CollisionShape3D" parent="." index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.423604, 0.23523325, -0.0026873052)
+shape = SubResource("BoxShape3D_y4uxq")
+
+[node name="Collision Head" type="CollisionShape3D" parent="." index="6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0006828308, 0.84007376, -3.0517578e-05)
+shape = SubResource("BoxShape3D_8o5j5")
+
+[node name="Collision Arm2" type="CollisionShape3D" parent="." index="8"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3387366, 0.63594884, -0.31163546)
+shape = SubResource("BoxShape3D_p03in")
+
+[node name="Collision Arm" type="CollisionShape3D" parent="." index="10"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3336786, 0.63594884, -0.31163546)
+shape = SubResource("BoxShape3D_p03in")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="12"]
+libraries = {
+&"": SubResource("AnimationLibrary_y4uxq")
+}
+next/Idle = &"Idle"
+next/Stagger = &"Idle"
+
+[node name="Center" type="Node3D" parent="." index="13"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.51106805, 0)
+
+[node name="MovementExecutor" type="Node" parent="." index="14" node_paths=PackedStringArray("_entity")]
+script = ExtResource("2_p03in")
+_entity = NodePath("..")
+_settings = SubResource("Resource_jqxd4")
+metadata/_custom_type_script = "uid://d1e0odws2w1g1"

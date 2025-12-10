@@ -412,6 +412,9 @@ static func find_entity_parent(current: Node, inclusive: bool = true) ->  GridEn
     if inclusive && current is GridEntity:
         return current as GridEntity
 
+    if current == null:
+        return null
+
     var parent: Node = current.get_parent()
 
     if parent == null:
