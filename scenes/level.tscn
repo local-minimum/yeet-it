@@ -70,11 +70,12 @@ broadcasts_parent = NodePath("Broadcasts")
 player = NodePath("Player")
 metadata/_custom_type_script = "uid://c74xugjiqdyyk"
 
-[node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("camera", "key_ring", "center", "executor", "_spawn_node")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+[node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("camera", "key_ring", "caster", "center", "executor", "_spawn_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 script = ExtResource("2_w7c3h")
 camera = NodePath("Head/Camera3D")
 key_ring = NodePath("KeyRingCore")
+caster = NodePath("Caster")
 center = NodePath("Center")
 transportation_mode = SubResource("Resource_olg7q")
 transportation_abilities = SubResource("Resource_t1rx8")
@@ -82,6 +83,7 @@ can_jump_off_floor = true
 executor = NodePath("MovementExecutor")
 concurrent_turns = true
 _spawn_node = NodePath("../Geometry/Elevation 0/Node (0, 0, 0)")
+_spawn_anchor_direction = 6
 metadata/_custom_type_script = "uid://dlbq7x82ejv6e"
 
 [node name="Head" type="Node3D" parent="Player"]
@@ -111,6 +113,10 @@ omni_attenuation = 0.3
 
 [node name="Center" type="Node3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0612761, 0)
+
+[node name="Caster" type="RayCast3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3530174, 0.80597043, 0)
+enabled = false
 
 [node name="Geometry" type="Node3D" parent="."]
 

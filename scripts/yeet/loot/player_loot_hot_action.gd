@@ -92,44 +92,33 @@ func _throw_body(body: LootProjectile, loot: Loot) -> void:
     body.launch(loot.tags, (target - body.global_position).normalized())
 
 func _get_throw_target(player: GridPlayerCore) -> Vector3:
-    var entity_target: GridEntity = _find_enemy_target(player)
+    var entity_target: GridEntity = _find_entity_target(player)
     if entity_target != null:
+        print_debug("[Hot Key %s] Found entity target %s" % [hot_key_index, entity_target])
         return entity_target.center.global_position
 
     # Throw something forward in general
     var ray_origin: Vector3 = player.center.global_position
     var ray_direction: Vector3 = CardinalDirections.direction_to_vector(player.look_direction) * throw_target_default_distance
     var target: Vector3 = ray_origin + ray_direction * throw_target_default_distance
-    var result: Dictionary = _ray_to(player, ray_origin + ray_direction * throw_max_target_distance)
 
-    var collides: bool = result.get("collider", null) != null
-    if collides:
-        target = result.get("position", target)
-        print_debug("[Hot Action %s] Found target %s setting target position to %s" % [
-            hot_key_index,
-            result,
-            target,
-        ])
+    var caster: RayCast3D = player.caster
+    caster.target_position = caster.to_local(target)
+    caster.force_raycast_update()
+    if caster.is_colliding():
+        print_debug("[Hot Action %s] Found default target in %s at %s" % [hot_key_index, player.caster.get_collider(), caster.get_collision_point()])
+        return caster.get_collision_point()
+
     return target
 
-func _ray_to(
-    player: GridPlayerCore,
-    target: Vector3,
-) -> Dictionary:
-    var ray_origin: Vector3 = player.center.global_position
-    var space: PhysicsDirectSpaceState3D = player.get_world_3d().direct_space_state
-    # TODO: Supply a mask to avoid some collisions. E.g. with self
-    var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(ray_origin, target)
-    # query.collide_with_areas = true
-    return space.intersect_ray(query)
-
-func _find_enemy_target(player: GridPlayerCore) -> GridEntity:
+func _find_entity_target(player: GridPlayerCore) -> GridEntity:
     if _level == null:
         push_warning("[Hot Action %s] We're not in a level!" % [hot_key_index])
         return
 
     var options: Array[GridEntity]
 
+    var caster: RayCast3D = player.caster
     var coords: Vector3i = player.coordinates()
     var idx: int = 0
     while idx < target_search_distance_max:
@@ -139,17 +128,23 @@ func _find_enemy_target(player: GridPlayerCore) -> GridEntity:
         print_debug("[Hot Action %s] Looking for entities at %s" % [hot_key_index, coords])
         for entity: GridEntity in _level.grid_entities:
             if entity is GridEnemyCore && entity.coordinates() == coords:
-                var result: Dictionary = _ray_to(player, entity.center.global_position)
-                print_debug("[Hot Action %s] Entity %s is in sought tile %s, ray cast gives %s" % [
-                    hot_key_index,
-                    entity.name,
-                    coords,
-                    result,
-                ])
-                var collider: Node = result.get("collider", null)
-                if GridEntity.find_entity_parent(collider, true) == entity:
-                    options.append(entity)
-                    print_debug("[Hot Action %s] Entity %s can be traced with ray" % [hot_key_index, entity.name])
+                var enemy: GridEnemy = entity
+                caster.target_position = player.caster.to_local(enemy.center.global_position)
+                caster.force_raycast_update()
+                if caster.is_colliding():
+                    var collider: Object = caster.get_collider() #c.get("collider", null)
+                    if collider is Node:
+                        if GridEntity.find_entity_parent(collider as Node, true) == entity:
+                            options.append(entity)
+                            print_debug("[Hot Action %s] Entity %s can be traced with ray" % [hot_key_index, entity.name])
+                        else:
+                            print_debug("[Hot Action %s] %s in the way of throwing stuff at %s" % [
+                                hot_key_index,
+                                collider,
+                                enemy,
+                            ])
+                    else:
+                        push_error("[Hot Action %s] Collsion with non node %s!" % [hot_key_index, collider])
 
         if !options.is_empty():
             return options.pick_random()
