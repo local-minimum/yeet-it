@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://dwyp8wg7aoahf"]
+[gd_scene load_steps=14 format=3 uid="uid://dwyp8wg7aoahf"]
 
 [ext_resource type="PackedScene" uid="uid://vb2hayc51nbm" path="res://models/entities/robohugger.blend" id="1_8o5j5"]
 [ext_resource type="Script" uid="uid://d1e0odws2w1g1" path="res://scripts/gridded_level/entities/movement_executor.gd" id="2_p03in"]
+[ext_resource type="Script" uid="uid://bemah7f8jv8xf" path="res://scripts/yeet/glue_to.gd" id="2_y4uxq"]
 [ext_resource type="Script" uid="uid://crv5isbs0cdmp" path="res://scripts/gridded_level/entities/movement_executor_settings.gd" id="3_y4uxq"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y8yd6"]
@@ -120,35 +121,47 @@ center = NodePath("Center")
 executor = NodePath("MovementExecutor")
 _spawn_anchor_direction = 6
 
-[node name="Collision Body" type="CollisionShape3D" parent="." index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0009317398, 0.36372566, 0.00049209595)
-shape = SubResource("BoxShape3D_y8yd6")
-
-[node name="Body" parent="." index="1"]
+[node name="Body" parent="." index="0"]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
 
 [node name="Head" parent="Body" index="2"]
 transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
 
-[node name="Collision Wheel" type="CollisionShape3D" parent="." index="2"]
+[node name="Collision Body" type="CollisionShape3D" parent="." index="1" node_paths=PackedStringArray("_other")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0009317398, 0.36372566, 0.00049209595)
+shape = SubResource("BoxShape3D_y8yd6")
+script = ExtResource("2_y4uxq")
+_other = NodePath("../Body")
+
+[node name="Collision Wheel Right" type="CollisionShape3D" parent="." index="2" node_paths=PackedStringArray("_other")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42911202, 0.23523325, -0.0026873052)
 shape = SubResource("BoxShape3D_y4uxq")
+script = ExtResource("2_y4uxq")
+_other = NodePath("../Body/Wheel Right")
 
-[node name="Collision Wheel2" type="CollisionShape3D" parent="." index="3"]
+[node name="Collision Wheel Left" type="CollisionShape3D" parent="." index="3" node_paths=PackedStringArray("_other")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.423604, 0.23523325, -0.0026873052)
 shape = SubResource("BoxShape3D_y4uxq")
+script = ExtResource("2_y4uxq")
+_other = NodePath("../Body/Wheel Left")
 
-[node name="Collision Head" type="CollisionShape3D" parent="." index="4"]
+[node name="Collision Head" type="CollisionShape3D" parent="." index="4" node_paths=PackedStringArray("_other")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0006828308, 0.84007376, -3.0517578e-05)
 shape = SubResource("BoxShape3D_8o5j5")
+script = ExtResource("2_y4uxq")
+_other = NodePath("../Body/Head")
 
-[node name="Collision Arm2" type="CollisionShape3D" parent="." index="5"]
+[node name="Collision Arm Right" type="CollisionShape3D" parent="." index="5" node_paths=PackedStringArray("_other")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3387366, 0.63594884, -0.31163546)
 shape = SubResource("BoxShape3D_p03in")
+script = ExtResource("2_y4uxq")
+_other = NodePath("../Body/Arm Right")
 
-[node name="Collision Arm" type="CollisionShape3D" parent="." index="6"]
+[node name="Collision Arm Left" type="CollisionShape3D" parent="." index="6" node_paths=PackedStringArray("_other")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3336786, 0.63594884, -0.31163546)
 shape = SubResource("BoxShape3D_p03in")
+script = ExtResource("2_y4uxq")
+_other = NodePath("../Body/Arm Left")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="7"]
 libraries = {
