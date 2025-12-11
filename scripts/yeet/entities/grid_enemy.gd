@@ -38,6 +38,8 @@ func _ready() -> void:
     if _animator != null:
         _animator.play(_anim_idle)
 
+    print_debug(GridNode.flood_fill_awareness_area(get_grid_node(), look_direction))
+
 func hurt(amount: int = 1) -> void:
     _health = maxi(0, _health - amount)
     print_debug("[Grid Enemy %s] Hurt for %s (health now %s)" % [name, amount, _health])

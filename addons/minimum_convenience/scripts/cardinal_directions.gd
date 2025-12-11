@@ -169,6 +169,9 @@ static func node_planar_rotation_to_direction(node: Node3D) -> CardinalDirection
 static func is_parallell(direction: CardinalDirection, other: CardinalDirection) -> bool:
     return direction == other || direction == invert(other)
 
+static func is_orthogonal(direction: CardinalDirection, other: CardinalDirection) -> bool:
+    return !is_parallell(direction, other) && ALL_DIRECTIONS.has(direction) && ALL_DIRECTIONS.has(other)
+
 static func is_planar_cardinal(direction: CardinalDirection) -> bool:
     return ALL_PLANAR_DIRECTIONS.has(direction)
 

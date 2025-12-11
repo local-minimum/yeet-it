@@ -1,5 +1,8 @@
 class_name VectorUtils
 
+static func maxi_scalar(v: Vector3i) -> int:
+    return maxi(maxi(v.x, v.y), v.z)
+
 static func rotate_cw(direction: Vector3i, up: Vector3i) -> Vector3i:
     if up.y > 0:
         return Vector3i(-direction.z, direction.y, direction.x)

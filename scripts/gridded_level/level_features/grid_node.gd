@@ -112,6 +112,31 @@ func _is_illusory_side(direction: CardinalDirections.CardinalDirection) -> bool:
 func illusory_sides() -> Array[GridNodeSide]:
     _init_sides_and_anchors(self)
     return _sides.values().filter(func (side: GridNodeSide) -> bool: return side.illusory)
+
+func is_open_side(
+    direction: CardinalDirections.CardinalDirection,
+    can_open_door: bool = false,
+    respect_illusory: bool = true,
+) -> bool:
+    match has_side(direction):
+        NodeSideState.DOOR:
+            var door: GridDoorCore = get_door(direction)
+            return door == null || door.lock_state == door.LockState.OPEN || door.lock_state == GridDoorCore.LockState.CLOSED && can_open_door
+        NodeSideState.ILLUSORY:
+            return !respect_illusory
+        NodeSideState.NONE:
+            return true
+        NodeSideState.SOLID:
+            return false
+        _:
+            push_warning("[Grid Node %s] Has unhandled side state %s to the %s" % [
+                coordinates,
+                NodeSideState.find_key(has_side(direction)),
+                CardinalDirections.name(direction),
+            ])
+            return false
+
+
 #endregion Sides
 
 #region Events
@@ -349,6 +374,11 @@ func neighbour(direction: CardinalDirections.CardinalDirection) -> GridNode:
 
     return _level.get_grid_node(neighbour_coords)
 
+func potentially_reachable_neighbour(direction: CardinalDirections.CardinalDirection) -> GridNode:
+    if !is_open_side(direction):
+        return null
+    return neighbour(direction)
+
 func may_enter(
     entity: GridEntity,
     from: GridNode,
@@ -441,4 +471,48 @@ static func find_node_parent(current: Node, inclusive: bool = true) ->  GridNode
         return parent as GridNode
 
     return find_node_parent(parent, false)
+
+static func flood_fill_awareness_area(source: GridNode, look_direction: CardinalDirections.CardinalDirection, area_size: int = 1, max_distance: int = 4) -> Array[GridNode]:
+    if source == null:
+        return []
+
+    var considered: Array[GridNode] = [source]
+    var found: Array[GridNode] = [source]
+    var to_investigate: Array[GridNode] = [source]
+    var distance: Dictionary[GridNode, int] = { source: 0 }
+
+    while !to_investigate.is_empty():
+        var from: GridNode = to_investigate.pop_front()
+        var from_dist: int = distance[from]
+
+        for direction: CardinalDirections.CardinalDirection in CardinalDirections.ALL_DIRECTIONS:
+            var to: GridNode = from.potentially_reachable_neighbour(direction)
+            if to == null || considered.has(to):
+                continue
+
+            considered.append(to)
+
+            if VectorUtils.chebychev_distance(from.coordinates, to.coordinates) <= area_size:
+                if !found.has(to):
+                    found.append(to)
+
+                    if from_dist < max_distance:
+                        to_investigate.append(to)
+                        distance[to] = from_dist + 1
+
+            else:
+                var delta: Vector3i = to.coordinates - from.coordinates
+                var look_direction_value: int = CardinalDirections.vectori_axis_value(delta, look_direction)
+                if look_direction_value <= 0 || VectorUtils.maxi_scalar(delta.abs()) > look_direction_value:
+                    continue
+
+                if !found.has(to):
+                    found.append(to)
+
+                    if from_dist < max_distance:
+                        to_investigate.append(to)
+                        distance[to] = from_dist + 1
+
+
+    return found
 #endregion Navigation
