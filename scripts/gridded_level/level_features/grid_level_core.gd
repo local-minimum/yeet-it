@@ -165,10 +165,11 @@ func get_closest_grid_node_side_by_position(pos: Vector3) -> CardinalDirections.
     # print_debug("%s -> %s" % [pos, CardinalDirections.name(CardinalDirections.principal_direction(pos))])
     return CardinalDirections.principal_direction(pos)
 
-func can_coexist_with_inhabitants(entity: GridEntity, node: GridNode) -> bool:
+func can_coexist_with_inhabitants(entity: GridEntity, node: GridNode, passing_through: bool) -> bool:
     return occupancy_concurrency_restriction.can_coexist(
         entity,
-        Array(grid_entities.filter(func (e: GridEntity) -> bool: return e.coordinates() == node.coordinates), TYPE_OBJECT, "Node3D", GridEntity)
+        Array(grid_entities.filter(func (e: GridEntity) -> bool: return e.coordinates() == node.coordinates), TYPE_OBJECT, "Node3D", GridEntity),
+        passing_through,
     )
 
 #endregion Nodes
