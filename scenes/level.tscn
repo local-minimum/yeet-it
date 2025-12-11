@@ -1,6 +1,7 @@
-[gd_scene load_steps=28 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=30 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
+[ext_resource type="Script" uid="uid://b5guu22x6ddn5" path="res://scripts/gridded_level/level_features/concurrency_restrictions/only_one_entity_restriction.gd" id="2_8gofh"]
 [ext_resource type="Script" uid="uid://bhfuqy6hll815" path="res://scripts/yeet/entities/grid_player.gd" id="2_gunhw"]
 [ext_resource type="Script" uid="uid://b8a6yvndcxtpa" path="res://scripts/gridded_level/transportation_mode.gd" id="3_2r41h"]
 [ext_resource type="Script" uid="uid://yjtiqbwbqcdd" path="res://addons/minimum_convenience/scripts/free_look_cam.gd" id="4_82cfe"]
@@ -19,6 +20,10 @@
 [ext_resource type="PackedScene" uid="uid://bbtbwtc4t56xm" path="res://scenes/container_box.tscn" id="14_82cfe"]
 [ext_resource type="PackedScene" uid="uid://dwyp8wg7aoahf" path="res://scenes/entities/robohugger.tscn" id="16_gunhw"]
 [ext_resource type="PackedScene" uid="uid://4n8i8kbl7c32" path="res://models/stuff/shelf.blend" id="18_h6wmr"]
+
+[sub_resource type="Resource" id="Resource_h6wmr"]
+script = ExtResource("2_8gofh")
+metadata/_custom_type_script = "uid://b5guu22x6ddn5"
 
 [sub_resource type="Resource" id="Resource_olg7q"]
 script = ExtResource("3_2r41h")
@@ -68,6 +73,7 @@ primary_entry_portal = NodePath("Geometry/Elevation 0/Node (0, 0, 0)/LevelPortal
 zones_parent = NodePath("Zones")
 broadcasts_parent = NodePath("Broadcasts")
 player = NodePath("Player")
+occupancy_concurrency_restriction = SubResource("Resource_h6wmr")
 metadata/_custom_type_script = "uid://c74xugjiqdyyk"
 
 [node name="Player" type="Node3D" parent="." node_paths=PackedStringArray("caster", "body_center_forward_ray", "camera", "key_ring", "center", "executor", "_spawn_node")]

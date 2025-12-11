@@ -29,6 +29,13 @@ const UNKNOWN_LEVEL_ID: String = "--unknown--"
         player = value
         __SignalBus.on_change_player.emit(self, value)
 
+@export var occupancy_concurrency_restriction: OccupancyConcurrencyRestriction:
+    get():
+        if occupancy_concurrency_restriction == null:
+            occupancy_concurrency_restriction = NoConcurrencyRestriction.new()
+
+        return occupancy_concurrency_restriction
+
 var grid_entities: Array[GridEntity]
 var _nodes_ready: bool
 
@@ -157,6 +164,12 @@ func get_closest_grid_node_side_by_position(pos: Vector3) -> CardinalDirections.
     pos -= node_size.y * Vector3.UP * 0.5
     # print_debug("%s -> %s" % [pos, CardinalDirections.name(CardinalDirections.principal_direction(pos))])
     return CardinalDirections.principal_direction(pos)
+
+func can_coexist_with_inhabitants(entity: GridEntity, node: GridNode) -> bool:
+    return occupancy_concurrency_restriction.can_coexist(
+        entity,
+        Array(grid_entities.filter(func (e: GridEntity) -> bool: return e.coordinates() == node.coordinates), TYPE_OBJECT, "Node3D", GridEntity)
+    )
 
 #endregion Nodes
 

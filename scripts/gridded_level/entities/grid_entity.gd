@@ -252,11 +252,11 @@ func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurr
     executor.execute_plan(plan, priority, concurrent)
 
 func force_movement(movement: Movement.MovementType) -> bool:
-    if _movement_allowed(movement, true):
+    if _can_execute_movement(movement, true):
         return attempt_movement(movement, false, true)
     return false
 
-func _movement_allowed(movement: Movement.MovementType, force: bool) -> bool:
+func _can_execute_movement(movement: Movement.MovementType, force: bool) -> bool:
     if Movement.MovementType.NONE == movement || (cinematic || falling()) && !force:
         push_warning("[Grid Entity %s] Movement refused: not accepting movements [cinematic = %s, falling = %s]" % [
             name,
@@ -319,7 +319,7 @@ func attempt_movement(
         print_stack()
         return false
 
-    if !_movement_allowed(movement, force):
+    if !_can_execute_movement(movement, force):
         print_debug("[Grid Entity %s] Movement %s not allowed at this time" % [name, Movement.name(movement)])
         if enqueue_if_occupied && queue_moves:
             _enqeue_movement(movement)

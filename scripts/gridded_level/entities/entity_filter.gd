@@ -26,3 +26,12 @@ static func applies_for(entity_type: EntityType, node: Node) -> bool:
         _:
             push_error("Entity Filter %s not handled" % entity_type)
             return false
+
+static func get_entity_type(node: Node) -> EntityType:
+    if node is GridPlayerCore:
+        return EntityType.PLAYER
+    if node is GridEnemyCore:
+        return EntityType.ENEMY
+    if node is GridEntity:
+        return EntityType.OTHER
+    return EntityType.NEVER

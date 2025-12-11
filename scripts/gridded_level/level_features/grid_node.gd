@@ -357,10 +357,14 @@ func may_enter(
     ignore_require_anchor: bool = false,
     force_respect_illuory: bool = false,
     silent: bool = false,
+    disregard_occupancy_rules: bool = false,
 ) -> bool:
     if _entry_blocking_events(entity, from, move_direction, anchor_direction, silent):
         if !silent:
             print_debug("Cannot enter moving %s because of events" % CardinalDirections.name(move_direction))
+        return false
+
+    if !disregard_occupancy_rules && !level.can_coexist_with_inhabitants(entity, self):
         return false
 
     var entry_direction: CardinalDirections.CardinalDirection = CardinalDirections.invert(move_direction)
