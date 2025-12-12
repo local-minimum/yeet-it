@@ -13,7 +13,7 @@ dest_files=["res://.godot/imported/robohugger.blend-b29cb306aa9a6ecd673f35f658a8
 
 [params]
 
-nodes/root_type="StaticBody3D"
+nodes/root_type="Node3D"
 nodes/root_name=""
 nodes/root_script=Resource("uid://cu5rcpnjd0co3", "res://scripts/yeet/entities/grid_enemy.gd")
 nodes/apply_root_scale=true
