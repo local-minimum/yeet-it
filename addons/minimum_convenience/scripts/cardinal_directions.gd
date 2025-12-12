@@ -172,6 +172,9 @@ static func is_parallell(direction: CardinalDirection, other: CardinalDirection)
 static func is_orthogonal(direction: CardinalDirection, other: CardinalDirection) -> bool:
     return !is_parallell(direction, other) && ALL_DIRECTIONS.has(direction) && ALL_DIRECTIONS.has(other)
 
+static func is_planar_orthogonal(direction: CardinalDirection, down: CardinalDirection, other: CardinalDirection) -> bool:
+    return !is_parallell(direction, other) && !is_parallell(down, other) && ALL_DIRECTIONS.has(other) && ALL_DIRECTIONS.has(direction)
+
 static func is_planar_cardinal(direction: CardinalDirection) -> bool:
     return ALL_PLANAR_DIRECTIONS.has(direction)
 

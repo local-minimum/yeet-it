@@ -38,7 +38,33 @@ func _ready() -> void:
     if _animator != null:
         _animator.play(_anim_idle)
 
-    print_debug(GridNode.flood_fill_awareness_area(get_grid_node(), look_direction))
+    _watched_nodes = GridNode.flood_fill_awareness_area(get_grid_node(), look_direction)
+
+func _process(_delta: float) -> void:
+    if !is_alive() || cinematic || Time.get_ticks_msec() < _next_move_allowed_time:
+        return
+
+    _next_move_allowed_time = roundi(_after_walk_wait * 1000.0) + Time.get_ticks_msec()
+    if _move_target != null:
+        var offset: Vector3i = _move_target.coordinates - coordinates()
+        var direction: CardinalDirections.CardinalDirection = CardinalDirections.principal_direction(offset)
+        var move: Movement.MovementType = Movement.from_directions(direction, look_direction, down)
+        if direction != look_direction && CardinalDirections.is_planar_orthogonal(direction, down, look_direction):
+            if direction == CardinalDirections.invert(look_direction):
+                move = Movement.MovementType.TURN_CLOCKWISE if randf() < 0.5 else Movement.MovementType.TURN_COUNTER_CLOCKWISE
+            else:
+                var yaw: CardinalDirections.CardinalDirection = CardinalDirections.yaw_cw(look_direction, down)[0]
+
+                if yaw == direction:
+                    move = Movement.MovementType.TURN_CLOCKWISE
+                else:
+                    yaw = CardinalDirections.yaw_ccw(look_direction, down)[0]
+                    if yaw == direction:
+                        move = Movement.MovementType.TURN_COUNTER_CLOCKWISE
+
+        if !force_movement(move):
+            push_warning("[Grid Enemy %s] Failed to enforce movement %s" % [name, Movement.name(move)])
+
 
 func hurt(amount: int = 1) -> void:
     _health = maxi(0, _health - amount)
@@ -73,6 +99,16 @@ func take_hit(tags: Array[Loot.Tag]) -> void:
 
     hurt(roundi(damage))
 
+var _move_target: GridNode
+var _watched_nodes: Array[GridNode]
+
 func _handle_move_end(entity: GridEntity) -> void:
     if entity == self:
         _next_move_allowed_time = roundi(_after_walk_wait * 1000.0) + Time.get_ticks_msec()
+        _watched_nodes = GridNode.flood_fill_awareness_area(get_grid_node(), look_direction)
+        if entity.get_grid_node() == _move_target:
+            _move_target = null
+    elif entity == get_level().player:
+        var player_node: GridNode = entity.get_grid_node()
+        if _watched_nodes.has(player_node):
+            _move_target = player_node

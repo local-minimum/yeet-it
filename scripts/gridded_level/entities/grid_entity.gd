@@ -265,7 +265,7 @@ func _can_execute_movement(movement: Movement.MovementType, force: bool) -> bool
         ])
         return false
 
-    return !force && !_executing_conflicting_plan(movement)
+    return force || !_executing_conflicting_plan(movement)
 
 func complete_plan(plan: MovementPlannerBase.MovementPlan, continue_with_next: bool = true) -> void:
     @warning_ignore_start("return_value_discarded")
