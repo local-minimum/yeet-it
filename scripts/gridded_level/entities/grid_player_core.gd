@@ -99,7 +99,7 @@ func is_alive() -> bool:
     return true
 
 func kill() -> void:
-    pass
+    occupying_space = false
 
 func _input(event: InputEvent) -> void:
     if free_look == FreeLookMode.ACTIVE_BLOCKING:

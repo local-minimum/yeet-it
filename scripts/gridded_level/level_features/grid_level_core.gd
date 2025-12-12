@@ -168,7 +168,7 @@ func get_closest_grid_node_side_by_position(pos: Vector3) -> CardinalDirections.
 func can_coexist_with_inhabitants(entity: GridEntity, node: GridNode, passing_through: bool) -> bool:
     return occupancy_concurrency_restriction.can_coexist(
         entity,
-        Array(grid_entities.filter(func (e: GridEntity) -> bool: return e.coordinates() == node.coordinates), TYPE_OBJECT, "Node3D", GridEntity),
+        Array(grid_entities.filter(func (e: GridEntity) -> bool: return e.occupying_space && e.coordinates() == node.coordinates), TYPE_OBJECT, "Node3D", GridEntity),
         passing_through,
     )
 

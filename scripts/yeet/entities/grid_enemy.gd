@@ -76,6 +76,7 @@ func kill() -> void:
     _health = 0
     visible = false
     cause_cinematic(self)
+    occupying_space = false
 
 func is_alive() -> bool:
     return _health > 0

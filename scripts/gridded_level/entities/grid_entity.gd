@@ -41,6 +41,7 @@ func remove_cinematic_cause(cause: Node) -> void:
     if _cinematics.is_empty():
         __SignalBus.on_cinematic.emit(self, false)
 
+var occupying_space: bool = true
 
 ## Mid/core of entity
 @export var center: Node3D:
