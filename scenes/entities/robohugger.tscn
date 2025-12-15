@@ -1,14 +1,48 @@
-[gd_scene load_steps=13 format=3 uid="uid://dwyp8wg7aoahf"]
+[gd_scene load_steps=20 format=3 uid="uid://dwyp8wg7aoahf"]
 
 [ext_resource type="PackedScene" uid="uid://vb2hayc51nbm" path="res://models/entities/robohugger.blend" id="1_8o5j5"]
 [ext_resource type="Script" uid="uid://d1e0odws2w1g1" path="res://scripts/gridded_level/entities/movement_executor.gd" id="2_p03in"]
+[ext_resource type="Script" uid="uid://dpg80pakly0th" path="res://scripts/yeet/entities/enemy_attacks/enemy_melee_attack.gd" id="2_y4uxq"]
 [ext_resource type="Script" uid="uid://crv5isbs0cdmp" path="res://scripts/gridded_level/entities/movement_executor_settings.gd" id="3_y4uxq"]
+
+[sub_resource type="Resource" id="Resource_gyt0h"]
+script = ExtResource("2_y4uxq")
+metadata/_custom_type_script = "uid://dpg80pakly0th"
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_y8yd6"]
 size = Vector3(0.7022419, 0.57473373, 0.5724106)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_p03in"]
 size = Vector3(0.13919258, 0.13863754, 0.7375946)
+
+[sub_resource type="Curve" id="Curve_p03in"]
+_limits = [-1.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0.008196719, 1.6206224), 0.0, 0.0, 0, 0, Vector2(0.9897541, -0.63667345), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_y4uxq"]
+curve = SubResource("Curve_p03in")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jqxd4"]
+emission_shape = 1
+emission_sphere_radius = 0.1
+gravity = Vector3(0, 0, 0)
+tangential_accel_min = -2.2351742e-06
+tangential_accel_max = 0.49999776
+tangential_accel_curve = SubResource("CurveTexture_y4uxq")
+turbulence_noise_strength = 2.12
+turbulence_noise_scale = 1.246
+turbulence_noise_speed = Vector3(1, 1, 1)
+turbulence_noise_speed_random = 1.32
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gyt0h"]
+vertex_color_use_as_albedo = true
+albedo_color = Color(5.0055983e-06, 0.8062529, 0.906491, 1)
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_q77yw"]
+material = SubResource("StandardMaterial3D_gyt0h")
+size = Vector2(0.1, 0.03)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8o5j5"]
 size = Vector3(0.40076447, 0.38853455, 0.2501831)
@@ -114,6 +148,7 @@ metadata/_custom_type_script = "uid://crv5isbs0cdmp"
 [node name="robohugger" node_paths=PackedStringArray("_animator", "center", "executor") instance=ExtResource("1_8o5j5")]
 _max_health = 40
 _health = 40
+attack = SubResource("Resource_gyt0h")
 _stagger_chance_factor = 1.5
 _animator = NodePath("AnimationPlayer")
 center = NodePath("Body/Center")
@@ -136,11 +171,27 @@ shape = SubResource("BoxShape3D_y8yd6")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3336786, 0.63594884, -0.31163546)
 shape = SubResource("BoxShape3D_p03in")
 
+[node name="Sparcle Emitter" type="Node3D" parent="Body/Arm Left" index="1"]
+transform = Transform3D(1, 0, 0, 0, 0.9999994, 0, 0, 0, 0.9999994, 0.33157533, 0.6389886, -0.6078728)
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Body/Arm Left/Sparcle Emitter" index="0"]
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_jqxd4")
+draw_pass_1 = SubResource("QuadMesh_q77yw")
+
 [node name="StaticBody3D" type="StaticBody3D" parent="Body/Arm Right" index="0"]
 
 [node name="Collision Arm Right" type="CollisionShape3D" parent="Body/Arm Right/StaticBody3D" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3387366, 0.63594884, -0.31163546)
 shape = SubResource("BoxShape3D_p03in")
+
+[node name="Sparcle Emitter" type="Node3D" parent="Body/Arm Right" index="1"]
+transform = Transform3D(1, 0, 0, 0, 0.99999946, 0, 0, 0, 0.99999946, -0.33661085, 0.6389887, -0.60787284)
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Body/Arm Right/Sparcle Emitter" index="0"]
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_jqxd4")
+draw_pass_1 = SubResource("QuadMesh_q77yw")
 
 [node name="Head" parent="Body" index="3"]
 transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)

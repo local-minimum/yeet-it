@@ -6,6 +6,8 @@ class_name GridEnemy
 ## Current / start health
 @export var _health: int = 100
 
+@export var attack: EnemyAttack
+
 @export var _base_damage_per_hit: int = 10
 @export var _stagger_chance_factor: float = 1
 @export var _stagger_duration: float = 0.5
@@ -44,6 +46,9 @@ func _process(_delta: float) -> void:
     if !is_alive() || cinematic || Time.get_ticks_msec() < _next_move_allowed_time:
         return
 
+    if _do_attack():
+        return
+
     _next_move_allowed_time = roundi(_after_walk_wait * 1000.0) + Time.get_ticks_msec()
     if _move_target != null:
         var offset: Vector3i = _move_target.coordinates - coordinates()
@@ -62,8 +67,31 @@ func _process(_delta: float) -> void:
                     if yaw == direction:
                         move = Movement.MovementType.TURN_COUNTER_CLOCKWISE
 
-        if !force_movement(move):
+        elif !force_movement(move):
             push_warning("[Grid Enemy %s] Failed to enforce movement %s" % [name, Movement.name(move)])
+
+func _do_attack() -> bool:
+    if is_moving() || attack == null || _move_target == null || !attack.in_range(self, _move_target.coordinates):
+        return false
+
+    var targets: Array[GridEntity] = Array(
+        get_level().grid_entities.filter(
+            func (e: GridEntity) -> bool:
+                return attack.can_target(e) && attack.in_range(self, e.coordinates())),
+        TYPE_OBJECT,
+        "Node3D",
+        GridEntity,
+    )
+
+    if targets.is_empty():
+        return false
+
+
+    attack.execute_on(targets)
+    _next_move_allowed_time = Time.get_ticks_msec() + attack.cooldown_msec
+
+    return true
+
 
 
 func hurt(amount: int = 1) -> void:
