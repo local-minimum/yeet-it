@@ -67,7 +67,7 @@ func _process(_delta: float) -> void:
                     if yaw == direction:
                         move = Movement.MovementType.TURN_COUNTER_CLOCKWISE
 
-        elif !force_movement(move):
+        if !force_movement(move):
             push_warning("[Grid Enemy %s] Failed to enforce movement %s" % [name, Movement.name(move)])
 
 func _do_attack() -> bool:
@@ -77,7 +77,7 @@ func _do_attack() -> bool:
     var targets: Array[GridEntity] = Array(
         get_level().grid_entities.filter(
             func (e: GridEntity) -> bool:
-                return attack.can_target(e) && attack.in_range(self, e.coordinates())),
+                return e != self && attack.can_target(e) && attack.in_range(self, e.coordinates())),
         TYPE_OBJECT,
         "Node3D",
         GridEntity,
@@ -86,7 +86,7 @@ func _do_attack() -> bool:
     if targets.is_empty():
         return false
 
-
+    print_debug("[Grid Enemy %s] Attacking %s with %s" % [self, targets, attack])
     attack.execute_on(targets)
     _next_move_allowed_time = Time.get_ticks_msec() + attack.cooldown_msec
 

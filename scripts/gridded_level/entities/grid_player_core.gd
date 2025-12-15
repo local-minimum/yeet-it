@@ -99,6 +99,8 @@ func is_alive() -> bool:
     return true
 
 func kill() -> void:
+    cinematic = true
+    clear_queue()
     occupying_space = false
 
 func _input(event: InputEvent) -> void:
