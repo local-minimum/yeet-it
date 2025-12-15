@@ -3,6 +3,10 @@ class_name SignalBus
 
 @warning_ignore_start("unused_signal")
 
+# Fight
+signal on_hurt_entity(entity: GridEntity, previous_health: int, health: int, max_health: int)
+signal on_kill_entity(entity: GridEntity)
+
 # Loot
 signal on_open_container(container: LootContainer)
 signal on_close_container(container: LootContainer)

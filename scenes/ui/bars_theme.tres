@@ -1,0 +1,16 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://be4v3jle2gyc7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_elmnx"]
+bg_color = Color(0.9972562, 0.67424566, 0.7002712, 1)
+border_width_bottom = 2
+border_color = Color(0.9713765, 0.14832467, 0.36244833, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jixd2"]
+bg_color = Color(0.5803603, 0.029572882, 0.19571468, 1)
+border_width_bottom = 2
+border_color = Color(0.7883827, 0.06946132, 0.28009403, 1)
+
+[resource]
+DamageBar/base_type = &"ProgressBar"
+DamageBar/styles/fill = SubResource("StyleBoxFlat_elmnx")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_jixd2")

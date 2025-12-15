@@ -67,8 +67,11 @@ func _process(_delta: float) -> void:
 
 
 func hurt(amount: int = 1) -> void:
+    var previous_health: int = _health
     _health = maxi(0, _health - amount)
     print_debug("[Grid Enemy %s] Hurt for %s (health now %s)" % [name, amount, _health])
+    __SignalBus.on_hurt_entity.emit(self, previous_health, _health, _max_health)
+
     if _health == 0:
         kill()
 
@@ -77,6 +80,7 @@ func kill() -> void:
     visible = false
     cause_cinematic(self)
     occupying_space = false
+    __SignalBus.on_kill_entity.emit(self)
 
 func is_alive() -> bool:
     return _health > 0
