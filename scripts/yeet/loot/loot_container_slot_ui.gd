@@ -2,18 +2,29 @@ extends Control
 class_name LootContainerSlotUI
 
 signal on_slot_clicked(slot: LootContainerSlotUI)
+signal on_slot_updated(slot: LootContainerSlotUI)
 
-@export var _show_as_dragging_sq_dist: float =  10.0
+@export var _show_as_dragging_sq_dist: float =  20.0
 
 @export var _count_label: Label
 @export var _item_texture: TextureRect
 @export var _content_root: Control
+@export var _ruleset: LootSlotRuleset
 
+var interactable: bool = true
 var _paused: bool
 
 var loot_slot: LootSlot:
     set(value):
-        loot_slot = value
+        if loot_slot != value:
+            if loot_slot != null:
+                loot_slot.on_slot_content_updated.disconnect(_handle_loot_slot_content_updated)
+            if value != null && value.on_slot_content_updated.connect(_handle_loot_slot_content_updated) != OK:
+                push_error("Failed to connect to slot content updated")
+
+            loot_slot = value
+
+            on_slot_updated.emit(self)
         sync_slot()
 
 func sync_slot() -> void:
@@ -32,15 +43,22 @@ func sync_slot() -> void:
 
 var is_empty: bool:
     get():
-        return loot_slot == null || loot_slot.loot == null || loot_slot.count < 1
+        return loot_slot == null || loot_slot.empty
 
 static var _hovered: LootContainerSlotUI
 static var _dragged: LootContainerSlotUI
 static var _drag_origin: Vector2
 static var _shown_as_dragging: bool
 
+func _handle_loot_slot_content_updated() -> void:
+    on_slot_updated.emit(self)
+
 func _on_mouse_entered() -> void:
     if _paused:
+        return
+
+    if !interactable:
+        InputCursorHelper.add_state(self, InputCursorHelper.State.FORBIDDEN)
         return
 
     print_debug("[Slot UI %s] Hover enter" % name)
@@ -51,15 +69,29 @@ func _on_mouse_entered() -> void:
 
 func _on_mouse_exited() -> void:
     print_debug("[Slot UI %s] Hover exit" % name)
-    InputCursorHelper.remove_state(self, InputCursorHelper.State.HOVER)
+    InputCursorHelper.remove_node(self)
 
     if _hovered == self:
         _hovered = null
 
-
 var _active_slot: bool:
     get():
         return _hovered == self || _dragged == self
+
+func create_lootslot(loot: Loot, count: int =  1) -> void:
+    loot_slot = LootSlot.new()
+    loot_slot.loot = loot
+    loot_slot.count = count if count > 0 && loot != null else 0
+    sync_slot()
+
+func delay_reveal(slot: LootSlot, delay: float) -> void:
+    if slot == null:
+        loot_slot = slot
+        return
+
+    create_lootslot(null)
+    await get_tree().create_timer(delay).timeout
+    loot_slot = slot
 
 func show_content() -> void:
     _content_root.show()
@@ -133,7 +165,7 @@ func _adopt_dragged_loot() -> void:
         swap_loot_with(_dragged)
     elif loot_slot.loot == _dragged.loot_slot.loot:
         var stackable: int = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
-        if stackable > 0:
+        if stackable > 0 && allowed_transaction(_dragged):
             var transfer_count: int = mini(stackable, _dragged.loot_slot.count)
             loot_slot.count += transfer_count
             _dragged.loot_slot.count -= transfer_count
@@ -158,9 +190,12 @@ func _adopt_dragged_loot() -> void:
     if !is_empty:
         InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
 
+func allowed_transaction(other: LootContainerSlotUI) -> bool:
+    return _ruleset == null || _ruleset.accepts(self, other)
+
 func fill_up_with_loot_from(other: LootContainerSlotUI) -> bool:
     var stackable: int = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
-    if stackable > 0:
+    if stackable > 0 && allowed_transaction(other):
         var transfer_count: int = mini(stackable, other.loot_slot.count)
         loot_slot.count += transfer_count
         other.loot_slot.count -= transfer_count
@@ -171,6 +206,15 @@ func fill_up_with_loot_from(other: LootContainerSlotUI) -> bool:
 
 
 func swap_loot_with(other: LootContainerSlotUI) -> void:
+    if !allowed_transaction(other) || !other.allowed_transaction(self):
+        print_debug("[Slot UI %s] Cannot swap %s with %s because one of us refuses swaps" % [
+            self.name,
+            self.loot_slot.summarize(),
+            other.name
+        ])
+        _return_dragged_to_origin()
+        return
+
     print_debug("[Slot UI %s] Swapping %s with %s %s" % [
         self.name,
         self.loot_slot.summarize(),

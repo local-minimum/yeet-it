@@ -8,6 +8,7 @@ var _max_distance_sq: float = 2.5
 @export var category_id: String
 @export var ui_icon: Texture2D
 @export var slots: Array[LootSlot]
+@export var container_as_loot: Loot
 
 var localized_name: String:
     get():

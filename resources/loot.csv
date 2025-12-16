@@ -3,3 +3,5 @@ LOOT_BRICK_NAME,Brick,Tegelsten
 LOOT_BRICK_DESC,A standard orange block,En helt vanlig orange sten
 LOOT_PLAYING_CARD_NAME,Playing Card,Spelkort
 LOOT_PLAYING_CARD_DESC,"It is not the ace of weapons, but highly annoying when thrown properly","Det är inte kungen av kastvapen, men skitstörigt likväl"
+LOOT_EMPTY_BOX_NAME,Empty Box,Tom låda
+LOOT_EMPTY_BOX_DESC,It used to hold stuf,Den brukade ha saker i sig

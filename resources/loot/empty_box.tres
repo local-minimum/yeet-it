@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Loot" load_steps=4 format=3 uid="uid://up4cmnhddp6p"]
+
+[ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_2t3ui"]
+[ext_resource type="Texture2D" uid="uid://de5m3g8gqlso1" path="res://models/stuff/box.png" id="2_00eyf"]
+[ext_resource type="PackedScene" uid="uid://ddkudoe56bw31" path="res://scenes/loot/emtpy_box.tscn" id="3_20yiw"]
+
+[resource]
+script = ExtResource("1_2t3ui")
+id = "empty_box"
+world_model = ExtResource("3_20yiw")
+ui_texture = ExtResource("2_00eyf")
+cooldown = 2.0
+tags = Array[int]([7, 7, 3])
+metadata/_custom_type_script = "uid://crv68xkjq7tqq"

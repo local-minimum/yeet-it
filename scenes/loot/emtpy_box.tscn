@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://ddkudoe56bw31"]
+
+[ext_resource type="Script" uid="uid://bxvy8y3tnvw6b" path="res://scripts/yeet/loot/loot_projectile.gd" id="1_pwx6w"]
+[ext_resource type="PackedScene" uid="uid://dwcsrqhovcseu" path="res://models/stuff/box.blend" id="2_6vchb"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ugpdv"]
+size = Vector3(0.42181396, 0.27844238, 0.6072998)
+
+[node name="EmtpyBox" type="RigidBody3D"]
+mass = 5.0
+gravity_scale = 0.0
+script = ExtResource("1_pwx6w")
+throw_speed = 7.0
+max_flight_duration = 1.0
+metadata/_custom_type_script = "uid://bxvy8y3tnvw6b"
+
+[node name="box" parent="." instance=ExtResource("2_6vchb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12444657, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0020446777, 0.0138549805, -0.0005493164)
+shape = SubResource("BoxShape3D_ugpdv")

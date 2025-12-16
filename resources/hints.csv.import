@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://coixpwl3fvpm7"
+
+[deps]
+
+files=["res://resources/hints.en.translation", "res://resources/hints.sv.translation"]
+
+source_file="res://resources/hints.csv"
+dest_files=["res://resources/hints.en.translation", "res://resources/hints.sv.translation"]
+
+[params]
+
+compress=true
+delimiter=0
