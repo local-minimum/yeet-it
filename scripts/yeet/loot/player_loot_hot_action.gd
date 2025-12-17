@@ -127,8 +127,11 @@ func _find_entity_target(player: GridPlayer) -> GridEntity:
 
         print_debug("[Hot Action %s] Looking for entities at %s" % [hot_key_index, coords])
         for entity: GridEntity in _level.grid_entities:
-            if entity is GridEnemyCore && entity.coordinates() == coords:
+
+            if entity is GridEnemy && entity.coordinates() == coords:
                 var enemy: GridEnemy = entity
+                if !enemy.is_alive():
+                    continue
                 caster.target_position = player.caster.to_local(enemy.center.global_position)
                 caster.force_raycast_update()
                 if caster.is_colliding():

@@ -17,6 +17,7 @@ class_name GridEnemy
 @export var _animator: AnimationPlayer
 @export var _anim_idle: String = "Idle"
 @export var _anim_stagger: String = "Stagger"
+@export var _anim_kill: String = "Kill"
 
 
 var _next_move_allowed_time: int:
@@ -105,10 +106,11 @@ func hurt(amount: int = 1) -> void:
 
 func kill() -> void:
     _health = 0
-    visible = false
     cause_cinematic(self)
     occupying_space = false
     __SignalBus.on_kill_entity.emit(self)
+    if _animator != null:
+        _animator.play(_anim_kill)
 
 func is_alive() -> bool:
     return _health > 0
@@ -122,8 +124,8 @@ func take_hit(tags: Array[Loot.Tag]) -> void:
             damage *= 1.5
 
     var stagger: bool = randf_range(0, _max_health) < damage * _stagger_chance_factor
+    print_debug("[Grid Enemy %s] Hit for %s DMG%s" % [name, roundi(damage), "; Stagger" if stagger else ""])
     if stagger:
-        print_debug("[Grid Enemy %s] Staggered" % name)
 
         if _animator != null:
             _animator.play(_anim_stagger)
