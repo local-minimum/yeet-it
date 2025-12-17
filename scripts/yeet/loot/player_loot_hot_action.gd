@@ -88,6 +88,7 @@ func _throw_body(body: LootProjectile, loot: Loot, player: GridPlayer) -> void:
 
     var target: Vector3 = _get_throw_target(player)
 
+    body.name = loot.id
     body.launch(loot.tags, (target - body.global_position).normalized())
 
 func _get_throw_target(player: GridPlayer) -> Vector3:

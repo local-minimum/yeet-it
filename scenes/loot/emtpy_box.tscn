@@ -9,6 +9,7 @@ size = Vector3(0.42181396, 0.27844238, 0.6072998)
 [node name="EmtpyBox" type="RigidBody3D"]
 mass = 5.0
 gravity_scale = 0.0
+contact_monitor = true
 script = ExtResource("1_pwx6w")
 throw_speed = 7.0
 max_flight_duration = 1.0

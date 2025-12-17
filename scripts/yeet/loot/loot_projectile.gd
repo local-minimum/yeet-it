@@ -10,7 +10,7 @@ class_name LootProjectile
 @export var max_flight_duration: float = 2
 
 func _on_body_entered(body: Node) -> void:
-    print_debug("[Loot Projectile %s] Smacked into %s" % [name, body])
+    print_debug("[Loot Projectile %s] Smacked into %s of %s" % [name, body, body.get_parent()])
     var entity: GridEntity = GridEntity.find_entity_parent(body, true)
     if entity is GridEnemy:
         var enemy: GridEnemy = entity
@@ -32,5 +32,13 @@ func launch(tags: Array[Loot.Tag], direction: Vector3) -> void:
     await get_tree().create_timer(1).timeout
     crash()
 
+var _crashed: bool
 func crash() -> void:
+    if _crashed:
+        return
+
+    _crashed = true
+    print_debug("[Loot Projectile %s] Crashing!" % [name])
+    await get_tree().create_timer(0.5).timeout
+    print_debug("[Loot Projectile %s] Freeing" % [name])
     queue_free()

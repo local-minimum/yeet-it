@@ -30,7 +30,7 @@ func set_grid_node(node: GridNode, _deferred: bool = false) -> void:
         anchor = null
     _node = node
 
-    print_debug("Entity %s is now at %s in the air" % [name, coordinates()])
+    print_debug("[Grid Node Feature %s] Now at %s in the air" % [name, coordinates()])
 
     if !_inited:
         _inited = true
@@ -48,13 +48,13 @@ func get_grid_anchor_direction() -> CardinalDirections.CardinalDirection:
 
 func set_grid_anchor(new_anchor: GridAnchor, _deferred: bool = false) -> void:
     if new_anchor == null:
-        push_warning("%s attempted to anchor to null" % self)
+        push_warning("[Grid Node Feature %s] Attempted to anchor to null" % self)
         return
 
     anchor = new_anchor
     _node = anchor.get_grid_node()
 
-    print_debug("Entity %s is now at %s %s" % [name, coordinates(), CardinalDirections.name(anchor.direction)])
+    print_debug("[Grid Node Feature %s] is now at %s %s" % [name, coordinates(), CardinalDirections.name(anchor.direction)])
 
     if !_inited:
         _inited = true
@@ -64,7 +64,7 @@ func set_grid_anchor(new_anchor: GridAnchor, _deferred: bool = false) -> void:
 
 func coordinates() -> Vector3i:
     if _node == null:
-        push_error("Entity %s isn't at a node, accessing its coordinates makes no sense" % name)
+        push_error("[Grid Node Feature %s] Isn't at a node, accessing its coordinates makes no sense" % name)
         print_stack()
         return Vector3i.ZERO
 
