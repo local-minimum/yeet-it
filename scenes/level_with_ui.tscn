@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://di3gn5h4u8hpg"]
+[gd_scene load_steps=15 format=3 uid="uid://di3gn5h4u8hpg"]
 
 [ext_resource type="PackedScene" uid="uid://c6rml76oe0t15" path="res://scenes/level.tscn" id="1_7im60"]
 [ext_resource type="Script" uid="uid://bvqfk07xb2q3f" path="res://scripts/ui/interaction_ui.gd" id="2_6677a"]
@@ -6,9 +6,11 @@
 [ext_resource type="Script" uid="uid://77nh0gjhx8lb" path="res://scripts/ui/interaction_ui_viz_outline.gd" id="3_nkn4f"]
 [ext_resource type="PackedScene" uid="uid://rllj05ukwjgg" path="res://scenes/ui/loot_container_ui.tscn" id="5_jixd2"]
 [ext_resource type="PackedScene" uid="uid://foxx08vvcu10" path="res://scenes/ui/player_loot_bar.tscn" id="6_oopir"]
+[ext_resource type="Script" uid="uid://da4w51cswbfcb" path="res://scripts/yeet/loot/trashbin.gd" id="7_yymii"]
 [ext_resource type="LabelSettings" uid="uid://dx8tttrmii71q" path="res://scenes/ui/loot_label_settings.tres" id="8_mprp7"]
 [ext_resource type="Script" uid="uid://c11ypqdp7r3i6" path="res://scripts/yeet/loot/dragged_loot.gd" id="10_cnq33"]
 [ext_resource type="Texture2D" uid="uid://bt2orqv6wbwd4" path="res://models/stuff/playing_card.png" id="10_oopir"]
+[ext_resource type="Texture2D" uid="uid://d3k12h05lafs1" path="res://icon.svg" id="10_ork8t"]
 [ext_resource type="Theme" uid="uid://be4v3jle2gyc7" path="res://scenes/ui/bars_theme.tres" id="10_oxpuh"]
 [ext_resource type="Script" uid="uid://bivs4swr75suc" path="res://scripts/yeet/health_bar.gd" id="10_yymii"]
 
@@ -48,6 +50,42 @@ layer = 50
 [node name="Loot Container UI" parent="Loot UI" instance=ExtResource("5_jixd2")]
 
 [node name="Player Loot Bar" parent="Loot UI" instance=ExtResource("6_oopir")]
+
+[node name="Trashing Panel" type="PanelContainer" parent="Loot UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -127.0
+offset_right = 147.0
+offset_bottom = -20.0
+grow_vertical = 0
+script = ExtResource("7_yymii")
+
+[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Trashing Panel"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="Loot UI/Trashing Panel/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "ACTION_TRASH"
+label_settings = ExtResource("8_mprp7")
+horizontal_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="Loot UI/Trashing Panel"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="Loot UI/Trashing Panel/CenterContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_ork8t")
+expand_mode = 1
+stretch_mode = 4
 
 [node name="Dragged Slot" type="Control" parent="Loot UI" node_paths=PackedStringArray("icon", "count_label")]
 visible = false
@@ -130,3 +168,6 @@ size_flags_vertical = 1
 theme = ExtResource("10_oxpuh")
 value = 40.0
 show_percentage = false
+
+[connection signal="mouse_entered" from="Loot UI/Trashing Panel" to="Loot UI/Trashing Panel" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Loot UI/Trashing Panel" to="Loot UI/Trashing Panel" method="_on_mouse_exited"]
