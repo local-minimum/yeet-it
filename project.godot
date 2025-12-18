@@ -142,3 +142,7 @@ hot_key_3={
 [internationalization]
 
 locale/translations=PackedStringArray("res://resources/loot.en.translation", "res://resources/loot.sv.translation", "res://resources/containers.en.translation", "res://resources/containers.sv.translation", "res://resources/hints.en.translation", "res://resources/hints.sv.translation", "res://resources/actions.en.translation", "res://resources/actions.sv.translation")
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
