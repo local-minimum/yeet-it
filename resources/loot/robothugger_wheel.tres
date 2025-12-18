@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Loot" load_steps=4 format=3 uid="uid://dmmetds0omf2r"]
+
+[ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_wcyyu"]
+[ext_resource type="Texture2D" uid="uid://6lownnnktjvr" path="res://models/entities/robothugger_wheel.png" id="2_wcyyu"]
+[ext_resource type="PackedScene" uid="uid://4r362o7nuor2" path="res://scenes/loot/robothugger_wheel.tscn" id="3_lhe78"]
+
+[resource]
+script = ExtResource("1_wcyyu")
+id = "robothugger_wheel"
+stack_size = 2
+world_model = ExtResource("3_lhe78")
+ui_texture = ExtResource("2_wcyyu")
+cooldown = 3.0
+tags = Array[int]([7, 7, 1, 11])
+metadata/_custom_type_script = "uid://crv68xkjq7tqq"

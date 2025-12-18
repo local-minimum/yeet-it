@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://t6phdrexfcdl"]
+
+[ext_resource type="Script" uid="uid://bxvy8y3tnvw6b" path="res://scripts/yeet/loot/loot_projectile.gd" id="1_vrw1q"]
+[ext_resource type="PackedScene" uid="uid://dnbem6s2ch2jn" path="res://models/entities/robothugger_head.blend" id="2_w5jgs"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bvy5f"]
+size = Vector3(0.40533447, 0.3951416, 0.25732422)
+
+[node name="RobotHugger Head" type="RigidBody3D"]
+gravity_scale = 0.0
+script = ExtResource("1_vrw1q")
+throw_speed = 7.0
+metadata/_custom_type_script = "uid://bxvy8y3tnvw6b"
+
+[node name="robothugger_head" parent="." instance=ExtResource("2_w5jgs")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0015563965, 0.00079345703, 0.0007324219)
+shape = SubResource("BoxShape3D_bvy5f")

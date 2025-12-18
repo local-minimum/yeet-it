@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Loot" load_steps=4 format=3 uid="uid://ef33pq2utgfd"]
+
+[ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_xjucm"]
+[ext_resource type="Texture2D" uid="uid://cxspb61w3gecc" path="res://models/entities/robothugger_body.png" id="2_xjucm"]
+[ext_resource type="PackedScene" uid="uid://brq4t1efwv4qf" path="res://scenes/loot/robothugger_body.tscn" id="3_4ymws"]
+
+[resource]
+script = ExtResource("1_xjucm")
+id = "robothugger_body"
+world_model = ExtResource("3_4ymws")
+ui_texture = ExtResource("2_xjucm")
+cooldown = 5.0
+tags = Array[int]([7, 7, 7, 3, 11])
+metadata/_custom_type_script = "uid://crv68xkjq7tqq"
