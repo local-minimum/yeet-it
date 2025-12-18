@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c6rml76oe0t15"]
+[gd_scene load_steps=31 format=3 uid="uid://c6rml76oe0t15"]
 
 [ext_resource type="Script" uid="uid://c74xugjiqdyyk" path="res://scripts/gridded_level/level_features/grid_level_core.gd" id="1_2q6dc"]
 [ext_resource type="Script" uid="uid://b5guu22x6ddn5" path="res://scripts/gridded_level/level_features/concurrency_restrictions/only_one_entity_restriction.gd" id="2_8gofh"]
@@ -46,6 +46,9 @@ metadata/_custom_type_script = "uid://crv5isbs0cdmp"
 script = ExtResource("9_8iemx")
 type = 3
 metadata/_custom_type_script = "uid://dsq3qb6waenpd"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8gofh"]
+size = Vector3(0.3996582, 0.030349731, 1.0053711)
 
 [sub_resource type="Resource" id="Resource_gunhw"]
 script = ExtResource("3_2r41h")
@@ -249,6 +252,12 @@ transform = Transform3D(-0.11862926, 0, -0.99293864, 0, 1, 0, 0.99293864, 0, -0.
 
 [node name="shelf" parent="Geometry/Elevation 0/Node (1, 0, -4)" instance=ExtResource("18_h6wmr")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 1.0248576, -0.9506235)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/shelf"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Geometry/Elevation 0/Node (1, 0, -4)/shelf/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0018310547, -0.010246277, -0.0026855469)
+shape = SubResource("BoxShape3D_8gofh")
 
 [node name="Node (0, 0, -4)" parent="Geometry/Elevation 0" instance=ExtResource("7_wc255")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)

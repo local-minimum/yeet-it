@@ -82,15 +82,17 @@ func _enact_throw() -> void:
     _animate_cooldown()
 
 func _throw_body(body: LootProjectile, loot: Loot, player: GridPlayer) -> void:
-    _level.add_child(body)
-
     var player_right: CardinalDirections.CardinalDirection = CardinalDirections.yaw_cw(player.look_direction, player.down)[0]
     body.global_position = player.center.global_position + CardinalDirections.direction_to_vector(player_right) * throw_lateral_offset
+
+    # Adding as child has to be after global postion set and before launching!
+    _level.add_child(body)
 
     var target: Vector3 = _get_throw_target(player)
 
     body.name = loot.id
     body.launch(loot.tags, (target - body.global_position).normalized())
+
 
 func _get_throw_target(player: GridPlayer) -> Vector3:
     var entity_target: GridEntity = _find_entity_target(player)
