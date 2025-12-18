@@ -103,24 +103,16 @@ func _handle_open_container(loot_container: LootContainer) -> void:
 
     var idx: int = 0
     var has_content: bool
-    var delay_start_idx: int = loot_container.slots_revealed
     if loot_container is LootContainerCorpse:
         var corpse_container: LootContainerCorpse = loot_container
         for world_slot: LootSlotWorld in corpse_container.world_slots:
             var ui: LootContainerSlotUI = _get_slot_ui(idx, true)
-            if idx < loot_container.slots_revealed:
-                ui.loot_slot = world_slot.slot
-            else:
-                ui.delay_reveal(
-                    world_slot.slot,
-                    delay_time * (idx - delay_start_idx + 1),
-                    _is_looting,
-                    func () -> void:
-                        loot_container.slots_revealed = maxi(loot_container.slots_revealed, idx + 1)
-                )
+            ui.loot_slot = world_slot.slot
+            loot_container.slots_revealed = maxi(loot_container.slots_revealed, idx + 1)
             idx += 1
             has_content = has_content || !world_slot.slot.empty
 
+    var delay_start_idx: int = loot_container.slots_revealed
     for slot: LootSlot in loot_container.slots:
         var ui: LootContainerSlotUI = _get_slot_ui(idx)
         if idx < loot_container.slots_revealed:
@@ -137,7 +129,7 @@ func _handle_open_container(loot_container: LootContainer) -> void:
         has_content = has_content || !slot.empty
 
     _config_container_as_loot(loot_container.container_as_loot, !has_content)
-    await get_tree().create_timer(delay_time * idx).timeout
+    await get_tree().create_timer(delay_time * (idx - delay_start_idx)).timeout
     _updating_slots = false
     _handle_slot_updated(null)
 

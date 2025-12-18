@@ -48,6 +48,7 @@ metadata/_custom_type_script = "uid://bvqfk07xb2q3f"
 layer = 150
 
 [node name="Loot Container UI" parent="Mid UI" instance=ExtResource("5_jixd2")]
+delay_time = 0.1
 
 [node name="Player Loot Bar" parent="Mid UI" instance=ExtResource("6_oopir")]
 
