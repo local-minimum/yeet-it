@@ -84,14 +84,16 @@ func create_lootslot(loot: Loot, count: int =  1) -> void:
     loot_slot.count = count if count > 0 && loot != null else 0
     sync_slot()
 
-func delay_reveal(slot: LootSlot, delay: float) -> void:
+func delay_reveal(slot: LootSlot, delay: float, check_still_open: Callable, after_reveal: Callable) -> void:
     if slot == null:
         loot_slot = slot
         return
 
     create_lootslot(null)
     await get_tree().create_timer(delay).timeout
-    loot_slot = slot
+    if check_still_open.call():
+        loot_slot = slot
+        after_reveal.call()
 
 func show_content() -> void:
     _content_root.show()

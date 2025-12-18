@@ -39,6 +39,9 @@ func _unhandled_input(event: InputEvent) -> void:
 func _handle_level_pause(_level: GridLevelCore, paused: bool) -> void:
     _paused = paused
 
+func _is_looting() -> bool:
+    return visible && _container != null
+
 func _get_slot_ui(idx: int, locked: bool = false) -> LootContainerSlotUI:
     var ui: LootContainerSlotUI = null
     if idx < _slots.size():
@@ -100,17 +103,36 @@ func _handle_open_container(loot_container: LootContainer) -> void:
 
     var idx: int = 0
     var has_content: bool
+    var delay_start_idx: int = loot_container.slots_revealed
     if loot_container is LootContainerCorpse:
         var corpse_container: LootContainerCorpse = loot_container
         for world_slot: LootSlotWorld in corpse_container.world_slots:
             var ui: LootContainerSlotUI = _get_slot_ui(idx, true)
-            ui.delay_reveal(world_slot.slot, delay_time * (idx + 1))
+            if idx < loot_container.slots_revealed:
+                ui.loot_slot = world_slot.slot
+            else:
+                ui.delay_reveal(
+                    world_slot.slot,
+                    delay_time * (idx - delay_start_idx + 1),
+                    _is_looting,
+                    func () -> void:
+                        loot_container.slots_revealed = maxi(loot_container.slots_revealed, idx + 1)
+                )
             idx += 1
             has_content = has_content || !world_slot.slot.empty
 
     for slot: LootSlot in loot_container.slots:
         var ui: LootContainerSlotUI = _get_slot_ui(idx)
-        ui.delay_reveal(slot, delay_time * (idx + 1))
+        if idx < loot_container.slots_revealed:
+            ui.loot_slot = slot
+        else:
+            ui.delay_reveal(
+                slot,
+                delay_time * (idx - delay_start_idx + 1),
+                _is_looting,
+                func () -> void:
+                    loot_container.slots_revealed = maxi(loot_container.slots_revealed, idx + 1)
+            )
         idx += 1
         has_content = has_content || !slot.empty
 

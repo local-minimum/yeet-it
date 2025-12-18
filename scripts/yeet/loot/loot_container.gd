@@ -11,6 +11,8 @@ var _level: GridLevelCore
 @export var slots: Array[LootSlot]
 @export var container_as_loot: Loot
 
+var slots_revealed: int
+
 var localized_name: String:
     get():
         return tr("CONTAINER_%s_NAME" % category_id.to_upper().strip_edges().replace(" ", "_"))
@@ -94,3 +96,14 @@ func execute_interation() -> void:
 func remove_container() -> void:
     visible = false
     is_interactable = false
+    disable_physics_in_children(self)
+
+
+func disable_physics_in_children(root: Node3D) -> void:
+    print_debug("[Loot Container %s] Disabled physics in %s" % [self, root])
+    print_stack()
+    for shape: CollisionShape3D in root.find_children("", "CollsionShape3D"):
+        shape.disabled = true
+
+    for body: PhysicsBody3D in root.find_children("", "PhysicsBody3D"):
+        body.process_mode = Node.PROCESS_MODE_DISABLED

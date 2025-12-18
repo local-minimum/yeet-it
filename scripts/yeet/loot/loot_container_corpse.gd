@@ -12,6 +12,7 @@ func remove_container() -> void:
     super.remove_container()
     if corpse_root != null:
         corpse_root.hide()
+        disable_physics_in_children(corpse_root)
 
 func get_world_slot(slot: LootSlot) -> LootSlotWorld:
     for world_slot: LootSlotWorld in world_slots:

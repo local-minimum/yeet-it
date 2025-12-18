@@ -155,3 +155,9 @@ static func all_surrounding_coordinates(start: Vector3i, size: Vector3i, corners
         res.append(Vector3i(max_x + 1, max_y + 1, max_z + 1))
 
     return res
+
+static func apply_random_rotation_to_direction(direction: Vector3, axis_rng_angle_amount: float) -> Vector3:
+    direction = Transform3D.IDENTITY.rotated(Vector3.UP, randf_range(-axis_rng_angle_amount, axis_rng_angle_amount)) * direction
+    direction = Transform3D.IDENTITY.rotated(Vector3.LEFT, randf_range(-axis_rng_angle_amount, axis_rng_angle_amount)) * direction
+    direction = Transform3D.IDENTITY.rotated(Vector3.FORWARD, randf_range(-axis_rng_angle_amount, axis_rng_angle_amount)) * direction
+    return direction

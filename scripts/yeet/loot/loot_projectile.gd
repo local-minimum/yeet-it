@@ -9,6 +9,10 @@ class_name LootProjectile
 ## Dictates how long the item can be flying
 @export var max_flight_duration: float = 2
 
+const crash_bounce_fudge_angle: float = 0.5
+const crash_energy_scale: float = 0.005
+const crash_gravity_scale: float = 1.25
+
 func _on_body_entered(body: Node) -> void:
     if _crashed:
         return
@@ -19,23 +23,22 @@ func _on_body_entered(body: Node) -> void:
         var enemy: GridEnemy = entity
         enemy.take_hit(_tags)
 
-    gravity_scale = 1.25
+    gravity_scale = crash_gravity_scale
 
     if _in_contact:
-        var energy: float = 0.5 * mass * throw_speed # pow(throw_speed, 2)
         var contact_position: Vector3 = to_global(_contact_center)
         var impulse_direction: Vector3 = _contact_center.normalized() * -1
-        var fudge: float = 0.5
-        impulse_direction = Transform3D.IDENTITY.rotated(Vector3.UP, randf_range(-fudge, fudge)) * impulse_direction
-        impulse_direction = Transform3D.IDENTITY.rotated(Vector3.LEFT, randf_range(-fudge, fudge)) * impulse_direction
-        impulse_direction = Transform3D.IDENTITY.rotated(Vector3.FORWARD, randf_range(-fudge, fudge)) * impulse_direction
+        impulse_direction = VectorUtils.apply_random_rotation_to_direction(impulse_direction, crash_bounce_fudge_angle)
+
+        # TODO: This doesn't make sense but hey decent enough
+        var energy: float = 0.5 * mass * throw_speed # pow(throw_speed, 2)
         print_debug("[Loot Projectile %s] Gains impulse based on %s energy applied at %s in %s direction" % [
             name,
             energy,
             contact_position,
             impulse_direction,
         ])
-        apply_impulse(impulse_direction * energy * 0.01, contact_position)
+        apply_impulse(impulse_direction * energy * crash_energy_scale, contact_position)
     crash()
 
 var _in_contact: bool
@@ -85,7 +88,7 @@ func launch(tags: Array[Loot.Tag], direction: Vector3) -> void:
 
     await get_tree().create_timer(max_flight_duration).timeout
     if !_crashed:
-        gravity_scale = 1.25
+        gravity_scale = crash_gravity_scale
         await get_tree().create_timer(1).timeout
 
         crash()
@@ -98,8 +101,8 @@ func crash() -> void:
     _crashed = true
     print_debug("[Loot Projectile %s] Crashing!" % [name])
     await get_tree().create_timer(0.5).timeout
-    linear_damp = 2
-    angular_damp = 10
+    linear_damp = 10
+    angular_damp = 30
 
     await get_tree().create_timer(10).timeout
     print_debug("[Loot Projectile %s] Freeing" % [name])
