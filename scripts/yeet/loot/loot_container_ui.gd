@@ -74,15 +74,15 @@ func _handle_quick_tranfer_loot(from: LootContainerSlotUI) -> void:
 
     if visible && !_slots.has(from) && from != contaier_as_loot_slot:
         for slot: LootContainerSlotUI in _slots:
-            if slot.is_empty:
-                slot.swap_loot_with(from)
-                return
-
-        for slot: LootContainerSlotUI in _slots:
             if slot.loot_slot.loot == from.loot_slot.loot:
                 if slot.fill_up_with_loot_from(from):
                     if from.is_empty:
-                        break
+                        return
+
+        for slot: LootContainerSlotUI in _slots:
+            if slot.is_empty:
+                slot.swap_loot_with(from)
+                return
     else:
         print_debug("[Loot Container UI %s] %s not for me because visible=%s or my slot %s" % [
             name, from, visible, _slots.has(from),

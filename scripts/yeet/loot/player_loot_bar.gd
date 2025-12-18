@@ -20,12 +20,12 @@ func _handle_quick_tranfer_loot(from: LootContainerSlotUI) -> void:
 
     if visible && !ui_slots.has(from):
         for slot: LootContainerSlotUI in ui_slots:
-            if slot.is_empty:
-                slot.swap_loot_with(from)
-                return
-
-        for slot: LootContainerSlotUI in ui_slots:
             if slot.loot_slot.loot == from.loot_slot.loot:
                 if slot.fill_up_with_loot_from(from):
                     if from.is_empty:
-                        break
+                        return
+
+        for slot: LootContainerSlotUI in ui_slots:
+            if slot.is_empty:
+                slot.swap_loot_with(from)
+                return
