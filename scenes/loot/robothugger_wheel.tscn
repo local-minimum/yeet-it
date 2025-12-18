@@ -10,6 +10,8 @@ radius = 0.23339844
 [node name="RobotHugger Wheel" type="RigidBody3D"]
 mass = 0.7
 gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 4
 script = ExtResource("1_0h5pk")
 throw_speed = 7.0
 metadata/_custom_type_script = "uid://bxvy8y3tnvw6b"

@@ -576,3 +576,7 @@ metadata/_custom_type_script = "uid://c2p88kl0crvig"
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08331299, 0.29882813, 0.20837402)
 shape = SubResource("BoxShape3D_je7rx")
+
+[connection signal="input_event" from="StaticBody3D" to="LootContainerCorpse" method="_on_static_body_3d_input_event"]
+[connection signal="mouse_entered" from="StaticBody3D" to="LootContainerCorpse" method="_on_static_body_3d_mouse_entered"]
+[connection signal="mouse_exited" from="StaticBody3D" to="LootContainerCorpse" method="_on_static_body_3d_mouse_exited"]

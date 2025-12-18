@@ -8,6 +8,8 @@ size = Vector3(0.70874023, 0.55615234, 0.56359863)
 
 [node name="Robothugger Body" type="RigidBody3D"]
 gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 4
 script = ExtResource("1_c5stw")
 throw_speed = 5.0
 angular_speed = 0.2

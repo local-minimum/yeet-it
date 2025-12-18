@@ -28,8 +28,8 @@ script = ExtResource("3_kayte")
 required_transportation_mode = SubResource("Resource_61ncy")
 metadata/_custom_type_script = "uid://bsjvh2o2oob57"
 
-[node name="RigidBody3D" type="RigidBody3D" parent="."]
+[node name="StaticBody" type="StaticBody3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016021729, 0.049819946, 0.004272461)
 shape = SubResource("BoxShape3D_kayte")

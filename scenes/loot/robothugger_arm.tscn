@@ -8,6 +8,8 @@ size = Vector3(0.14678955, 0.13574219, 0.7319336)
 
 [node name="RobotHugger Arm" type="RigidBody3D"]
 gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 4
 script = ExtResource("1_xdyaa")
 throw_speed = 7.0
 metadata/_custom_type_script = "uid://bxvy8y3tnvw6b"

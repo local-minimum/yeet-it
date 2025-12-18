@@ -13,7 +13,7 @@ var _level: GridLevelCore
 
 var localized_name: String:
     get():
-        return tr("CONTAINER_%s_NAME" % category_id.to_upper())
+        return tr("CONTAINER_%s_NAME" % category_id.to_upper().strip_edges().replace(" ", "_"))
 
 var player: GridPlayerCore:
     get():
