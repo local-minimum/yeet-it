@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_8hbtx"]
 [ext_resource type="Texture2D" uid="uid://b3k677hwb2b1d" path="res://models/entities/robothugger_arm.png" id="2_8hbtx"]
-[ext_resource type="PackedScene" uid="uid://dld3gld7e7n6d" path="res://models/entities/robohugger_arm.blend" id="3_87h0f"]
+[ext_resource type="PackedScene" uid="uid://c1mojhan61lna" path="res://scenes/loot/robothugger_arm.tscn" id="3_8hbtx"]
 
 [resource]
 script = ExtResource("1_8hbtx")
 id = "robothugger_arm"
-world_model = ExtResource("3_87h0f")
+world_model = ExtResource("3_8hbtx")
 ui_texture = ExtResource("2_8hbtx")
 cooldown = 3.0
 tags = Array[int]([7, 7, 3, 11])

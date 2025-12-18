@@ -102,7 +102,7 @@ func _handle_move_end(entity: GridEntity) -> void:
         return
 
     _moving = false
-    _interacting = _requested
+    _interacting = _requested && !_calculate_within_reach().is_empty()
     _requested = false
 
     if _interacting:
@@ -144,7 +144,7 @@ func _input(event: InputEvent) -> void:
         if _moving:
             _requested = true
             print_debug("[Interaction UI] Requested %s" % _requested)
-        else:
+        elif _interacting || !_calculate_within_reach().is_empty():
             _interacting = !_interacting
             print_debug("[Interaction UI] Interaction %s" % _interacting)
             queue_redraw()

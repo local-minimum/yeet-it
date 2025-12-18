@@ -2,7 +2,8 @@ extends Interactable
 class_name LootContainer
 
 var _level: GridLevelCore
-var _max_distance_sq: float = 2.5
+@export var _interact_min_distance_sq: float = 0.0
+@export var _interact_max_distance_sq: float = 2.5
 
 ## Used for look up of
 @export var category_id: String
@@ -60,12 +61,23 @@ func _handle_close_container(container: LootContainer) -> void:
 
 func _in_range(_event_position: Vector3) -> bool:
     var p: GridPlayerCore = player
-
+    var d: float = global_position.distance_squared_to(p.center.global_position)
+    print_debug("[Loot Container %s] In Range of %s: cinematic %s / looking %s == %s/ distance sq %s < %s / in frustrum %s" % [
+        name,
+        p,
+        p.cinematic,
+        GridPlayerCore.FreeLookMode.find_key(p.free_look),
+        GridPlayerCore.FreeLookMode.find_key(GridPlayerCore.FreeLookMode.INACTIVE),
+        d,
+        _interact_max_distance_sq,
+        p.camera.is_position_in_frustum(global_position)
+    ])
     return (
         p!= null &&
         !p.cinematic &&
         p.free_look == GridPlayerCore.FreeLookMode.INACTIVE &&
-        global_position.distance_squared_to(p.center.global_position) < _max_distance_sq &&
+        d > _interact_min_distance_sq &&
+        d < _interact_max_distance_sq &&
         p.camera.is_position_in_frustum(global_position)
     )
 
@@ -78,3 +90,7 @@ func execute_interation() -> void:
         p.cause_cinematic(self)
 
     __SignalBus.on_open_container.emit(self)
+
+func remove_container() -> void:
+    visible = false
+    is_interactable = false

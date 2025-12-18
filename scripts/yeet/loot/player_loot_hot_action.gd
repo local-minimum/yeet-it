@@ -75,8 +75,9 @@ func _enact_throw() -> void:
         var body: LootProjectile = projectile
         _throw_body(body, loot, _level.player as GridPlayer)
     else:
-        push_error("[Hot Action %s] Instanced loot '%s':s world object is not a loot projectile %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id, projectile])
-        projectile.queue_free()
+        push_error("[Hot Action %s] Instanced %s:s world object is not a loot projectile %s" % [hot_key_index, loot_slot_ui.loot_slot.summarize(), projectile])
+        if projectile != null:
+            projectile.queue_free()
 
     _animate_cooldown()
 

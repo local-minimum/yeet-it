@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://dwyp8wg7aoahf"]
+[gd_scene load_steps=36 format=3 uid="uid://dwyp8wg7aoahf"]
 
 [ext_resource type="PackedScene" uid="uid://vb2hayc51nbm" path="res://models/entities/robohugger.blend" id="1_8o5j5"]
 [ext_resource type="Script" uid="uid://d1e0odws2w1g1" path="res://scripts/gridded_level/entities/movement_executor.gd" id="2_p03in"]
@@ -10,6 +10,8 @@
 [ext_resource type="Resource" uid="uid://cp76mwofj01xu" path="res://resources/loot/robothugger_arm.tres" id="6_sq0sw"]
 [ext_resource type="Resource" uid="uid://5agj7bd7ofac" path="res://resources/loot/robothugger_head.tres" id="7_312cj"]
 [ext_resource type="Resource" uid="uid://dmmetds0omf2r" path="res://resources/loot/robothugger_wheel.tres" id="8_jqfw6"]
+[ext_resource type="Script" uid="uid://c2p88kl0crvig" path="res://scripts/yeet/loot/loot_container_corpse.gd" id="11_dwk37"]
+[ext_resource type="Texture2D" uid="uid://b2ibaha8gwd6b" path="res://models/entities/robothugger_corpse.png" id="12_je7rx"]
 
 [sub_resource type="Resource" id="Resource_gyt0h"]
 script = ExtResource("2_y4uxq")
@@ -444,10 +446,14 @@ script = ExtResource("3_y4uxq")
 tank_movement = true
 metadata/_custom_type_script = "uid://crv5isbs0cdmp"
 
-[node name="robohugger" node_paths=PackedStringArray("_animator", "center", "executor") instance=ExtResource("1_8o5j5")]
+[sub_resource type="BoxShape3D" id="BoxShape3D_je7rx"]
+size = Vector3(2.2164307, 0.6074219, 2.3103027)
+
+[node name="robohugger" node_paths=PackedStringArray("loot", "_animator", "center", "executor") instance=ExtResource("1_8o5j5")]
 _max_health = 40
 _health = 40
 attack = SubResource("Resource_gyt0h")
+loot = NodePath("LootContainerCorpse")
 _stagger_chance_factor = 1.5
 _animator = NodePath("AnimationPlayer")
 center = NodePath("Body/Center")
@@ -551,3 +557,22 @@ script = ExtResource("2_p03in")
 _entity = NodePath("..")
 _settings = SubResource("Resource_jqxd4")
 metadata/_custom_type_script = "uid://d1e0odws2w1g1"
+
+[node name="LootContainerCorpse" type="Node3D" parent="." index="3" node_paths=PackedStringArray("corpse_root", "world_slots", "_collission_shape")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0904727, 0.4911402, 0.32311857)
+script = ExtResource("11_dwk37")
+corpse_root = NodePath("../Body")
+world_slots = [NodePath("../Body/Arm Left"), NodePath("../Body/Arm Right"), NodePath("../Body/Head"), NodePath("../Body/Wheel Left"), NodePath("../Body/Wheel Right")]
+_interact_min_distance_sq = 4.0
+_interact_max_distance_sq = 10.0
+category_id = " robothugger"
+ui_icon = ExtResource("12_je7rx")
+container_as_loot = ExtResource("4_dwk37")
+_collission_shape = NodePath("../StaticBody3D/CollisionShape3D")
+metadata/_custom_type_script = "uid://c2p88kl0crvig"
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="4"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08331299, 0.29882813, 0.20837402)
+shape = SubResource("BoxShape3D_je7rx")

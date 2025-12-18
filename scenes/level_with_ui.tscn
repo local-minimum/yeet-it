@@ -28,10 +28,10 @@ metadata/_custom_type_script = "uid://77nh0gjhx8lb"
 
 [node name="Level" parent="." instance=ExtResource("1_7im60")]
 
-[node name="Interactions UI" type="CanvasLayer" parent="."]
+[node name="Bottom UI" type="CanvasLayer" parent="."]
 layer = 100
 
-[node name="InteractionUI" type="Control" parent="Interactions UI"]
+[node name="InteractionUI" type="Control" parent="Bottom UI"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,14 +44,14 @@ _max_interactables = 3
 _viz = SubResource("Resource_ndbn4")
 metadata/_custom_type_script = "uid://bvqfk07xb2q3f"
 
-[node name="Loot UI" type="CanvasLayer" parent="."]
-layer = 50
+[node name="Mid UI" type="CanvasLayer" parent="."]
+layer = 150
 
-[node name="Loot Container UI" parent="Loot UI" instance=ExtResource("5_jixd2")]
+[node name="Loot Container UI" parent="Mid UI" instance=ExtResource("5_jixd2")]
 
-[node name="Player Loot Bar" parent="Loot UI" instance=ExtResource("6_oopir")]
+[node name="Player Loot Bar" parent="Mid UI" instance=ExtResource("6_oopir")]
 
-[node name="Trashing Panel" type="PanelContainer" parent="Loot UI"]
+[node name="Trashing Panel" type="PanelContainer" parent="Mid UI"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -62,11 +62,11 @@ offset_bottom = -20.0
 grow_vertical = 0
 script = ExtResource("7_yymii")
 
-[node name="MarginContainer" type="MarginContainer" parent="Loot UI/Trashing Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="Mid UI/Trashing Panel"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Label" type="Label" parent="Loot UI/Trashing Panel/MarginContainer"]
+[node name="Label" type="Label" parent="Mid UI/Trashing Panel/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 0
 text = "ACTION_TRASH"
@@ -75,11 +75,11 @@ horizontal_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="Loot UI/Trashing Panel"]
+[node name="CenterContainer" type="CenterContainer" parent="Mid UI/Trashing Panel"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="TextureRect" type="TextureRect" parent="Loot UI/Trashing Panel/CenterContainer"]
+[node name="TextureRect" type="TextureRect" parent="Mid UI/Trashing Panel/CenterContainer"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 mouse_filter = 2
@@ -87,7 +87,7 @@ texture = ExtResource("10_ork8t")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="Dragged Slot" type="Control" parent="Loot UI" node_paths=PackedStringArray("icon", "count_label")]
+[node name="Dragged Slot" type="Control" parent="Mid UI" node_paths=PackedStringArray("icon", "count_label")]
 visible = false
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 3
@@ -99,7 +99,7 @@ count_label = NodePath("Slot Count Label")
 offset = Vector2(-10, -10)
 tween_back_speed = 2000.0
 
-[node name="Slot Icon" type="TextureRect" parent="Loot UI/Dragged Slot"]
+[node name="Slot Icon" type="TextureRect" parent="Mid UI/Dragged Slot"]
 modulate = Color(0.4392157, 1, 1, 1)
 layout_mode = 0
 offset_right = 52.0
@@ -109,7 +109,7 @@ texture = ExtResource("10_oopir")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Slot Count Label" type="Label" parent="Loot UI/Dragged Slot"]
+[node name="Slot Count Label" type="Label" parent="Mid UI/Dragged Slot"]
 layout_mode = 0
 offset_top = 41.0
 offset_right = 37.0
@@ -120,9 +120,10 @@ text = "11"
 label_settings = ExtResource("8_mprp7")
 vertical_alignment = 1
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Top UI" type="CanvasLayer" parent="."]
+layer = 200
 
-[node name="HealthBar" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("anim_bar", "health_bar")]
+[node name="HealthBar" type="Control" parent="Top UI" node_paths=PackedStringArray("anim_bar", "health_bar")]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 16.0
@@ -133,7 +134,7 @@ script = ExtResource("10_yymii")
 anim_bar = NodePath("MarginContainer/Animation Health Bar")
 health_bar = NodePath("MarginContainer/Health Bar")
 
-[node name="Background" type="ColorRect" parent="CanvasLayer/HealthBar"]
+[node name="Background" type="ColorRect" parent="Top UI/HealthBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -142,7 +143,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.043137256, 0.043137256, 0.043137256, 0.72156864)
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/HealthBar"]
+[node name="MarginContainer" type="MarginContainer" parent="Top UI/HealthBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -154,7 +155,7 @@ theme_override_constants/margin_top = 1
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 1
 
-[node name="Animation Health Bar" type="ProgressBar" parent="CanvasLayer/HealthBar/MarginContainer"]
+[node name="Animation Health Bar" type="ProgressBar" parent="Top UI/HealthBar/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 1
 theme = ExtResource("10_oxpuh")
@@ -162,12 +163,12 @@ theme_type_variation = &"DamageBar"
 value = 60.0
 show_percentage = false
 
-[node name="Health Bar" type="ProgressBar" parent="CanvasLayer/HealthBar/MarginContainer"]
+[node name="Health Bar" type="ProgressBar" parent="Top UI/HealthBar/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 1
 theme = ExtResource("10_oxpuh")
 value = 40.0
 show_percentage = false
 
-[connection signal="mouse_entered" from="Loot UI/Trashing Panel" to="Loot UI/Trashing Panel" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Loot UI/Trashing Panel" to="Loot UI/Trashing Panel" method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="Mid UI/Trashing Panel" to="Mid UI/Trashing Panel" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Mid UI/Trashing Panel" to="Mid UI/Trashing Panel" method="_on_mouse_exited"]

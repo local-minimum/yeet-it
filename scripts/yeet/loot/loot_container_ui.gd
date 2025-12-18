@@ -39,19 +39,20 @@ func _unhandled_input(event: InputEvent) -> void:
 func _handle_level_pause(_level: GridLevelCore, paused: bool) -> void:
     _paused = paused
 
-func _get_slot_ui(idx: int) -> LootContainerSlotUI:
+func _get_slot_ui(idx: int, locked: bool = false) -> LootContainerSlotUI:
+    var ui: LootContainerSlotUI = null
     if idx < _slots.size():
-        return _slots[idx]
+        ui = _slots[idx]
+    else:
+        ui = slot_scene.instantiate()
+        ui.name = "Slot container %s" % idx
+        _slots.append(ui)
+        slots_root.add_child(ui)
 
-    var ui: LootContainerSlotUI = slot_scene.instantiate()
-    ui._ruleset = LootSlotRuleContainerSlot.new(self)
+        if ui.on_slot_updated.connect(_handle_slot_updated) != OK:
+            push_error("Failed to connect slot updated")
 
-    if ui.on_slot_updated.connect(_handle_slot_updated) != OK:
-        push_error("Failed to connect slot updated")
-
-    ui.name = "Slot container %s" % idx
-    _slots.append(ui)
-    slots_root.add_child(ui)
+    ui._ruleset = (LootSlotRuleRefuseGain.new() as LootSlotRuleset) if locked else LootSlotRuleContainerSlot.new(self)
 
     return ui
 
@@ -99,6 +100,14 @@ func _handle_open_container(loot_container: LootContainer) -> void:
 
     var idx: int = 0
     var has_content: bool
+    if loot_container is LootContainerCorpse:
+        var corpse_container: LootContainerCorpse = loot_container
+        for world_slot: LootSlotWorld in corpse_container.world_slots:
+            var ui: LootContainerSlotUI = _get_slot_ui(idx, true)
+            ui.delay_reveal(world_slot.slot, delay_time * (idx + 1))
+            idx += 1
+            has_content = has_content || !world_slot.slot.empty
+
     for slot: LootSlot in loot_container.slots:
         var ui: LootContainerSlotUI = _get_slot_ui(idx)
         ui.delay_reveal(slot, delay_time * (idx + 1))
@@ -116,10 +125,15 @@ func _handle_slot_updated(updade_slot: LootContainerSlotUI) -> void:
 
     if updade_slot == contaier_as_loot_slot && updade_slot != null && updade_slot.is_empty:
         if _container != null:
-            _container.visible = false
-            _container.is_interactable = false
+            _container.remove_container()
         _on_close_loot_ui_btn_pressed()
         return
+
+    if _container is LootContainerCorpse && updade_slot != null && updade_slot.is_empty:
+        var corpse: LootContainerCorpse = _container
+        var world_slot: LootSlotWorld = corpse.get_world_slot(updade_slot.loot_slot)
+        if world_slot != null:
+            world_slot.hide()
 
     _sync_container_empty(_slots.all(func (slot: LootContainerSlotUI) -> bool: return slot.is_empty))
 

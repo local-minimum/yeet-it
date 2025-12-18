@@ -7,6 +7,7 @@ class_name GridEnemy
 @export var _health: int = 100
 
 @export var attack: EnemyAttack
+@export var loot: LootContainer
 
 @export var _base_damage_per_hit: int = 10
 @export var _stagger_chance_factor: float = 1
@@ -20,6 +21,7 @@ class_name GridEnemy
 @export var _anim_kill: String = "Kill"
 
 
+
 var _next_move_allowed_time: int:
     set(value):
         _next_move_allowed_time = value
@@ -30,9 +32,14 @@ var _informed_move_allowed: bool
 func _enter_tree() -> void:
     if __SignalBus.on_move_end.connect(_handle_move_end) != OK:
         push_error("Failed to connect to move end")
+    if _animator != null:
+        if _animator.animation_finished.connect(_enable_looting) != OK:
+            push_error("Failed to connect kill animation finished")
 
 func _exit_tree() -> void:
     __SignalBus.on_move_end.disconnect(_handle_move_end)
+    if _animator != null:
+        _animator.animation_finished.disconnect(_enable_looting)
 
 func _ready() -> void:
     super._ready()
@@ -93,8 +100,6 @@ func _do_attack() -> bool:
 
     return true
 
-
-
 func hurt(amount: int = 1) -> void:
     var previous_health: int = _health
     _health = maxi(0, _health - amount)
@@ -111,6 +116,15 @@ func kill() -> void:
     __SignalBus.on_kill_entity.emit(self)
     if _animator != null:
         _animator.play(_anim_kill)
+
+        if !_animator.animation_finished.is_connected(_enable_looting):
+            loot.is_interactable = true
+    else:
+        loot.is_interactable = true
+
+func _enable_looting(anim_name: String) -> void:
+    if anim_name == _anim_kill:
+        loot.is_interactable = true
 
 func is_alive() -> bool:
     return _health > 0

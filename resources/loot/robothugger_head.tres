@@ -10,5 +10,5 @@ id = "robothugger_head"
 world_model = ExtResource("2_kkt4x")
 ui_texture = ExtResource("2_w5lfx")
 cooldown = 3.0
-tags = Array[int]([7, 7, 3, 11])
+tags = Array[int]([7, 7, 3, 2, 11])
 metadata/_custom_type_script = "uid://crv68xkjq7tqq"

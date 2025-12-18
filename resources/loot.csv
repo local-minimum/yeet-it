@@ -5,3 +5,11 @@ LOOT_PLAYING_CARD_NAME,Playing Card,Spelkort
 LOOT_PLAYING_CARD_DESC,"It is not the ace of weapons, but highly annoying when thrown properly","Det är inte kungen av kastvapen, men skitstörigt likväl"
 LOOT_EMPTY_BOX_NAME,Empty Box,Tom låda
 LOOT_EMPTY_BOX_DESC,It used to hold stuf,Den brukade ha saker i sig
+LOOT_ROBOTHUGGER_ARM_NAME,Hugger Arm,Kramisarm
+LOOT_ROBOTHUGGER_ARM_DESC,Used to be a nasty electrocution limb,Brukade vara otrevlig högvolts lem
+LOOT_ROBOTHUGGER_BODY_NAME,Hugger Torso,Kramistorso
+LOOT_ROBOTHUGGER_BODY_DESC,Most of all this is heavy,Framförallt väldigt tung
+LOOT_ROBOTHUGGER_HEAD_NAME,Hugger Head,Kramishuvud
+LOOT_ROBOTHUGGER_HEAD_DESC,A dead glas screen in a sturdy frame,En död glasskärm i ett robust skal
+LOOT_ROBOTHUGGER_WHEEL_NAME,Hugger Wheel,Kramishjul
+LOOT_ROBOTHUGGER_WHEEL_DESC,Round and plastic,Rund och plastigt
