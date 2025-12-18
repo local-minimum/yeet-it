@@ -19,16 +19,23 @@ func _on_body_entered(body: Node) -> void:
         var enemy: GridEnemy = entity
         enemy.take_hit(_tags)
 
-    gravity_scale = 1
+    gravity_scale = 1.25
+
     if _in_contact:
-        var energy: float = 0.5 * mass * pow(throw_speed, 2)
+        var energy: float = 0.5 * mass * throw_speed # pow(throw_speed, 2)
         var contact_position: Vector3 = to_global(_contact_center)
-        print_debug("[Loot Projectile %s] Gains impulse based on %s energy applied at %s" % [
+        var impulse_direction: Vector3 = _contact_center.normalized() * -1
+        var fudge: float = 0.5
+        impulse_direction = Transform3D.IDENTITY.rotated(Vector3.UP, randf_range(-fudge, fudge)) * impulse_direction
+        impulse_direction = Transform3D.IDENTITY.rotated(Vector3.LEFT, randf_range(-fudge, fudge)) * impulse_direction
+        impulse_direction = Transform3D.IDENTITY.rotated(Vector3.FORWARD, randf_range(-fudge, fudge)) * impulse_direction
+        print_debug("[Loot Projectile %s] Gains impulse based on %s energy applied at %s in %s direction" % [
             name,
             energy,
             contact_position,
+            impulse_direction,
         ])
-        apply_impulse(_contact_center.normalized() * -energy * 0.001,contact_position)
+        apply_impulse(impulse_direction * energy * 0.01, contact_position)
     crash()
 
 var _in_contact: bool
@@ -90,6 +97,10 @@ func crash() -> void:
 
     _crashed = true
     print_debug("[Loot Projectile %s] Crashing!" % [name])
+    await get_tree().create_timer(0.5).timeout
+    linear_damp = 2
+    angular_damp = 10
+
     await get_tree().create_timer(10).timeout
     print_debug("[Loot Projectile %s] Freeing" % [name])
     queue_free()

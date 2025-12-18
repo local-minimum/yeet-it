@@ -7,9 +7,12 @@
 size = Vector3(0.07556152, 0.0073242188, 0.10571289)
 
 [node name="Playing Card" type="RigidBody3D"]
+mass = 0.3
 gravity_scale = 0.0
+continuous_cd = true
 contact_monitor = true
 max_contacts_reported = 4
+angular_damp = 10.0
 script = ExtResource("1_2kpmu")
 
 [node name="playing_card" parent="." instance=ExtResource("1_m7dhd")]

@@ -11,7 +11,7 @@ mode = 1
 metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kayte"]
-size = Vector3(2.5014496, 0.100860596, 2.517334)
+size = Vector3(2.5014496, 0.10206604, 2.517334)
 
 [node name="Floor" type="Node3D" node_paths=PackedStringArray("anchor")]
 script = ExtResource("2_4yc0h")
@@ -31,5 +31,5 @@ metadata/_custom_type_script = "uid://bsjvh2o2oob57"
 [node name="StaticBody" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016021729, 0.049819946, 0.004272461)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016021729, 0.05042267, 0.004272461)
 shape = SubResource("BoxShape3D_kayte")
