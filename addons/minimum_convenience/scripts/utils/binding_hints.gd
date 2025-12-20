@@ -82,7 +82,8 @@ func _get_event_hint(evt: InputEvent) -> Variant:
 func get_hint(event_name: String) -> Variant:
     var fallback: Variant = null
     for evt: InputEvent in InputMap.action_get_events(event_name):
-        print_debug("[Binding Hints] '%s' has event %s (%s)" % [event_name, evt, mode_name(_get_event_mode(evt))])
+        if _config.debug:
+            print_debug("[Binding Hints] '%s' has event %s (%s)" % [event_name, evt, mode_name(_get_event_mode(evt))])
         if mode == _get_event_mode(evt):
             return _get_event_hint(evt)
 

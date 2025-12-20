@@ -52,7 +52,8 @@ func _handle_free_look_camera(active: bool, cause: FreeLookCam.ToggleCause) -> v
 
 func _handle_cinematic(entity: GridEntity, _is_cinematic: bool) -> void:
     if entity == self:
-        print_debug("[Grid Player] clear all input")
+        if _debug:
+            print_debug("[Grid Player] clear all input")
         clear_queue()
         _repeat_movement.clear()
 
@@ -86,12 +87,13 @@ func _sync_level_entry() -> void:
     update_entity_anchorage(spawn_node, spawn_anchor, true)
     sync_position()
     orient(self)
-    print_debug("[Grid Player] %s anchors to %s in node %s and mode %s" % [
-        name,
-        spawn_anchor,
-        spawn_node,
-        transportation_mode.humanize()
-    ])
+    if _debug:
+        print_debug("[Grid Player] %s anchors to %s in node %s and mode %s" % [
+            name,
+            spawn_anchor,
+            spawn_node,
+            transportation_mode.humanize()
+        ])
 
 var _repeat_movement: Array[Movement.MovementType] = []
 
@@ -108,7 +110,7 @@ func _input(event: InputEvent) -> void:
         return
 
     if transportation_mode.mode == TransportationMode.NONE:
-        print_debug("[Grid Player %s] Lacking transportation mode!" % [name])
+        push_warning("[Grid Player %s] Lacking transportation mode!" % [name])
         return
 
     if !event.is_echo():
@@ -136,15 +138,15 @@ func _input(event: InputEvent) -> void:
             if free_look == FreeLookMode.ACTIVE:
                 __SignalBus.on_toggle_freelook_camera.emit(false, FreeLookCam.ToggleCause.KEYBOARD_ACTIVATOR)
 
-            if !attempt_movement(Movement.MovementType.TURN_COUNTER_CLOCKWISE):
-                print_debug("Refused Rotate Left")
+            if !attempt_movement(Movement.MovementType.TURN_COUNTER_CLOCKWISE) && _debug:
+                print_debug("[Grid Player %s] Refused Rotate Left" % name)
 
         elif !cinematic && event.is_action_pressed("crawl_turn_right"):
             if free_look == FreeLookMode.ACTIVE:
                 __SignalBus.on_toggle_freelook_camera.emit(false, FreeLookCam.ToggleCause.KEYBOARD_ACTIVATOR)
 
-            if !attempt_movement(Movement.MovementType.TURN_CLOCKWISE):
-                print_debug("Refused Rotate Right")
+            if !attempt_movement(Movement.MovementType.TURN_CLOCKWISE) && _debug:
+                print_debug("[Grid Player %s] Refused Rotate Right" % name)
         else:
             return
 
@@ -162,8 +164,8 @@ func hold_movement(movement: Movement.MovementType) -> void:
     if free_look == FreeLookMode.ACTIVE:
         __SignalBus.on_toggle_freelook_camera.emit(false, FreeLookCam.ToggleCause.KEYBOARD_ACTIVATOR)
 
-    if !attempt_movement(movement):
-        print_debug("Refused %s" % Movement.name(movement))
+    if !attempt_movement(movement) && _debug:
+        print_debug("[Grid Player %s] Refused %s" % [name, Movement.name(movement)])
 
     if !allow_replays || Movement.is_turn(movement):
         return
@@ -223,7 +225,8 @@ func _animate_ducking_stand_up() -> void:
     @warning_ignore_restore("return_value_discarded")
 
 func enable_player() -> void:
-    print_debug("[Grid Player %s] Enabled" % name)
+    if _debug:
+        print_debug("[Grid Player %s] Enabled" % name)
     set_process(true)
     # set_physics_process(true)
     set_process_input(true)
@@ -236,7 +239,8 @@ func enable_player() -> void:
     _repeat_movement.clear()
 
 func disable_player() -> void:
-    print_debug("[Grid Player %s] Disabled" % name)
+    if _debug:
+        print_debug("[Grid Player %s] Disabled" % name)
     set_process(false)
     # set_physics_process(false)
     set_process_input(false)
@@ -339,4 +343,5 @@ func load_from_save(level: GridLevelCore, save_data: Dictionary) -> void:
         orient(self)
 
     camera.make_current()
-    print_debug("[Grid Player] loaded player onto %s from %s" % [coords, save_data])
+    if _debug:
+        print_debug("[Grid Player] loaded player onto %s from %s" % [coords, save_data])

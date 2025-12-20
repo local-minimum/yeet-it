@@ -1,6 +1,8 @@
 extends Node3D
 class_name GridNodeFeature
 
+@export var _debug: bool
+
 var _node: GridNode:
     get():
         if _node == null && !_inited:
@@ -30,7 +32,8 @@ func set_grid_node(node: GridNode, _deferred: bool = false) -> void:
         anchor = null
     _node = node
 
-    print_debug("[Grid Node Feature %s] Now at %s in the air" % [name, coordinates()])
+    if _debug:
+        print_debug("[Grid Node Feature %s] Now at %s in the air" % [name, coordinates()])
 
     if !_inited:
         _inited = true
@@ -54,7 +57,8 @@ func set_grid_anchor(new_anchor: GridAnchor, _deferred: bool = false) -> void:
     anchor = new_anchor
     _node = anchor.get_grid_node()
 
-    print_debug("[Grid Node Feature %s] is now at %s %s" % [name, coordinates(), CardinalDirections.name(anchor.direction)])
+    if _debug:
+        print_debug("[Grid Node Feature %s] is now at %s %s" % [name, coordinates(), CardinalDirections.name(anchor.direction)])
 
     if !_inited:
         _inited = true

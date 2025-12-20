@@ -94,7 +94,8 @@ func _do_attack() -> bool:
     if targets.is_empty():
         return false
 
-    print_debug("[Grid Enemy %s] Attacking %s with %s" % [self, targets, attack])
+    if _debug:
+        print_debug("[Grid Enemy %s] Attacking %s with %s" % [self, targets, attack])
     attack.execute_on(targets)
     _next_move_allowed_time = Time.get_ticks_msec() + attack.cooldown_msec
 
@@ -103,7 +104,8 @@ func _do_attack() -> bool:
 func hurt(amount: int = 1) -> void:
     var previous_health: int = _health
     _health = maxi(0, _health - amount)
-    print_debug("[Grid Enemy %s] Hurt for %s (health now %s)" % [name, amount, _health])
+    if _debug:
+        print_debug("[Grid Enemy %s] Hurt for %s (health now %s)" % [name, amount, _health])
     __SignalBus.on_hurt_entity.emit(self, previous_health, _health, _max_health)
 
     if _health == 0:
@@ -138,7 +140,8 @@ func take_hit(tags: Array[Loot.Tag]) -> void:
             damage *= 1.5
 
     var stagger: bool = randf_range(0, _max_health) < damage * _stagger_chance_factor
-    print_debug("[Grid Enemy %s] Hit for %s DMG%s" % [name, roundi(damage), "; Stagger" if stagger else ""])
+    if _debug:
+        print_debug("[Grid Enemy %s] Hit for %s DMG%s" % [name, roundi(damage), "; Stagger" if stagger else ""])
     if stagger:
 
         if _animator != null:

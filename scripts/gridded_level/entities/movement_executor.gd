@@ -3,7 +3,7 @@ class_name MovementExecutor
 
 @export var _entity: GridEntity
 @export var _settings: MovementExecutorSettings
-@export var _verbose: bool
+@export var _debug: bool
 
 var _active_plan_a: MovementPlannerBase.MovementPlan
 var _active_plan_prio_a: int
@@ -44,16 +44,16 @@ func abort_plan(plan: MovementPlannerBase.MovementPlan) -> void:
         @warning_ignore_restore("return_value_discarded")
 
 func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurrent: bool) -> void:
-    if _verbose:
+    if _debug:
         print_debug("[Movement Executor %s] Recieved plan %s with priority %s, concurrent=%s" % [name, plan.summarize(), priority, concurrent])
 
     if !concurrent && priority < active_plan_prio || plan.equals(_active_plan_a) || plan.equals(_active_plan_b):
-        if _verbose:
+        if _debug:
             print_debug("[Movement Executor %s] Discarding plan %s because of priority or currently running" % [name, plan.summarize()])
         return
 
     if concurrent && !has_concurrency_slot:
-        if _verbose:
+        if _debug:
             print_debug("[Movement Executor %s] Discarding plan %s because no concurrent slot available" % [name, plan.summarize()])
         return
 
@@ -117,7 +117,7 @@ func _handle_ducking(plan: MovementPlannerBase.MovementPlan) -> void:
 
 func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> bool:
     if plan.mode == MovementPlannerBase.MovementMode.NONE:
-        if _verbose:
+        if _debug:
             print_debug("[Movement Executor %s] Discarding plan %s of its mode" % [name, plan.summarize()])
         tween.kill()
         return false
@@ -125,12 +125,12 @@ func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> bool:
     _trigger_grid_events(plan)
 
     if plan.to.mode == MovementPlannerBase.PositionMode.EVENT_CONTROLLED:
-        if _verbose:
+        if _debug:
             print_debug("[Movement Executor %s] Discarding plan %s of its mode" % [name, plan.summarize()])
         tween.kill()
         return false
 
-    if _verbose:
+    if _debug:
         print_debug("[Movement Executor %s] Executing plan %s" % [name, plan.summarize()])
 
     _handle_ducking(plan)
@@ -192,7 +192,7 @@ func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> bool:
         var target: GridNode = _get_node(plan.to)
         if target != null:
             var anchor: GridAnchor = target.get_grid_anchor(plan.to.anchor)
-            if _verbose:
+            if _debug:
                 print_debug("[Movement Executor %s] Plan %s updates anchor of %s from <%s> to <%s>" % [
                     name,
                     plan.summarize(),
@@ -206,7 +206,7 @@ func _start_plan(plan: MovementPlannerBase.MovementPlan, tween: Tween) -> bool:
         else:
             push_error("[Movement Executor %s] Plan %s target node cannot be found" % [name, plan.summarize()])
     else:
-        if _verbose:
+        if _debug:
             print_debug("[Movement Executor %s] Plan %s maintains anchor" % [name, plan.summarize()])
 
     if _settings.instant_step:
@@ -350,7 +350,7 @@ func _make_midpoint_translation_tween(
     return tween
 
 func _create_translate_planar_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
-    if _verbose:
+    if _debug:
         print_debug("[Movement Executor %s of %s] Making planar translation" % [name, _entity.name])
     tween = _make_linear_translation_tween(
         tween,
@@ -377,7 +377,7 @@ func _create_translate_planar_tween(tween: Tween, plan: MovementPlannerBase.Move
 
 func _add_rotation_and_finalize_simple_translation_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
     if plan.from.quaternion != plan.to.quaternion:
-        if _verbose:
+        if _debug:
             print_debug("[Movement Executor %s of %s] Movement includes rotation" % [name, _entity.name])
         @warning_ignore_start("return_value_discarded")
         _make_rotation_tween(tween.parallel(), plan)
@@ -484,7 +484,7 @@ func _create_translate_fall_lateral_tween(tween: Tween, plan: MovementPlannerBas
     _add_rotation_and_finalize_simple_translation_tween(tween, plan)
 
 func _create_translate_refuse_tween(tween: Tween, plan: MovementPlannerBase.MovementPlan) -> void:
-    if _verbose:
+    if _debug:
         print_debug("[Movement Executor %s of %s] Refusing movment" % [name, _entity.name])
 
     var node: GridNode = _get_node(plan.from)

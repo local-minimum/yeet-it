@@ -1,6 +1,7 @@
 extends Resource
 class_name BindingHintsConfig
 
+@export var debug: bool
 @export var key_icons: Dictionary[Key, Texture2D]
 @export var mouse_button_icons: Dictionary[MouseButton, Texture2D]
 @export var mouse_motion_icon: Texture

@@ -19,7 +19,7 @@ func draw_interactable_ui(ui: InteractionUI, key: String, interactable: Interact
         hint_text = hint
         gap_size = hint_text.length()
 
-    print_debug("[Interaction UI] %s -> %s rect %s" % [key, hint, rect])
+    # print_debug("[Interaction UI] %s -> %s rect %s" % [key, hint, rect])
 
     var corners: PackedVector2Array = convert_rect_to_corners(ui, rect)
     var top_left: Vector2 = corners[0]

@@ -1,6 +1,7 @@
 extends Node
 class_name PlayerLootHotAction
 
+@export var _debug: bool
 @export var hot_key_index: int
 @export var hot_key_label: Label
 @export var loot_slot_ui: LootContainerSlotUI
@@ -53,7 +54,8 @@ func _unhandled_input(event: InputEvent) -> void:
         return
 
 func _warn_nothing_to_throw() -> void:
-    print_debug("[Loot Hot Key %s Action] Trying to throw nothing!" % [hot_key_index])
+    if _debug:
+        print_debug("[Hot Action %s] Trying to throw nothing!" % [hot_key_index])
 
 var _cooldown_start_msec: int
 var _next_throw_msec: int
@@ -66,13 +68,16 @@ func _enact_throw() -> void:
     _cooldown_start_msec = Time.get_ticks_msec()
     _next_throw_msec = _cooldown_start_msec + roundi(loot.cooldown * 1000)
 
-    print_debug("[Loot Hot Key %s Action] Throwing %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id])
+    if _debug:
+        print_debug("[Hot Action %s] Throwing %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id])
     var projectile: Node = loot_slot_ui.loot_slot.loot.world_model.instantiate()
     loot_slot_ui.loot_slot.count -= 1
     loot_slot_ui.sync_slot()
 
     if projectile is LootProjectile && _level != null && _level.player is GridPlayer:
         var body: LootProjectile = projectile
+        if _debug:
+            body._debug = true
         _throw_body(body, loot, _level.player as GridPlayer)
     else:
         push_error("[Hot Action %s] Instanced %s:s world object is not a loot projectile %s" % [hot_key_index, loot_slot_ui.loot_slot.summarize(), projectile])
@@ -99,7 +104,8 @@ func _throw_late(body: LootProjectile, loot: Loot, player: GridPlayer) -> void:
 func _get_throw_target(player: GridPlayer) -> Vector3:
     var entity_target: GridEntity = _find_entity_target(player)
     if entity_target != null:
-        print_debug("[Hot Key %s] Found entity target %s" % [hot_key_index, entity_target])
+        if _debug:
+            print_debug("[Hot Action %s] Found entity target %s" % [hot_key_index, entity_target])
         return entity_target.center.global_position
 
     # Throw something forward in general
@@ -111,7 +117,8 @@ func _get_throw_target(player: GridPlayer) -> Vector3:
     caster.target_position = caster.to_local(target)
     caster.force_raycast_update()
     if caster.is_colliding():
-        print_debug("[Hot Action %s] Found default target in %s at %s" % [hot_key_index, player.caster.get_collider(), caster.get_collision_point()])
+        if _debug:
+            print_debug("[Hot Action %s] Found default target in %s at %s" % [hot_key_index, player.caster.get_collider(), caster.get_collision_point()])
         return caster.get_collision_point()
 
     return target
@@ -130,7 +137,8 @@ func _find_entity_target(player: GridPlayer) -> GridEntity:
         # Get next position
         coords = CardinalDirections.translate(coords, player.look_direction)
 
-        print_debug("[Hot Action %s] Looking for entities at %s" % [hot_key_index, coords])
+        if _debug:
+            print_debug("[Hot Action %s] Looking for entities at %s" % [hot_key_index, coords])
         for entity: GridEntity in _level.grid_entities:
 
             if entity is GridEnemy && entity.coordinates() == coords:
@@ -144,8 +152,9 @@ func _find_entity_target(player: GridPlayer) -> GridEntity:
                     if collider is Node:
                         if GridEntity.find_entity_parent(collider as Node, true) == entity:
                             options.append(entity)
-                            print_debug("[Hot Action %s] Entity %s can be traced with ray" % [hot_key_index, entity.name])
-                        else:
+                            if _debug:
+                                print_debug("[Hot Action %s] Entity %s can be traced with ray" % [hot_key_index, entity.name])
+                        elif _debug:
                             print_debug("[Hot Action %s] %s in the way of throwing stuff at %s" % [
                                 hot_key_index,
                                 collider,

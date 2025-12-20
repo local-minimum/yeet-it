@@ -10,6 +10,7 @@ signal on_slot_updated(slot: LootContainerSlotUI)
 @export var _item_texture: TextureRect
 @export var _content_root: Control
 @export var _ruleset: LootSlotRuleset
+@export var _debug: bool
 
 var interactable: bool = true
 var _paused: bool
@@ -61,14 +62,16 @@ func _on_mouse_entered() -> void:
         InputCursorHelper.add_state(self, InputCursorHelper.State.FORBIDDEN)
         return
 
-    print_debug("[Slot UI %s] Hover enter" % name)
+    if _debug:
+        print_debug("[Slot UI %s] Hover enter" % name)
     _hovered = self
     if !is_empty:
         InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
 
 
 func _on_mouse_exited() -> void:
-    print_debug("[Slot UI %s] Hover exit" % name)
+    if _debug:
+        print_debug("[Slot UI %s] Hover exit" % name)
     InputCursorHelper.remove_node(self)
 
     if _hovered == self:
@@ -113,7 +116,8 @@ func _on_gui_input(event: InputEvent) -> void:
         var m_button: InputEventMouseButton = event
         if m_button.button_index == MOUSE_BUTTON_LEFT:
             if m_button.double_click:
-                print_debug("[Slot UI %s] Double click" % [name])
+                if _debug:
+                    print_debug("[Slot UI %s] Double click" % [name])
                 if !is_empty:
                     __SignalBus.on_quick_transfer_loot.emit(self)
             elif m_button.is_pressed():
@@ -129,7 +133,8 @@ func _on_gui_input(event: InputEvent) -> void:
                 var self_was_dragged: bool = _dragged == self
 
                 if _dragged == null:
-                    print_debug("[Slot UI %s] Nothing dragged, so can't recieve anything" % name)
+                    if _debug:
+                        print_debug("[Slot UI %s] Nothing dragged, so can't recieve anything" % name)
                 elif _dragged == self && (_hovered == null || _hovered == self):
                     _return_dragged_to_origin()
                 elif _hovered != null:
@@ -154,7 +159,8 @@ func _handle_level_pause(_level: GridLevelCore, paused: bool) -> void:
     _paused = paused
 
 func _return_dragged_to_origin() -> void:
-    print_debug("[Slot UI %s] Return dragged loot" % [name])
+    if _debug:
+        print_debug("[Slot UI %s] Return dragged loot" % [name])
     _dragged = null
 
 func _adopt_dragged_loot() -> void:
@@ -175,7 +181,7 @@ func _adopt_dragged_loot() -> void:
             _dragged.sync_slot()
             if _dragged.loot_slot.count > 0:
                 _return_dragged_to_origin()
-            else:
+            elif _debug:
                 print_debug("[Slot UI %s] Adopted %s from %s resulting in %s and %s" % [
                     name,
                     transfer_count,
@@ -209,20 +215,22 @@ func fill_up_with_loot_from(other: LootContainerSlotUI) -> bool:
 
 func swap_loot_with(other: LootContainerSlotUI) -> void:
     if !allowed_transaction(other) || !other.allowed_transaction(self):
-        print_debug("[Slot UI %s] Cannot swap %s with %s because one of us refuses swaps" % [
-            self.name,
-            self.loot_slot.summarize(),
-            other.name
-        ])
+        if _debug:
+            print_debug("[Slot UI %s] Cannot swap %s with %s because one of us refuses swaps" % [
+                self.name,
+                self.loot_slot.summarize(),
+                other.name
+            ])
         _return_dragged_to_origin()
         return
 
-    print_debug("[Slot UI %s] Swapping %s with %s %s" % [
-        self.name,
-        self.loot_slot.summarize(),
-        other.name,
-        other.loot_slot.summarize(),
-    ])
+    if _debug:
+        print_debug("[Slot UI %s] Swapping %s with %s %s" % [
+            self.name,
+            self.loot_slot.summarize(),
+            other.name,
+            other.loot_slot.summarize(),
+        ])
     var my_loot: Loot = loot_slot.loot
     var my_count: int = loot_slot.count
 
@@ -235,9 +243,10 @@ func swap_loot_with(other: LootContainerSlotUI) -> void:
         other.loot_slot.count = my_count
     other.sync_slot()
 
-    print_debug("[Slot UI %s] After swapping %s with %s %s" % [
-        self.name,
-        self.loot_slot.summarize(),
-        other.name,
-        other.loot_slot.summarize(),
-    ])
+    if _debug:
+        print_debug("[Slot UI %s] After swapping %s with %s %s" % [
+            self.name,
+            self.loot_slot.summarize(),
+            other.name,
+            other.loot_slot.summarize(),
+        ])

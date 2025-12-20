@@ -55,25 +55,27 @@ func _handle_close_container(container: LootContainer) -> void:
 
     if container == self && p != null:
         p.remove_cinematic_cause(self)
-        print_debug("[Loot Container %s] Closed myself, player %s is now cinematic=%s" % [
-            p.name,
-            name,
-            p.cinematic,
-        ])
+        if _debug:
+            print_debug("[Loot Container %s] Closed myself, player %s is now cinematic=%s" % [
+                p.name,
+                name,
+                p.cinematic,
+            ])
 
 func _in_range(_event_position: Vector3) -> bool:
     var p: GridPlayerCore = player
     var d: float = global_position.distance_squared_to(p.center.global_position)
-    print_debug("[Loot Container %s] In Range of %s: cinematic %s / looking %s == %s/ distance sq %s < %s / in frustrum %s" % [
-        name,
-        p,
-        p.cinematic,
-        GridPlayerCore.FreeLookMode.find_key(p.free_look),
-        GridPlayerCore.FreeLookMode.find_key(GridPlayerCore.FreeLookMode.INACTIVE),
-        d,
-        _interact_max_distance_sq,
-        p.camera.is_position_in_frustum(global_position)
-    ])
+    if _debug:
+        print_debug("[Loot Container %s] In Range of %s: cinematic %s / looking %s == %s/ distance sq %s < %s / in frustrum %s" % [
+            name,
+            p,
+            p.cinematic,
+            GridPlayerCore.FreeLookMode.find_key(p.free_look),
+            GridPlayerCore.FreeLookMode.find_key(GridPlayerCore.FreeLookMode.INACTIVE),
+            d,
+            _interact_max_distance_sq,
+            p.camera.is_position_in_frustum(global_position)
+        ])
     return (
         p!= null &&
         !p.cinematic &&
@@ -100,8 +102,9 @@ func remove_container() -> void:
 
 
 func disable_physics_in_children(root: Node3D) -> void:
-    print_debug("[Loot Container %s] Disabled physics in %s" % [self, root])
-    print_stack()
+    if _debug:
+        print_debug("[Loot Container %s] Disabled physics in %s" % [self, root])
+        print_stack()
     for shape: CollisionShape3D in root.find_children("", "CollsionShape3D"):
         shape.disabled = true
 

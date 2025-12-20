@@ -1,6 +1,7 @@
 extends RigidBody3D
 class_name LootProjectile
 
+@export var _debug: bool
 @export var throw_speed: float = 10
 
 ## Only applies if launched with tag thin
@@ -17,7 +18,8 @@ func _on_body_entered(body: Node) -> void:
     if _crashed:
         return
 
-    print_debug("[Loot Projectile %s] Smacked into %s of %s" % [name, body, body.get_parent()])
+    if _debug:
+        print_debug("[Loot Projectile %s] Smacked into %s of %s" % [name, body, body.get_parent()])
     var entity: GridEntity = GridEntity.find_entity_parent(body, true)
     if entity is GridEnemy:
         var enemy: GridEnemy = entity
@@ -32,12 +34,13 @@ func _on_body_entered(body: Node) -> void:
 
         # TODO: This doesn't make sense but hey decent enough
         var energy: float = 0.5 * mass * throw_speed # pow(throw_speed, 2)
-        print_debug("[Loot Projectile %s] Gains impulse based on %s energy applied at %s in %s direction" % [
-            name,
-            energy,
-            contact_position,
-            impulse_direction,
-        ])
+        if _debug:
+            print_debug("[Loot Projectile %s] Gains impulse based on %s energy applied at %s in %s direction" % [
+                name,
+                energy,
+                contact_position,
+                impulse_direction,
+            ])
         apply_impulse(impulse_direction * energy * crash_energy_scale, contact_position)
     crash()
 
@@ -68,7 +71,7 @@ func _integrate_forces(state: PhysicsDirectBodyState3D) -> void:
     if points > 1:
         _contact_center /= points
 
-    if !_crashed:
+    if !_crashed && _debug:
         print_debug("[Loot Projectile %s] Integrate forces with %s contact points against %s at %s" % [name, points, target, _contact_center])
 
     if target != null:
@@ -100,11 +103,13 @@ func crash() -> void:
         return
 
     _crashed = true
-    print_debug("[Loot Projectile %s] Crashing!" % [name])
+    if _debug:
+        print_debug("[Loot Projectile %s] Crashing!" % [name])
     await get_tree().create_timer(0.5).timeout
     linear_damp = 10
     angular_damp = 30
 
     await get_tree().create_timer(10).timeout
-    print_debug("[Loot Projectile %s] Freeing" % [name])
+    if _debug:
+        print_debug("[Loot Projectile %s] Freeing" % [name])
     queue_free()

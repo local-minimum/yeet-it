@@ -209,27 +209,30 @@ func _executing_conflicting_plan(
             continue
 
         if !concurrent_turns:
-            print_debug("[Grid Entity %s] does not allow concurrent plans and %s among %s is active" % [
-                name,
-                active,
-                _active_plans,
-            ])
+            if _debug:
+                print_debug("[Grid Entity %s] does not allow concurrent plans and %s among %s is active" % [
+                    name,
+                    active,
+                    _active_plans,
+                ])
             return true
 
         elif is_translation && MovementPlannerBase.is_translation_plan(active):
-            print_debug("[Grid Entity %s] does not allow %s as %s is active and translating" % [
-                name,
-                Movement.name(movement),
-                active.summarize(),
-            ])
+            if _debug:
+                print_debug("[Grid Entity %s] does not allow %s as %s is active and translating" % [
+                    name,
+                    Movement.name(movement),
+                    active.summarize(),
+                ])
             return true
 
         elif is_rotation && MovementPlannerBase.is_rotation_plan(active):
-            print_debug("[Grid Entity %s] does not allow %s as %s is active and rotating" % [
-                name,
-                Movement.name(movement),
-                active.summarize(),
-            ])
+            if _debug:
+                print_debug("[Grid Entity %s] does not allow %s as %s is active and rotating" % [
+                    name,
+                    Movement.name(movement),
+                    active.summarize(),
+                ])
             return true
 
     return false
@@ -237,11 +240,12 @@ func _executing_conflicting_plan(
 func execute_plan(plan: MovementPlannerBase.MovementPlan, priority: int, concurrent: bool) -> void:
     for existing: MovementPlannerBase.MovementPlan in _superseeded_plans(plan, priority):
         if existing.equals(plan):
-            print_debug("[Grid Entity %s] Ignoring plan %s because equivalent to %s" % [
-                name,
-                plan.summarize(),
-                existing.summarize(),
-            ])
+            if _debug:
+                print_debug("[Grid Entity %s] Ignoring plan %s because equivalent to %s" % [
+                    name,
+                    plan.summarize(),
+                    existing.summarize(),
+                ])
             return
 
         executor.abort_plan(plan)
@@ -274,9 +278,10 @@ func complete_plan(plan: MovementPlannerBase.MovementPlan, continue_with_next: b
     @warning_ignore_restore("return_value_discarded")
 
     if count_active_plans() == 0:
-        print_debug("[Grid Entity %s] Ended all movements" % [
-            name,
-        ])
+        if _debug:
+            print_debug("[Grid Entity %s] Ended all movements" % [
+                name,
+            ])
 
         __SignalBus.on_move_end.emit(self)
 
@@ -309,10 +314,12 @@ func attempt_movement(
     enqueue_if_occupied: bool = true,
     force: bool = false,
 ) -> bool:
-    print_debug("[Grid Entity %s] Attempt movement %s from %s" % [name, Movement.name(movement), coordinates()])
+    if _debug:
+        print_debug("[Grid Entity %s] Attempt movement %s from %s" % [name, Movement.name(movement), coordinates()])
 
     if get_level().paused:
-        print_debug("[Grid Entity %s] Ignoring movement %s because level is paused" % [name, Movement.name(movement)])
+        if _debug:
+            print_debug("[Grid Entity %s] Ignoring movement %s because level is paused" % [name, Movement.name(movement)])
         return false
 
     if movement == Movement.MovementType.NONE:
@@ -321,7 +328,8 @@ func attempt_movement(
         return false
 
     if !_can_execute_movement(movement, force):
-        print_debug("[Grid Entity %s] Movement %s not allowed at this time" % [name, Movement.name(movement)])
+        if _debug:
+            print_debug("[Grid Entity %s] Movement %s not allowed at this time" % [name, Movement.name(movement)])
         if enqueue_if_occupied && queue_moves:
             _enqeue_movement(movement)
             return true
@@ -365,8 +373,9 @@ func update_entity_anchorage(new_node: GridNode, new_anchor: GridAnchor, deferre
                 transportation_mode.mode = TransportationMode.FLYING
             else:
                 transportation_mode.mode = TransportationMode.FALLING
-
-    print_debug("[Grid Entity %s] Now %s @ %s %s" % [name, transportation_mode.humanize() if transportation_mode != null else "static", new_node.name, CardinalDirections.name(new_anchor.direction) if new_anchor else "airbourne"])
+    
+    if _debug:
+        print_debug("[Grid Entity %s] Now %s @ %s %s" % [name, transportation_mode.humanize() if transportation_mode != null else "static", new_node.name, CardinalDirections.name(new_anchor.direction) if new_anchor else "airbourne"])
 
 func sync_position() -> void:
     if anchor != null:

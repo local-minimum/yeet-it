@@ -1,6 +1,7 @@
 extends Control
 class_name LootContainerUI
 
+@export var _debug: bool
 @export var slot_scene: PackedScene
 @export var container_icon: TextureRect
 @export var container_name: Label
@@ -33,7 +34,8 @@ func _unhandled_input(event: InputEvent) -> void:
         return
 
     if visible && event.is_action_pressed("ui_cancel"):
-        print_debug("[Loot Container UI %s] Closing with ui cancel pressed" % name)
+        if _debug:
+            print_debug("[Loot Container UI %s] Closing with ui cancel pressed" % name)
         _on_close_loot_ui_btn_pressed()
 
 func _handle_level_pause(_level: GridLevelCore, paused: bool) -> void:
@@ -70,7 +72,8 @@ func _handle_quick_tranfer_loot(from: LootContainerSlotUI) -> void:
     if _paused:
         return
 
-    print_debug("[Loot Container UI %s] Processing quick transfer of %s" % [name, from])
+    if _debug:
+        print_debug("[Loot Container UI %s] Processing quick transfer of %s" % [name, from])
     if from.is_empty:
         push_warning("[Loot Container UI %s] Quick transfer of nothing should not happen" % name)
         return
@@ -86,7 +89,7 @@ func _handle_quick_tranfer_loot(from: LootContainerSlotUI) -> void:
             if slot.is_empty:
                 slot.swap_loot_with(from)
                 return
-    else:
+    elif _debug:
         print_debug("[Loot Container UI %s] %s not for me because visible=%s or my slot %s" % [
             name, from, visible, _slots.has(from),
         ])
@@ -164,7 +167,8 @@ func _on_close_loot_ui_btn_pressed() -> void:
         return
 
     var container: LootContainer = _container
-    print_debug("[Loot Container UI %s] Executing close code for container %s" % [name, container])
+    if _debug:
+        print_debug("[Loot Container UI %s] Executing close code for container %s" % [name, container])
 
     _container = null
     hide()

@@ -6,6 +6,7 @@ static var active_level: GridLevelCore
 const LEVEL_GROUP: String = "grid-level"
 const UNKNOWN_LEVEL_ID: String = "--unknown--"
 
+@export var _debug: bool
 @export var level_id: String = UNKNOWN_LEVEL_ID
 
 @export var node_size: Vector3 = Vector3(3, 3, 3)
@@ -77,9 +78,9 @@ func _ready() -> void:
     _sync_nodes()
 
     if _nodes.size() == 0:
-        push_warning("Level %s is empty" % name)
-    else:
-        print_debug("Level %s has %s nodes" % [name, _nodes.size()])
+        push_warning("[Level %s] is empty" % name)
+    elif _debug:
+        print_debug("[Level %s] has %s nodes" % [name, _nodes.size()])
 
     active_level = self
 
@@ -90,7 +91,8 @@ func _input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
     if emit_loaded:
         emit_loaded = false
-        print_debug("Level %s loaded" % level_id)
+        if _debug:
+            print_debug("[Level %s] loaded" % level_id)
         __SignalBus.on_level_loaded.emit(self)
 
 func _exit_tree() -> void:

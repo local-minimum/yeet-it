@@ -1,5 +1,7 @@
 extends Control
 
+@export var _debug: bool
+
 func _enter_tree() -> void:
     if __SignalBus.on_open_container.connect(_handle_container_open) != OK:
         push_error("Failed to connect container open")
@@ -49,7 +51,8 @@ func _handle_drag_loot_end(slot_ui: LootContainerSlotUI, _origin: Vector2) -> vo
         _dragged_lot = null
 
         if _hovered:
-            print_debug("[Trashbin] Trashing %s" % [slot_ui.loot_slot.summarize()])
+            if _debug:
+                print_debug("[Trashbin] Trashing %s" % [slot_ui.loot_slot.summarize()])
             slot_ui.loot_slot.count = 0
             slot_ui.sync_slot()
 
