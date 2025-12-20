@@ -1,8 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://w1rjgsij34eh"]
+[gd_scene load_steps=14 format=3 uid="uid://w1rjgsij34eh"]
 
 [ext_resource type="Script" uid="uid://hktghyj0gdcj" path="res://addons/grid_level_digger/grid_level_digger_panel.gd" id="1_fy27w"]
 [ext_resource type="Script" uid="uid://dq6vmugrwwqs6" path="res://addons/grid_level_digger/grid_node_digger.gd" id="2_6po18"]
+[ext_resource type="Texture2D" uid="uid://kx3ihji6wr88" path="res://addons/grid_level_digger/sprites/kenney game icons/PNG/White/1x/up.png" id="2_56aqn"]
 [ext_resource type="Script" uid="uid://u8ci3y0p5kpp" path="res://addons/grid_level_digger/grid_level_actions.gd" id="2_uh4v4"]
+[ext_resource type="Texture2D" uid="uid://d0b7f5ynetioe" path="res://addons/grid_level_digger/sprites/kenney game icons/PNG/White/1x/down.png" id="2_veu6e"]
 [ext_resource type="PackedScene" uid="uid://b8ubdi65g1kxb" path="res://addons/grid_level_digger/controls/navigation_buttons.tscn" id="4_cswv1"]
 [ext_resource type="Script" uid="uid://2cl0qyqo8sb5" path="res://addons/grid_level_digger/controls/validating_editor_node_picker.gd" id="11_uh4v4"]
 [ext_resource type="Script" uid="uid://cbew5xyh75xqm" path="res://addons/grid_level_digger/grid_level_style.gd" id="12_56aqn"]
@@ -12,13 +14,16 @@
 [ext_resource type="PackedScene" uid="uid://c78r58kx1pltb" path="res://addons/grid_level_digger/controls/new_node_line.tscn" id="17_uu5qx"]
 [ext_resource type="Script" uid="uid://bemcpr6cqtnb3" path="res://addons/minimum_convenience/scripts/save/disk_json_storage_provider.gd" id="18_uy6lp"]
 
-[node name="GridLevelDiggerPanel" type="Panel" node_paths=PackedStringArray("tab_container", "about_tab", "level_tab", "digging_tab", "manipulate_tab", "style_tab", "styles", "node_digger", "level_actions", "manipulator", "zones", "update_nav", "settings_storage")]
-custom_minimum_size = Vector2(500, 600)
+[node name="GridLevelDiggerPanel" type="Panel" node_paths=PackedStringArray("minmax_btn", "body", "tab_container", "about_tab", "level_tab", "digging_tab", "manipulate_tab", "style_tab", "styles", "node_digger", "level_actions", "manipulator", "zones", "update_nav", "settings_storage")]
 anchors_preset = 9
 anchor_bottom = 1.0
 grow_vertical = 2
 size_flags_horizontal = 3
 script = ExtResource("1_fy27w")
+minimize_icon = ExtResource("2_veu6e")
+maximize_icon = ExtResource("2_56aqn")
+minmax_btn = NodePath("VBoxContainer/Section Head/MinMax Button")
+body = NodePath("VBoxContainer/TabContainer")
 tab_container = NodePath("VBoxContainer/TabContainer")
 about_tab = NodePath("VBoxContainer/TabContainer/About")
 level_tab = NodePath("VBoxContainer/TabContainer/Level")
@@ -63,6 +68,22 @@ theme_override_font_sizes/font_size = 26
 text = "Gridded Level Digger"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MinMax Button" type="TextureButton" parent="VBoxContainer/Section Head"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -20.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+toggle_mode = true
+button_pressed = true
+texture_normal = ExtResource("2_56aqn")
 
 [node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -793,6 +814,7 @@ metadata/_custom_type_script = "uid://2cl0qyqo8sb5"
 script = ExtResource("18_uy6lp")
 save_file_pattern = "res://.godot/gld_settings.json"
 
+[connection signal="toggled" from="VBoxContainer/Section Head/MinMax Button" to="." method="_on_texture_button_toggled"]
 [connection signal="pressed" from="VBoxContainer/TabContainer/Level/ScrollContainer/VBoxContainer/GridLevelActions/Refresh level nodes" to="VBoxContainer/TabContainer/Level/ScrollContainer/VBoxContainer/GridLevelActions" method="_on_refresh_level_nodes_pressed"]
 [connection signal="pressed" from="VBoxContainer/TabContainer/Level/ScrollContainer/VBoxContainer/GridLevelActions/Align All Nodes" to="VBoxContainer/TabContainer/Level/ScrollContainer/VBoxContainer/GridLevelActions" method="_on_align_all_nodes_pressed"]
 [connection signal="pressed" from="VBoxContainer/TabContainer/Level/ScrollContainer/VBoxContainer/GridLevelActions/Set All Wall Rotations" to="VBoxContainer/TabContainer/Level/ScrollContainer/VBoxContainer/GridLevelActions" method="_on_set_all_wall_rotations_pressed"]

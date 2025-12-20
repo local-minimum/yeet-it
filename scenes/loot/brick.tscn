@@ -12,8 +12,8 @@ gravity_scale = 0.0
 continuous_cd = true
 contact_monitor = true
 max_contacts_reported = 4
-angular_damp = 3.0
 script = ExtResource("1_itom5")
+throw_speed = 9.0
 
 [node name="brick" parent="." instance=ExtResource("1_wq1s0")]
 

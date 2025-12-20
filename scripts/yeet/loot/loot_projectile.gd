@@ -81,6 +81,7 @@ var _tags: Array[Loot.Tag]
 func launch(tags: Array[Loot.Tag], direction: Vector3) -> void:
     _tags = tags
 
+    # print_debug("[Loot Projectile %s] Launching at %s with velocity %s" % [name, global_position, direction * throw_speed])
     linear_velocity = direction * throw_speed
 
     if tags.has(Loot.Tag.Thin):

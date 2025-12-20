@@ -6,6 +6,11 @@ signal on_update_raw_selection(nodes: Array[Node])
 signal on_update_selected_nodes(nodes: Array[GridNode])
 signal on_update_level(level: GridLevelCore)
 
+@export var minimize_icon: Texture2D
+@export var maximize_icon: Texture2D
+@export var minmax_btn: TextureButton
+@export var body: Control
+
 var level: GridLevelCore:
     set(value):
         if inside_level:
@@ -178,7 +183,10 @@ func _exit_tree() -> void:
     for nav: GridLevelNav in _navs:
         nav.on_update_nav.disconnect(_handle_update_nav)
     _navs.clear()
-
+    
+func _ready() -> void:
+    _on_texture_button_toggled(minmax_btn.button_pressed)
+    
 func register_nav(nav: GridLevelNav) -> void:
     if nav.on_update_nav.connect(_handle_update_nav) != OK:
         push_error("Failed to connect update nav")
@@ -423,3 +431,14 @@ func _remove_debug_arrow() -> void:
     if _debug_arrow_mesh != null:
         _debug_arrow_mesh.queue_free()
         _debug_arrow_mesh = null
+
+
+func _on_texture_button_toggled(toggled_on: bool) -> void:
+    if toggled_on:
+        custom_minimum_size = Vector2(0, 500)
+        minmax_btn.texture_normal = minimize_icon
+        body.show()
+    else:
+        custom_minimum_size = Vector2(0, 20)
+        minmax_btn.texture_normal = maximize_icon
+        body.hide()
