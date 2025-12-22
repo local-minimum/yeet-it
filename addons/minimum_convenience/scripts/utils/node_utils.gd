@@ -8,6 +8,13 @@ static func parentage(node: Node) -> Array[Node]:
             parents.append(node)
     return parents
 
+static func is_parent(node: Node, child: Node) -> bool:
+    while child != null:
+        if child == node:
+            return true
+        child = child.get_parent()
+    return false
+    
 static func find_parent_types(node: Node, types: Array[String]) -> Node:
     for type: String in types:
         var parent: Node = find_parent_type(node, type)

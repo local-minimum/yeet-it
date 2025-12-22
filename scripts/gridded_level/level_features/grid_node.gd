@@ -139,7 +139,27 @@ func is_open_side(
 func remove_side(side: GridNodeSide) -> void:
     for key: CardinalDirections.CardinalDirection in _sides.keys():
         if _sides[key] == side:
+            print_debug("[Grid Node %s] Removing side %s (%s)" % [name, side, CardinalDirections.name(key)])
+            @warning_ignore_start("return_value_discarded")
             _sides.erase(key)
+            @warning_ignore_restore("return_value_discarded")
+            return
+    
+    push_warning("[Grid Node %s] %s is not one of my sides %s" % [name, side, _sides])
+
+func add_side(side: GridNodeSide) -> void:
+    if NodeUtils.is_parent(self, side):
+        _sides[side.direction] = side
+        if side.anchor != null:
+            @warning_ignore_start("return_value_discarded")
+            add_anchor(side.anchor)
+            @warning_ignore_restore("return_value_discarded")
+    else:
+        _sides[CardinalDirections.invert(side.direction)] = side
+        if side.negative_anchor != null:
+            @warning_ignore_start("return_value_discarded")
+            add_anchor(side.negative_anchor)
+            @warning_ignore_restore("return_value_discarded")
             
 #endregion Sides
 
@@ -247,6 +267,19 @@ static func _init_sides_and_anchors(node: GridNode) -> void:
             continue
 
         node._anchors[side.direction] = side.anchor
+        
+        if side.negative_anchor != null:
+            var n: GridNode = node.neighbour(side.direction)
+            if n == null:
+                push_warning("[Grid Node %s] Has a side %s in direction %s with a negative anchor %s but no neighbour in that direction" % [
+                    n.name,
+                    side,
+                    CardinalDirections.name(side.direction),
+                    side.negative_anchor,
+                ])
+            else:
+            
+                n.add_side(side)
 
     for dir: CardinalDirections.CardinalDirection in CardinalDirections.ALL_DIRECTIONS:
         if node._anchors.has(dir):
@@ -267,7 +300,7 @@ static func _init_sides_and_anchors(node: GridNode) -> void:
 
 func remove_anchor(anchor: GridAnchor) -> bool:
     if !_anchors.has(anchor.direction):
-        push_warning("Node %s has no anchor in the %s direction" % [name, anchor.direction])
+        push_warning("Node %s has no anchor in the %s direction" % [name, CardinalDirections.name(anchor.direction)])
         return false
 
     if _anchors[anchor.direction] == anchor:
@@ -283,11 +316,14 @@ func add_anchor(anchor: GridAnchor) -> bool:
     _init_sides_and_anchors(self)
 
     if _anchors.has(anchor.direction):
+        if _anchors[anchor.direction] == anchor:
+            return true
+            
         push_warning(
             "Node %s already has an anchor %s in the %s direction - ignoring" % [name, _anchors[anchor.direction], anchor.direction],
         )
 
-        return _anchors[anchor.direction] == anchor
+        return false
 
     var old_anchor: GridAnchor = _anchors.get(anchor.direction)
     var success: bool = _anchors.set(anchor.direction, anchor)

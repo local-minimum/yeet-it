@@ -20,20 +20,38 @@ class_name GridNodeSide
 var disabled: bool:
     set(value): 
         if value == disabled:
+            print_debug("[Grid Node Side %s] Ignoring disabled=%s because was already" % [name, value])
             return
+        
+        disabled = value
         if value:
             var node: GridNode = get_grid_node(anchor)
+            print_debug("[Grid Node Side %s] Disabling myself for %s" % [name, node])
             if node != null:
                 node.remove_side(self)
-                if negative_anchor != null && !node.remove_anchor(anchor):
+                if anchor != null && !node.remove_anchor(anchor):
                     push_warning("[Grid Node Side %s] Failed to disable anchor %s of %s" % [name, anchor, node])
-                
+            else:
+                push_warning("[Grid Node Side %s] Isn't part of any node" % [name])
+                              
             node = get_grid_node(negative_anchor)
+            print_debug("[Grid Node Side %s] Disabling myself for %s" % [name, node])
             if node != null:
                 node.remove_side(self)
                 if negative_anchor != null && !node.remove_anchor(negative_anchor):
                     push_warning("[Grid Node Side %s] Failed to disable anchor %s of %s" % [name, negative_anchor, node])
-
+            else:
+                print_debug("[Grid Node Side %s] Has no negative side" % name)
+                
+        else:
+            var node: GridNode = get_grid_node(anchor)
+            if node != null:
+                node.add_side(self)
+                
+            node = get_grid_node(negative_anchor)
+            if node != null:
+                node.add_side(self)
+                
 func is_two_sided() -> bool:
     return negative_anchor != null
 
@@ -82,7 +100,7 @@ func get_grid_node(value: GridAnchor) -> GridNode:
         
     if value == anchor:
         return get_side_parent_grid_node()
-    elif value == negative_anchor && negative_anchor != null:
+    elif value == negative_anchor:
         return _get_inverse_parent_node()
 
     push_error("%s of %s is not an anchor of %s" % [value.name, value.get_parent().name, name])

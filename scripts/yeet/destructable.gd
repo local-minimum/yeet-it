@@ -71,6 +71,7 @@ func take_hit(tags: Array[Loot.Tag], epicenter: Vector3) -> void:
         _animate_to_health(new_health)
         _health = new_health
     else:
+        print_debug("[Destructable %s] Destroyed" % name)
         _health = 0
         NodeUtils.disable_physics_in_children(self)    
             
@@ -85,6 +86,7 @@ func take_hit(tags: Array[Loot.Tag], epicenter: Vector3) -> void:
             
         if disable_node_side_on_destroy != null:
             disable_node_side_on_destroy.disabled = true
+            print_debug("[Destructable %s] Has its node side %s disabled" % [name, disable_node_side_on_destroy])
  
 func _explode_destroyd_geometry(epicenter: Vector3) -> void:
     for body: RigidBody3D in destroyed_geometry.find_children("", "RigidBody3D"):
