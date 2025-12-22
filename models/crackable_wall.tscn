@@ -1,0 +1,130 @@
+[gd_scene load_steps=15 format=3 uid="uid://bttx1e0dk83c8"]
+
+[ext_resource type="PackedScene" uid="uid://4st0ms40xpd3" path="res://models/twosided_wall.blend" id="1_xp3i8"]
+[ext_resource type="Texture2D" uid="uid://c4xckd42n1jin" path="res://models/twosided_uncracked.png" id="2_wenlk"]
+[ext_resource type="Texture2D" uid="uid://csls8bg06xl3s" path="res://models/twosided_cracked_1.png" id="3_wenlk"]
+[ext_resource type="Texture2D" uid="uid://2xaneblhe10s" path="res://models/twosided_cracked_2.png" id="4_55j7s"]
+[ext_resource type="Texture2D" uid="uid://fqn8dh7ybmw2" path="res://models/twosided_cracked_3.png" id="5_f0bqm"]
+[ext_resource type="Texture2D" uid="uid://o5ikerykqa5k" path="res://models/twosided_cracked_4.png" id="6_avgbk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iu6o3"]
+albedo_texture = ExtResource("5_f0bqm")
+metallic = 0.2
+
+[sub_resource type="Animation" id="Animation_atig1"]
+resource_name = "Health 100"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Twosided wall:surface_material_override/1:albedo_texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("2_wenlk"), ExtResource("2_wenlk")]
+}
+
+[sub_resource type="Animation" id="Animation_55j7s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Twosided wall:surface_material_override/1:albedo_texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("5_f0bqm")]
+}
+
+[sub_resource type="Animation" id="Animation_f0bqm"]
+resource_name = "Health 80"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Twosided wall:surface_material_override/1:albedo_texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("2_wenlk"), ExtResource("3_wenlk")]
+}
+
+[sub_resource type="Animation" id="Animation_avgbk"]
+resource_name = "Health 60"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Twosided wall:surface_material_override/1:albedo_texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("3_wenlk"), ExtResource("4_55j7s")]
+}
+
+[sub_resource type="Animation" id="Animation_t8oyx"]
+resource_name = "Health 40"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Twosided wall:surface_material_override/1:albedo_texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("4_55j7s"), ExtResource("5_f0bqm")]
+}
+
+[sub_resource type="Animation" id="Animation_f5cpt"]
+resource_name = "Health 20"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Twosided wall:surface_material_override/1:albedo_texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("4_55j7s"), ExtResource("6_avgbk")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t8oyx"]
+_data = {
+&"Health 100": SubResource("Animation_atig1"),
+&"Health 20": SubResource("Animation_f5cpt"),
+&"Health 40": SubResource("Animation_t8oyx"),
+&"Health 60": SubResource("Animation_avgbk"),
+&"Health 80": SubResource("Animation_f0bqm"),
+&"RESET": SubResource("Animation_55j7s")
+}
+
+[node name="twosided_wall" instance=ExtResource("1_xp3i8")]
+metadata/Animator = NodePath("AnimationPlayer")
+
+[node name="Twosided wall" parent="." index="0"]
+surface_material_override/1 = SubResource("StandardMaterial3D_iu6o3")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+libraries = {
+&"": SubResource("AnimationLibrary_t8oyx")
+}
+metadata/AnimatedMaterialOverride = 1
+metadata/AnimatedMaterial = NodePath("../Twosided wall")

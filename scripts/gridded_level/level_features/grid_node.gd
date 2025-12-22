@@ -136,7 +136,11 @@ func is_open_side(
             ])
             return false
 
-
+func remove_side(side: GridNodeSide) -> void:
+    for key: CardinalDirections.CardinalDirection in _sides.keys():
+        if _sides[key] == side:
+            _sides.erase(key)
+            
 #endregion Sides
 
 #region Events
@@ -222,6 +226,9 @@ static func _init_sides_and_anchors(node: GridNode) -> void:
 
     for side: GridNodeSide in node.find_children("", "GridNodeSide"):
         GridNodeSide.set_direction_from_rotation(side)
+                
+        if side.disabled:
+            continue
 
         node._sides[side.direction] = side
 

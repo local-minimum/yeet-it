@@ -1,0 +1,61 @@
+[gd_scene load_steps=9 format=3 uid="uid://b0t3osvrcwuu7"]
+
+[ext_resource type="Script" uid="uid://c6733p4qj68p" path="res://scripts/gridded_level/level_features/grid_node_side.gd" id="1_qyrox"]
+[ext_resource type="Script" uid="uid://bsjvh2o2oob57" path="res://scripts/gridded_level/level_features/grid_anchor.gd" id="2_vm650"]
+[ext_resource type="Script" uid="uid://b8a6yvndcxtpa" path="res://scripts/gridded_level/transportation_mode.gd" id="3_nbx5n"]
+[ext_resource type="PackedScene" uid="uid://bttx1e0dk83c8" path="res://models/crackable_wall.tscn" id="4_qyrox"]
+[ext_resource type="Script" uid="uid://d2oluc2vrmmfq" path="res://scripts/yeet/destructable.gd" id="4_vm650"]
+[ext_resource type="PackedScene" uid="uid://cabqmswgtx1ma" path="res://scenes/cube sides/twosided_wall_broken.tscn" id="6_nbx5n"]
+
+[sub_resource type="Resource" id="Resource_aw1v7"]
+script = ExtResource("3_nbx5n")
+mode = 8
+metadata/_custom_type_script = "uid://b8a6yvndcxtpa"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2vrb3"]
+size = Vector3(2.5005493, 3.0007935, 0.19989014)
+
+[node name="Wall" type="Node3D" node_paths=PackedStringArray("anchor", "negative_anchor")]
+script = ExtResource("1_qyrox")
+direction = 1
+anchor = NodePath("Positive Anchor")
+negative_anchor = NodePath("Negaitve Anchor")
+metadata/_custom_type_script = "uid://c6733p4qj68p"
+
+[node name="Positive Anchor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.15)
+script = ExtResource("2_vm650")
+direction = 1
+required_transportation_mode = SubResource("Resource_aw1v7")
+metadata/_custom_type_script = "uid://bsjvh2o2oob57"
+
+[node name="Negaitve Anchor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.35)
+script = ExtResource("2_vm650")
+direction = 1
+required_transportation_mode = SubResource("Resource_aw1v7")
+metadata/_custom_type_script = "uid://bsjvh2o2oob57"
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." node_paths=PackedStringArray("_animator_holder", "destructable_geometry", "destroyed_geometry", "disable_node_side_on_destroy")]
+script = ExtResource("4_vm650")
+_animator_holder = NodePath("../twosided_wall")
+health_animation_threshold = Dictionary[int, String]({
+20: "Health 20",
+40: "Health 40",
+60: "Health 60",
+80: "Health 80",
+100: "Health 100"
+})
+destructable_geometry = NodePath("../twosided_wall")
+destroyed_geometry = NodePath("../twosided_wall_broken")
+disable_node_side_on_destroy = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00015258789, 1.4994812, -1.2502136)
+shape = SubResource("BoxShape3D_2vrb3")
+
+[node name="twosided_wall" parent="." instance=ExtResource("4_qyrox")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -1.25)
+
+[node name="twosided_wall_broken" parent="." instance=ExtResource("6_nbx5n")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, -1.25)

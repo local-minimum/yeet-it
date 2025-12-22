@@ -35,3 +35,32 @@ static func find_parent_type(node: Node, type: String) -> Node:
 
 
     return find_parent_type(node.get_parent(), type)
+    
+
+static func disable_physics_in_children(root: Node3D) -> void:
+    if root is PhysicsBody3D:
+        var body: PhysicsBody3D = root
+        body.process_mode = Node.PROCESS_MODE_DISABLED
+    elif root is CollisionShape3D:
+        var shape: CollisionShape3D = root
+        shape.disabled = true
+        
+    for shape: CollisionShape3D in root.find_children("", "CollsionShape3D"):
+        shape.disabled = true
+
+    for body: PhysicsBody3D in root.find_children("", "PhysicsBody3D"):
+        body.process_mode = Node.PROCESS_MODE_DISABLED
+    
+static func enable_physics_in_children(root: Node3D, mode: Node.ProcessMode = Node.PROCESS_MODE_INHERIT) -> void:
+    if root is PhysicsBody3D:
+        var body: PhysicsBody3D = root
+        body.process_mode = mode
+    elif root is CollisionShape3D:
+        var shape: CollisionShape3D = root
+        shape.disabled = false
+        
+    for shape: CollisionShape3D in root.find_children("", "CollsionShape3D"):
+        shape.disabled = false
+
+    for body: PhysicsBody3D in root.find_children("", "PhysicsBody3D"):
+        body.process_mode = mode

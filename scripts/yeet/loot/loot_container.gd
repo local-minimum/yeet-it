@@ -98,15 +98,4 @@ func execute_interation() -> void:
 func remove_container() -> void:
     visible = false
     is_interactable = false
-    disable_physics_in_children(self)
-
-
-func disable_physics_in_children(root: Node3D) -> void:
-    if _debug:
-        print_debug("[Loot Container %s] Disabled physics in %s" % [self, root])
-        print_stack()
-    for shape: CollisionShape3D in root.find_children("", "CollsionShape3D"):
-        shape.disabled = true
-
-    for body: PhysicsBody3D in root.find_children("", "PhysicsBody3D"):
-        body.process_mode = Node.PROCESS_MODE_DISABLED
+    NodeUtils.disable_physics_in_children(self)

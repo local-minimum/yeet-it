@@ -14,17 +14,28 @@ const crash_bounce_fudge_angle: float = 0.5
 const crash_energy_scale: float = 0.005
 const crash_gravity_scale: float = 1.25
 
+func _handle_hit(body: Node) -> void:
+    var entity: GridEntity = GridEntity.find_entity_parent(body, true)
+    if entity is GridEnemy:
+        var enemy: GridEnemy = entity
+        enemy.take_hit(_tags)
+        return
+    
+    var destructable: Destructable = Destructable.find_destructable_parent(body, true)
+    if destructable != null:
+        destructable.take_hit(_tags, global_position)
+        return
+    
+    
 func _on_body_entered(body: Node) -> void:
     if _crashed:
         return
 
     if _debug:
         print_debug("[Loot Projectile %s] Smacked into %s of %s" % [name, body, body.get_parent()])
-    var entity: GridEntity = GridEntity.find_entity_parent(body, true)
-    if entity is GridEnemy:
-        var enemy: GridEnemy = entity
-        enemy.take_hit(_tags)
-
+    
+    _handle_hit(body)
+    
     gravity_scale = crash_gravity_scale
 
     if _in_contact:

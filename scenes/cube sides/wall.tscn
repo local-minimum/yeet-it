@@ -20,6 +20,7 @@ anchor = NodePath("GridAnchor Wall")
 metadata/_custom_type_script = "uid://c6733p4qj68p"
 
 [node name="GridAnchor Wall" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -1.15)
 script = ExtResource("2_2vrb3")
 direction = 1
 required_transportation_mode = SubResource("Resource_aw1v7")

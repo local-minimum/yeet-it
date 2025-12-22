@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://cabqmswgtx1ma"]
+
+[ext_resource type="PackedScene" uid="uid://5smp3x203cw3" path="res://models/twosided_wall_broken.blend" id="1_juthe"]
+
+[node name="twosided_wall_broken" instance=ExtResource("1_juthe")]

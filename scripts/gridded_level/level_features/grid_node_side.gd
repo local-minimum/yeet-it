@@ -17,6 +17,23 @@ class_name GridNodeSide
 
 @export var illusory: bool
 
+var disabled: bool:
+    set(value): 
+        if value == disabled:
+            return
+        if value:
+            var node: GridNode = get_grid_node(anchor)
+            if node != null:
+                node.remove_side(self)
+                if negative_anchor != null && !node.remove_anchor(anchor):
+                    push_warning("[Grid Node Side %s] Failed to disable anchor %s of %s" % [name, anchor, node])
+                
+            node = get_grid_node(negative_anchor)
+            if node != null:
+                node.remove_side(self)
+                if negative_anchor != null && !node.remove_anchor(negative_anchor):
+                    push_warning("[Grid Node Side %s] Failed to disable anchor %s of %s" % [name, negative_anchor, node])
+
 func is_two_sided() -> bool:
     return negative_anchor != null
 
@@ -60,6 +77,9 @@ func _get_inverse_parent_node() -> GridNode:
     return _inverse_parent_node
 
 func get_grid_node(value: GridAnchor) -> GridNode:
+    if value == null:
+        return null
+        
     if value == anchor:
         return get_side_parent_grid_node()
     elif value == negative_anchor && negative_anchor != null:
