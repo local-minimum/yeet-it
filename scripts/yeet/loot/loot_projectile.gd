@@ -14,6 +14,19 @@ const crash_bounce_fudge_angle: float = 0.5
 const crash_energy_scale: float = 0.005
 const crash_gravity_scale: float = 1.25
 
+var root: Node3D:
+    get():
+        var n: Node3D = self
+        var steps: int = 0
+        while steps < 20:
+            var parent: Node = n.get_parent()
+            if parent == null || parent is not Node3D:
+                return n
+            n = parent
+            steps += 1
+            
+        return null
+        
 func _handle_hit(body: Node) -> void:
     var entity: GridEntity = GridEntity.find_entity_parent(body, true)
     if entity is GridEnemy:
@@ -102,8 +115,10 @@ func launch(tags: Array[Loot.Tag], direction: Vector3) -> void:
         angular_velocity = Vector3(0, angular_speed, 0)
 
     await get_tree().create_timer(max_flight_duration).timeout
+    
     if !_crashed:
         gravity_scale = crash_gravity_scale
+
         await get_tree().create_timer(1).timeout
 
         crash()
@@ -120,7 +135,7 @@ func crash() -> void:
     linear_damp = 10
     angular_damp = 30
 
-    await get_tree().create_timer(10).timeout
+    await get_tree().create_timer(1.5).timeout
     if _debug:
         print_debug("[Loot Projectile %s] Freeing" % [name])
     queue_free()

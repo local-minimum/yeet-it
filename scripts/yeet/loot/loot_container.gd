@@ -65,7 +65,7 @@ func _handle_close_container(container: LootContainer) -> void:
 
 func _in_range(_event_position: Vector3) -> bool:
     var p: GridPlayerCore = player
-    var d: float = global_position.distance_squared_to(p.center.global_position)
+    var d: float = _collission_shape.global_position.distance_squared_to(p.center.global_position)
     if _debug:
         print_debug("[Loot Container %s] In Range of %s: cinematic %s / looking %s == %s/ distance sq %s < %s / in frustrum %s" % [
             name,
@@ -75,7 +75,7 @@ func _in_range(_event_position: Vector3) -> bool:
             GridPlayerCore.FreeLookMode.find_key(GridPlayerCore.FreeLookMode.INACTIVE),
             d,
             _interact_max_distance_sq,
-            p.camera.is_position_in_frustum(global_position)
+            p.camera.is_position_in_frustum(_collission_shape.global_position)
         ])
     return (
         p!= null &&
@@ -83,7 +83,7 @@ func _in_range(_event_position: Vector3) -> bool:
         p.free_look == GridPlayerCore.FreeLookMode.INACTIVE &&
         d > _interact_min_distance_sq &&
         d < _interact_max_distance_sq &&
-        p.camera.is_position_in_frustum(global_position)
+        p.camera.is_position_in_frustum(_collission_shape.global_position)
     )
 
 func check_allow_interact() -> bool:

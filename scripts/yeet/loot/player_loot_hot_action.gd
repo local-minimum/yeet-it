@@ -88,7 +88,7 @@ func _enact_throw() -> void:
 
 func _throw_body(body: LootProjectile, loot: Loot, player: GridPlayer) -> void:
     # Adding as child has to be after global postion set and before launching!
-    _level.add_child(body)
+    _level.add_child(body.root)
     _throw_late.call_deferred(body, loot, player)
 
 func _throw_late(body: LootProjectile, loot: Loot, player: GridPlayer) -> void:

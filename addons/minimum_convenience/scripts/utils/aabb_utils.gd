@@ -96,3 +96,21 @@ static func create_around_coordinates(coordinates: Vector3i, size: Vector3i, nod
         centerf.z += 0.5 * unit.z
 
     return create_around(centerf, sizef)
+
+static func _identity_transform(v: Vector3) -> Vector3: return v
+
+static func create_bounding_box(data: PackedVector3Array, transform: Variant = null) -> AABB:
+    if data.is_empty():
+        return AABB(Vector3.ZERO, Vector3.ZERO)
+    
+    var tranform_fn: Callable = transform if transform is Callable else _identity_transform
+    
+    var min_point: Vector3 = tranform_fn.call(data[0])
+    var max_point: Vector3 = tranform_fn.call(data[0])
+    
+    for pos: Vector3 in data:
+        pos = tranform_fn.call(pos)
+        min_point = min_point.min(pos)
+        max_point = max_point.max(pos)
+        
+    return AABB(min_point, max_point - min_point)

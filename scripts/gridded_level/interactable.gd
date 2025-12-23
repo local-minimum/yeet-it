@@ -65,6 +65,9 @@ func bounding_box() -> AABB:
     elif _collission_shape.shape is SphereShape3D:
         var sphere: SphereShape3D = _collission_shape.shape
         size = global_basis * (sphere.radius * Vector3i.ONE)
+    elif _collission_shape.shape is ConvexPolygonShape3D:
+        var poly_shape: ConvexPolygonShape3D = _collission_shape.shape
+        return AABBUtils.create_bounding_box(poly_shape.points, _collission_shape.to_global)
     else:
         push_warning("Collision shape %s type not handled" % _collission_shape.shape)
 
