@@ -68,27 +68,36 @@ func _hide_slots_from(idx: int) -> void:
         ui.loot_slot = null
     _updating_slots = false
 
-func _handle_quick_tranfer_loot(from: LootContainerSlotUI) -> void:
+func _handle_quick_tranfer_loot(from: LootContainerSlotUI, loot_slot: LootSlot) -> void:
     if _paused:
         return
 
+    if loot_slot == null && from != null:
+        loot_slot = from.loot_slot
+        
     if _debug:
         print_debug("[Loot Container UI %s] Processing quick transfer of %s" % [name, from])
-    if from.is_empty:
+    if loot_slot.empty:
         push_warning("[Loot Container UI %s] Quick transfer of nothing should not happen" % name)
         return
-
-    if visible && !_slots.has(from) && from != contaier_as_loot_slot:
+        
+    if visible && (from == null || !_slots.has(from) && from != contaier_as_loot_slot):
         for slot: LootContainerSlotUI in _slots:
-            if slot.loot_slot.loot == from.loot_slot.loot:
-                if slot.fill_up_with_loot_from(from):
-                    if from.is_empty:
+            if slot.loot_slot.loot == loot_slot.loot:
+                if slot.fill_up_with_loot_from(loot_slot):
+                    if from != null:
+                        from.sync_slot()
+                    if loot_slot.empty:
                         return
 
         for slot: LootContainerSlotUI in _slots:
             if slot.is_empty:
-                slot.swap_loot_with(from)
-                return
+                if slot.fill_up_with_loot_from(loot_slot):
+                    if from != null:
+                        from.sync_slot()
+                    if loot_slot.empty:
+                        return
+
     elif _debug:
         print_debug("[Loot Container UI %s] %s not for me because visible=%s or my slot %s" % [
             name, from, visible, _slots.has(from),

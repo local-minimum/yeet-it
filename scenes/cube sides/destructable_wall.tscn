@@ -36,7 +36,7 @@ direction = 2
 required_transportation_mode = SubResource("Resource_aw1v7")
 metadata/_custom_type_script = "uid://bsjvh2o2oob57"
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." node_paths=PackedStringArray("_animator_holder", "destructable_geometry", "destroyed_geometry", "disable_node_side_on_destroy")]
+[node name="Destructable" type="StaticBody3D" parent="." node_paths=PackedStringArray("_animator_holder", "destructable_geometry", "destroyed_geometry", "disable_node_side_on_destroy")]
 script = ExtResource("4_vm650")
 _animator_holder = NodePath("../twosided_wall")
 health_animation_threshold = Dictionary[int, String]({
@@ -51,7 +51,7 @@ destroyed_geometry = NodePath("../twosided_wall_broken")
 disable_node_side_on_destroy = NodePath("..")
 explosive_force = 20.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Destructable"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00015258789, 1.4994812, -1.2502136)
 shape = SubResource("BoxShape3D_2vrb3")
 

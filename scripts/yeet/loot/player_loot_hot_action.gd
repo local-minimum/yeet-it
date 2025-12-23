@@ -70,11 +70,11 @@ func _enact_throw() -> void:
 
     if _debug:
         print_debug("[Hot Action %s] Throwing %s" % [hot_key_index, loot_slot_ui.loot_slot.loot.id])
-    var projectile: Node = loot_slot_ui.loot_slot.loot.world_model.instantiate()
+    var projectile: LootProjectile = loot_slot_ui.loot_slot.loot.instantiate_loot_projectile()
     loot_slot_ui.loot_slot.count -= 1
     loot_slot_ui.sync_slot()
 
-    if projectile is LootProjectile && _level != null && _level.player is GridPlayer:
+    if projectile != null && _level != null && _level.player is GridPlayer:
         var body: LootProjectile = projectile
         if _debug:
             body._debug = true

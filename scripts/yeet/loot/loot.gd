@@ -34,3 +34,11 @@ var localized_description: String:
         if localized_description.is_empty():
             localized_description = tr("LOOT_%s_DESC" % id.to_upper())
         return localized_description
+
+func instantiate_loot_projectile() -> LootProjectile:
+    var model: Node = world_model.instantiate()
+    if model is LootProjectile:
+        return model
+    for projectile: LootProjectile in model.find_children("", "LootProjectile"):
+        return projectile
+    return null

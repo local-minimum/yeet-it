@@ -4,6 +4,12 @@ class_name Interactable
 @export var _debug: bool
 @export var _collission_shape: CollisionShape3D
 
+var physics_body: PhysicsBody3D:
+    get():
+        if _collission_shape == null:
+            return null
+        return _collission_shape.get_parent() as PhysicsBody3D
+        
 var is_interactable: bool = true:
     set(value):
         is_interactable = value
@@ -15,9 +21,37 @@ var is_interactable: bool = true:
 var _hovered: bool
 var _showing_cursor_hand: bool
 
+func _enter_tree() -> void:
+    var body: PhysicsBody3D = physics_body
+    if body == null:
+        return
+    if (
+        !body.mouse_entered.is_connected(_on_static_body_3d_mouse_entered) &&
+        body.mouse_entered.connect(_on_static_body_3d_mouse_entered) != OK
+    ):
+        push_warning("Failed to connect mouse entered body")
+    
+    if (
+        !body.mouse_exited.is_connected(_on_static_body_3d_mouse_exited) &&
+        body.mouse_exited.connect(_on_static_body_3d_mouse_exited) != OK
+    ):
+        push_warning("Failed to connect mouse exited body")       
+
+    if (
+        !body.input_event.is_connected(_on_static_body_3d_input_event) &&
+        body.input_event.connect(_on_static_body_3d_input_event) != OK
+    ):
+        push_warning("Failed to connect body input event")
+        
 func _exit_tree() -> void:
     is_interactable = false
-
+    
+    var body: PhysicsBody3D = physics_body  
+    if body != null:
+        body.mouse_entered.disconnect(_on_static_body_3d_mouse_entered)
+        body.mouse_exited.disconnect(_on_static_body_3d_mouse_exited)
+        body.input_event.disconnect(_on_static_body_3d_input_event)
+        
 func player_is_in_range() -> bool:
     return _in_range(_collission_shape.global_position)
 

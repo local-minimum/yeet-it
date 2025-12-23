@@ -92,6 +92,11 @@ func _explode_destroyd_geometry(epicenter: Vector3) -> void:
     for body: RigidBody3D in destroyed_geometry.find_children("", "RigidBody3D"):
         var direction: Vector3 = (body.global_position - epicenter).normalized()
         body.apply_impulse(direction * explosive_force, epicenter)
+        
+        await get_tree().create_timer(1).timeout
+        
+        for interactable: Interactable in body.find_children("", "Interactable"):
+            interactable.is_interactable = true
     
 func _animate_to_health(health: int, always_update_value: bool = false) -> void:
     var anim: AnimationPlayer = _animator

@@ -2,4 +2,4 @@
 extends Resource
 class_name LootSlotRuleset
 
-@abstract func accepts(own: LootContainerSlotUI, other: LootContainerSlotUI) -> bool
+@abstract func accepts(own: LootContainerSlotUI, other: LootSlot) -> bool

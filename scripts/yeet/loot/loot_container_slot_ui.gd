@@ -119,7 +119,7 @@ func _on_gui_input(event: InputEvent) -> void:
                 if _debug:
                     print_debug("[Slot UI %s] Double click" % [name])
                 if !is_empty:
-                    __SignalBus.on_quick_transfer_loot.emit(self)
+                    __SignalBus.on_quick_transfer_loot.emit(self, loot_slot)
             elif m_button.is_pressed():
                 if !is_empty:
                     _dragged = self
@@ -170,10 +170,10 @@ func _adopt_dragged_loot() -> void:
         return
 
     if loot_slot.loot == null || loot_slot.count < 1:
-        swap_loot_with(_dragged)
+        swap_loot_with(_dragged.loot_slot, _dragged)
     elif loot_slot.loot == _dragged.loot_slot.loot:
         var stackable: int = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
-        if stackable > 0 && allowed_transaction(_dragged):
+        if stackable > 0 && allowed_transaction(_dragged.loot_slot):
             var transfer_count: int = mini(stackable, _dragged.loot_slot.count)
             loot_slot.count += transfer_count
             _dragged.loot_slot.count -= transfer_count
@@ -190,63 +190,90 @@ func _adopt_dragged_loot() -> void:
                     _dragged.loot_slot.summarize(),
                 ])
         else:
-            swap_loot_with(_dragged)
+            swap_loot_with(_dragged.loot_slot, _dragged)
     else:
-        swap_loot_with(_dragged)
+        swap_loot_with(_dragged.loot_slot, _dragged)
 
     _dragged = null
     if !is_empty:
         InputCursorHelper.add_state(self, InputCursorHelper.State.HOVER)
 
-func allowed_transaction(other: LootContainerSlotUI) -> bool:
+func allowed_transaction(other: LootSlot) -> bool:
     return _ruleset == null || _ruleset.accepts(self, other)
 
-func fill_up_with_loot_from(other: LootContainerSlotUI) -> bool:
-    var stackable: int = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
+func fill_up_with_loot_from(other: LootSlot) -> bool:
+    var stackable: int = 0
+    if !loot_slot.empty:
+        stackable = maxi(0, loot_slot.loot.stack_size - loot_slot.count)
+    elif other != null && other.loot != null:
+        stackable = other.loot.stack_size
+        
     if stackable > 0 && allowed_transaction(other):
-        var transfer_count: int = mini(stackable, other.loot_slot.count)
+        if _debug:
+            print_debug("[Slot UI %s] Filling up %s with up to %s from %s" % [
+                name,
+                loot_slot.summarize(),
+                stackable,
+                other.summarize()
+            ])
+        if loot_slot.loot == null:
+            loot_slot.loot = other.loot
+        var transfer_count: int = mini(stackable, other.count)
         loot_slot.count += transfer_count
-        other.loot_slot.count -= transfer_count
+        other.count -= transfer_count
         sync_slot()
-        other.sync_slot()
+        if _debug:
+            print_debug("[Slot UI %s] Filled up %s {mini(%s, %s)}, am now %s" % [
+                name,
+                transfer_count,
+                stackable,
+                other.count + transfer_count,
+                loot_slot.summarize(),
+            ])
         return transfer_count > 0
+    elif _debug:
+        print_debug("[Slot UI %s] Not filling up %s from %s" % [
+            name,
+            loot_slot.summarize(),
+            other.summarize(),
+        ])
     return false
 
 
-func swap_loot_with(other: LootContainerSlotUI) -> void:
-    if !allowed_transaction(other) || !other.allowed_transaction(self):
+func swap_loot_with(other: LootSlot, other_ui: LootContainerSlotUI) -> void:
+    if !allowed_transaction(other) || (other_ui != null && !other_ui.allowed_transaction(loot_slot)):
         if _debug:
             print_debug("[Slot UI %s] Cannot swap %s with %s because one of us refuses swaps" % [
                 self.name,
                 self.loot_slot.summarize(),
-                other.name
+                other.summarize()
             ])
         _return_dragged_to_origin()
         return
 
     if _debug:
-        print_debug("[Slot UI %s] Swapping %s with %s %s" % [
+        print_debug("[Slot UI %s] Swapping %s with %s" % [
             self.name,
             self.loot_slot.summarize(),
-            other.name,
-            other.loot_slot.summarize(),
+            other.summarize(),
         ])
     var my_loot: Loot = loot_slot.loot
     var my_count: int = loot_slot.count
 
-    loot_slot.loot = other.loot_slot.loot
-    loot_slot.count = other.loot_slot.count
+    loot_slot.loot = other.loot
+    loot_slot.count = other.count
     sync_slot()
 
-    other.loot_slot.loot = my_loot
+    other.loot = my_loot
     if my_loot != null:
-        other.loot_slot.count = my_count
-    other.sync_slot()
+        other.count = my_count
+    
+    if other_ui != null:
+        other_ui.sync_slot()
 
     if _debug:
-        print_debug("[Slot UI %s] After swapping %s with %s %s" % [
+        print_debug("[Slot UI %s] After swapping %s with %s" % [
             self.name,
             self.loot_slot.summarize(),
-            other.name,
-            other.loot_slot.summarize(),
+            other.summarize(),
         ])

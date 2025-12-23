@@ -1,22 +1,13 @@
 extends Interactable
-class_name LootContainer
+class_name FastLootableItem
+
+@export var id: String
+@export var loot: LootSlot
+@export var exhausted_root: Node3D
+@export var _interact_min_distance_sq: float = 2
+@export var _interact_max_distance_sq: float = 8
 
 var _level: GridLevelCore
-@export var _interact_min_distance_sq: float = 0.0
-@export var _interact_max_distance_sq: float = 2.5
-
-## Used for look up of
-@export var category_id: String
-@export var ui_icon: Texture2D
-@export var slots: Array[LootSlot]
-@export var container_as_loot: Loot
-
-var slots_revealed: int
-
-var localized_name: String:
-    get():
-        return tr("CONTAINER_%s_NAME" % category_id.to_upper().strip_edges().replace(" ", "_"))
-
 var player: GridPlayerCore:
     get():
         return _level.player if _level != null else null
@@ -27,42 +18,23 @@ func _enter_tree() -> void:
         push_error("Failed to connect to level loaded")
     if __SignalBus.on_level_unloaded.connect(_handle_level_unloaded) != OK:
         push_error("Failed to connect to level unloaded")
-    if __SignalBus.on_close_container.connect(_handle_close_container) != OK:
-        push_error("Failed to connect to close container")
-
+        
 func _exit_tree() -> void:
     __SignalBus.on_level_loaded.disconnect(_handle_level_loaded)
     __SignalBus.on_level_unloaded.disconnect(_handle_level_unloaded)
-    __SignalBus.on_close_container.disconnect(_handle_close_container)
-
-    var p: GridPlayerCore = player
-    if p != null && p.cinematic:
-        p.remove_cinematic_cause(self)
-
     super._exit_tree()
-
+ 
 func _ready() -> void:
-    is_interactable = true
-
+    is_interactable = false
+    
 func _handle_level_unloaded(level: GridLevelCore) -> void:
     if _level == level:
         _level = null
 
 func _handle_level_loaded(level: GridLevelCore) -> void:
     _level = level
-
-func _handle_close_container(container: LootContainer) -> void:
-    var p: GridPlayerCore = player
-
-    if container == self && p != null:
-        p.remove_cinematic_cause(self)
-        if _debug:
-            print_debug("[Loot Container %s] Closed myself, player %s is now cinematic=%s" % [
-                p.name,
-                name,
-                p.cinematic,
-            ])
-
+               
+## Determines if player should be presented with it as an interaction option
 func _in_range(_event_position: Vector3) -> bool:
     var p: GridPlayerCore = player
     var d: float = global_position.distance_squared_to(p.center.global_position)
@@ -86,17 +58,18 @@ func _in_range(_event_position: Vector3) -> bool:
         p.camera.is_position_in_frustum(global_position)
     )
 
+## Determines if when interacting, it should be allowed or refused
 func check_allow_interact() -> bool:
     return true
 
 func execute_interation() -> void:
-    var p: GridPlayerCore = player
-    if p != null:
-        p.cause_cinematic(self)
+    if loot.count < 1:
+        return
+    
+    ## TODO: This isn't right
+    __SignalBus.on_quick_transfer_loot.emit(null, loot)
 
-    __SignalBus.on_open_container.emit(self)
-
-func remove_container() -> void:
-    visible = false
-    is_interactable = false
-    NodeUtils.disable_physics_in_children(self)
+    if loot.count < 1:
+        is_interactable = false
+        NodeUtils.disable_physics_in_children(exhausted_root)
+        exhausted_root.hide()

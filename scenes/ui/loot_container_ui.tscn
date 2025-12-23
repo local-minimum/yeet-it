@@ -20,6 +20,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7baso")
+_debug = true
 slot_scene = ExtResource("2_qf63m")
 container_icon = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Texture")
 container_name = NodePath("MarginContainer/HBoxContainer/Container Info/MarginContainer/Container Name")

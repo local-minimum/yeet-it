@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Loot" load_steps=4 format=3 uid="uid://dvroa1mes2lq3"]
+
+[ext_resource type="Script" uid="uid://crv68xkjq7tqq" path="res://scripts/yeet/loot/loot.gd" id="1_2c2wx"]
+[ext_resource type="Texture2D" uid="uid://bfttx644orgoy" path="res://models/stuff/wall_chunk.png" id="2_36yb5"]
+[ext_resource type="PackedScene" uid="uid://hvpud1gsykws" path="res://scenes/loot/wall_chunk.tscn" id="3_2c2wx"]
+
+[resource]
+script = ExtResource("1_2c2wx")
+id = "wall-chunk"
+world_model = ExtResource("3_2c2wx")
+ui_texture = ExtResource("2_36yb5")
+cooldown = 8.0
+tags = Array[int]([0, 7, 7, 7, 7])
+metadata/_custom_type_script = "uid://crv68xkjq7tqq"

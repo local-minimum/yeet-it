@@ -14,18 +14,26 @@ func _setup_slots() -> void:
     for ui: LootContainerSlotUI in ui_slots:
         ui.loot_slot = LootSlot.new()
 
-func _handle_quick_tranfer_loot(from: LootContainerSlotUI) -> void:
-    if from.is_empty:
+func _handle_quick_tranfer_loot(from: LootContainerSlotUI, loot_slot: LootSlot) -> void:     
+    if loot_slot == null && from != null:
+        loot_slot = from.loot_slot
+        
+    if loot_slot.empty:
         return
-
-    if visible && !ui_slots.has(from):
+        
+    if visible && (from == null || !ui_slots.has(from)):
         for slot: LootContainerSlotUI in ui_slots:
-            if slot.loot_slot.loot == from.loot_slot.loot:
-                if slot.fill_up_with_loot_from(from):
-                    if from.is_empty:
+            if slot.loot_slot.loot == loot_slot.loot:
+                if slot.fill_up_with_loot_from(loot_slot):
+                    if from != null:
+                        from.sync_slot()
+                    if loot_slot.empty:
                         return
-
+                        
         for slot: LootContainerSlotUI in ui_slots:
             if slot.is_empty:
-                slot.swap_loot_with(from)
-                return
+                if slot.fill_up_with_loot_from(loot_slot):
+                    if from != null:
+                        from.sync_slot()
+                    if loot_slot.empty:
+                        return

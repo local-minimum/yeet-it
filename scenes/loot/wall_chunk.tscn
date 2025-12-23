@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://hvpud1gsykws"]
+
+[ext_resource type="Script" uid="uid://bxvy8y3tnvw6b" path="res://scripts/yeet/loot/loot_projectile.gd" id="1_xnqow"]
+[ext_resource type="PackedScene" uid="uid://dowibrqqhy6h3" path="res://models/stuff/wall_chunk.blend" id="2_xnqow"]
+
+[node name="wall_chunk" instance=ExtResource("2_xnqow")]
+
+[node name="Wall Chunk-rigid" parent="." index="0"]
+mass = 10.0
+gravity_scale = 0.0
+script = ExtResource("1_xnqow")
+throw_speed = 5.0
+angular_speed = 0.0
+max_flight_duration = 1.0
