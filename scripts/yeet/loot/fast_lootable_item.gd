@@ -44,8 +44,9 @@ func _in_range(_event_position: Vector3) -> bool:
     var p: GridPlayerCore = player
     var d: float = _collission_shape.global_position.distance_squared_to(p.center.global_position)
     if _debug:
-        print_debug("[Fast Lootable %s] In Range of %s: cinematic %s / looking %s == %s/ distance sq %s < %s < %s / in frustrum %s" % [
+        print_debug("[Fast Lootable %s (%s)] In Range of %s: cinematic %s / looking %s == %s/ distance sq %s < %s < %s / in frustrum %s" % [
             name,
+            id,
             p,
             p.cinematic,
             GridPlayerCore.FreeLookMode.find_key(p.free_look),
