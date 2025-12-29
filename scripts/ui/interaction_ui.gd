@@ -7,7 +7,12 @@ class_name InteractionUI
 @export var _viz: InteractionUIViz
 
 var _interactables: Array[Interactable]
-var _interacting: bool
+var _interacting: bool:
+    set(value):
+        if value != _interacting:
+            _interacting = value
+            __SignalBus.on_interacting.emit(value)
+            
 var _requested: bool
 var _moving: bool
 var _active: Dictionary[String, Interactable]
@@ -120,7 +125,7 @@ func _draw() -> void:
     for interactable: Interactable in _calculate_within_reach():
         if idx > _max_interactables:
             push_warning("Cannot show interactable %s because exceeding limit of %s at a time" % [interactable, _max_interactables])
-            continue
+            break
 
         var id_key: String = get_key_id(idx)
         _active[id_key] = interactable

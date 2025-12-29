@@ -85,67 +85,61 @@ metadata/_custom_type_script = "uid://c4pg72ybhpmj0"
 
 [node name="twosided_wall_broken" instance=ExtResource("1_juthe")]
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_001-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 1" type="Node3D" parent="Twosided wall_001-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-1"
 loot = SubResource("Resource_ss8tx")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_002-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 2" type="Node3D" parent="Twosided wall_002-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-2"
 loot = SubResource("Resource_mhont")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_003-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 3" type="Node3D" parent="Twosided wall_003-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-3"
 loot = SubResource("Resource_m6acb")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_004-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 4" type="Node3D" parent="Twosided wall_004-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-4"
 loot = SubResource("Resource_jp813")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_005-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 5" type="Node3D" parent="Twosided wall_005-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-5"
 loot = SubResource("Resource_0rhbn")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_006-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 6" type="Node3D" parent="Twosided wall_006-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-6"
 loot = SubResource("Resource_eyosl")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_007-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 7" type="Node3D" parent="Twosided wall_007-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-7"
 loot = SubResource("Resource_6e8p7")
@@ -154,7 +148,7 @@ _interact_min_distance_sq = 1.0
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_008-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 8" type="Node3D" parent="Twosided wall_008-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-8"
 loot = SubResource("Resource_1uiq7")
@@ -163,7 +157,7 @@ _interact_min_distance_sq = 1.0
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_009-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 9" type="Node3D" parent="Twosided wall_009-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-9"
 loot = SubResource("Resource_6mdr3")
@@ -172,7 +166,7 @@ _interact_min_distance_sq = 1.0
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_010-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 10" type="Node3D" parent="Twosided wall_010-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-10"
 loot = SubResource("Resource_aydtt")
@@ -181,7 +175,7 @@ _interact_min_distance_sq = 1.0
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_011-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 11" type="Node3D" parent="Twosided wall_011-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-11"
 loot = SubResource("Resource_creyu")
@@ -190,22 +184,20 @@ _interact_min_distance_sq = 1.0
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_012-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 12" type="Node3D" parent="Twosided wall_012-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-12"
 loot = SubResource("Resource_q0tnh")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"
 
-[node name="FastLootableItem" type="Node3D" parent="Twosided wall_013-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
+[node name="FastLootableItem 13" type="Node3D" parent="Twosided wall_013-rigid" index="2" node_paths=PackedStringArray("exhausted_root", "_collission_shape")]
 script = ExtResource("2_upx1e")
 id = "chunk-13"
 loot = SubResource("Resource_mtnjf")
 exhausted_root = NodePath("..")
 _interact_min_distance_sq = 1.0
-_debug = true
 _collission_shape = NodePath("../../Twosided wall_001-rigid/CollisionShape3D")
 metadata/_custom_type_script = "uid://b111kn7ofttwt"

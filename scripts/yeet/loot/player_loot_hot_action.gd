@@ -11,25 +11,57 @@ class_name PlayerLootHotAction
 @export var target_search_distance_max: int = 3
 @export var cooldown_overlay: Control
 
+const POST_LOOT_DISABLE_TIME: int = 50
+
 func _enter_tree() -> void:
     if __SignalBus.on_level_loaded.connect(_handle_level_loaded) != OK:
         push_error("Could not connect to level loaded")
     if __SignalBus.on_level_unloaded.connect(_handle_level_unloaded) != OK:
         push_error("Could not connect to level unloaded")
+    if __SignalBus.on_interacting.connect(_handle_interacting) != OK:
+        push_error("Failed to connect to interacting") 
+   
     if loot_slot_ui != null && loot_slot_ui.on_slot_clicked.connect(_handle_slot_click) != OK:
         push_error("Could not connect to slot click")
+    if loot_slot_ui != null && loot_slot_ui.on_slot_updated.connect(_handle_slot_updated) != OK:
+        push_error("Coult not connect to slot updated")
+        
     cooldown_overlay.hide()
 
 func _exit_tree() -> void:
     __SignalBus.on_level_loaded.disconnect(_handle_level_loaded)
     __SignalBus.on_level_unloaded.disconnect(_handle_level_unloaded)
+    __SignalBus.on_interacting.disconnect(_handle_interacting)
+    
     if is_instance_valid(loot_slot_ui):
         loot_slot_ui.on_slot_clicked.disconnect(_handle_slot_click)
+        loot_slot_ui.on_slot_updated.disconnect(_handle_slot_updated)
 
 var _level: GridLevelCore
+var _interaction_active: bool
+var _allow_action_time: int
 
+func _handle_interacting(active: bool) -> void:
+    _interaction_active = active
+    if _debug:
+        print_debug("[Hot Action %s] Sensed interacting toggle to %s" % [hot_key_index, active])
+        
+    if !active:
+        _allow_action_time = Time.get_ticks_msec() + POST_LOOT_DISABLE_TIME
+    
+func _handle_slot_updated(slot: LootContainerSlotUI) -> void:
+    if _debug:
+        print_debug("[Hot Action %s] My slot updated %s" % [
+            hot_key_index, slot.loot_slot.summarize()
+        ])
+    _allow_action_time = Time.get_ticks_msec() + POST_LOOT_DISABLE_TIME
+    
 func _handle_slot_click(slot: LootContainerSlotUI) -> void:
     if _may_do_action && !slot.is_empty:
+        if _debug:
+            print_debug("[Hot Action %s] Clicked my slot %s" % [
+                hot_key_index, slot,
+            ])
         _enact_throw()
 
 func _handle_level_loaded(level: GridLevelCore) -> void:
@@ -41,15 +73,26 @@ func _handle_level_unloaded(level: GridLevelCore) -> void:
 
 var _may_do_action: bool:
     get():
-        return _level != null && !_level.paused && !_level.player == null && !_level.player.cinematic
+        return (
+            !_interaction_active &&
+            Time.get_ticks_msec() > _allow_action_time &&
+            _level != null && 
+            !_level.paused && 
+            _level.player != null && 
+            !_level.player.cinematic
+        )
 
 func _unhandled_input(event: InputEvent) -> void:
+    if event is InputEventMouseMotion:
+        return
+        
     if _may_do_action:
         if event.is_action_pressed(InteractionUI.get_key_id(hot_key_index)):
-            # TODO: Cooldown
             if loot_slot_ui.is_empty:
                 _warn_nothing_to_throw()
             else:
+                if _debug:
+                    print_debug("[Hot Action %s] Hot key pressed %s" % [hot_key_index, event])
                 _enact_throw()
         return
 

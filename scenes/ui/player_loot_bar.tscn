@@ -16,21 +16,23 @@ grow_horizontal = 2
 grow_vertical = 0
 alignment = 1
 script = ExtResource("1_c34at")
-ui_slots = [NodePath("Hotkey Action 1/CenterContainer/Container Slot"), NodePath("Hotkey Action 2/CenterContainer2/Container Slot"), NodePath("Hotkey Action 3/CenterContainer3/Container Slot"), NodePath("Player Loot Slot 4/Container Slot"), NodePath("Player Loot Slot 5/Container Slot"), NodePath("Player Loot Slot 6/Container Slot"), NodePath("Player Loot Slot 7/Container Slot"), NodePath("Player Loot Slot 8/Container Slot")]
+ui_slots = [NodePath("Hotkey Action 1/CenterContainer/Container Slot 1"), NodePath("Hotkey Action 2/CenterContainer2/Container Slot 2"), NodePath("Hotkey Action 3/CenterContainer3/Container Slot 3"), NodePath("Player Loot Slot 4/Container Slot 4"), NodePath("Player Loot Slot 5/Container Slot 5"), NodePath("Player Loot Slot 6/Container Slot 6"), NodePath("Player Loot Slot 7/Container Slot 7"), NodePath("Player Loot Slot 8/Container Slot 8")]
 
 [node name="Hotkey Action 1" type="MarginContainer" parent="." node_paths=PackedStringArray("hot_key_label", "loot_slot_ui", "cooldown_overlay")]
 layout_mode = 2
 script = ExtResource("2_yd3um")
+_debug = true
 hot_key_index = 1
 hot_key_label = NodePath("Hotkey hint Text")
-loot_slot_ui = NodePath("CenterContainer/Container Slot")
+loot_slot_ui = NodePath("CenterContainer/Container Slot 1")
 cooldown_overlay = NodePath("Cooldown Container")
 
 [node name="CenterContainer" type="CenterContainer" parent="Hotkey Action 1"]
 layout_mode = 2
 
-[node name="Container Slot" parent="Hotkey Action 1/CenterContainer" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 1" parent="Hotkey Action 1/CenterContainer" instance=ExtResource("3_jsmlg")]
 layout_mode = 2
+_debug = true
 
 [node name="Hotkey hint Text" type="Label" parent="Hotkey Action 1"]
 layout_mode = 2
@@ -51,13 +53,13 @@ layout_mode = 2
 script = ExtResource("2_yd3um")
 hot_key_index = 2
 hot_key_label = NodePath("Hotkey hint Text")
-loot_slot_ui = NodePath("CenterContainer2/Container Slot")
+loot_slot_ui = NodePath("CenterContainer2/Container Slot 2")
 cooldown_overlay = NodePath("Cooldown Container")
 
 [node name="CenterContainer2" type="CenterContainer" parent="Hotkey Action 2"]
 layout_mode = 2
 
-[node name="Container Slot" parent="Hotkey Action 2/CenterContainer2" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 2" parent="Hotkey Action 2/CenterContainer2" instance=ExtResource("3_jsmlg")]
 layout_mode = 2
 
 [node name="Hotkey hint Text" type="Label" parent="Hotkey Action 2"]
@@ -79,13 +81,13 @@ layout_mode = 2
 script = ExtResource("2_yd3um")
 hot_key_index = 3
 hot_key_label = NodePath("Hotkey hint Text")
-loot_slot_ui = NodePath("CenterContainer3/Container Slot")
+loot_slot_ui = NodePath("CenterContainer3/Container Slot 3")
 cooldown_overlay = NodePath("Cooldown Container")
 
 [node name="CenterContainer3" type="CenterContainer" parent="Hotkey Action 3"]
 layout_mode = 2
 
-[node name="Container Slot" parent="Hotkey Action 3/CenterContainer3" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 3" parent="Hotkey Action 3/CenterContainer3" instance=ExtResource("3_jsmlg")]
 layout_mode = 2
 
 [node name="Hotkey hint Text" type="Label" parent="Hotkey Action 3"]
@@ -105,29 +107,29 @@ color = Color(0.1882353, 0.1882353, 0.1882353, 0.91764706)
 [node name="Player Loot Slot 4" type="CenterContainer" parent="."]
 layout_mode = 2
 
-[node name="Container Slot" parent="Player Loot Slot 4" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 4" parent="Player Loot Slot 4" instance=ExtResource("3_jsmlg")]
 layout_mode = 2
 
 [node name="Player Loot Slot 5" type="CenterContainer" parent="."]
 layout_mode = 2
 
-[node name="Container Slot" parent="Player Loot Slot 5" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 5" parent="Player Loot Slot 5" instance=ExtResource("3_jsmlg")]
 layout_mode = 2
 
 [node name="Player Loot Slot 6" type="CenterContainer" parent="."]
 layout_mode = 2
 
-[node name="Container Slot" parent="Player Loot Slot 6" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 6" parent="Player Loot Slot 6" instance=ExtResource("3_jsmlg")]
 layout_mode = 2
 
 [node name="Player Loot Slot 7" type="CenterContainer" parent="."]
 layout_mode = 2
 
-[node name="Container Slot" parent="Player Loot Slot 7" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 7" parent="Player Loot Slot 7" instance=ExtResource("3_jsmlg")]
 layout_mode = 2
 
 [node name="Player Loot Slot 8" type="CenterContainer" parent="."]
 layout_mode = 2
 
-[node name="Container Slot" parent="Player Loot Slot 8" instance=ExtResource("3_jsmlg")]
+[node name="Container Slot 8" parent="Player Loot Slot 8" instance=ExtResource("3_jsmlg")]
 layout_mode = 2

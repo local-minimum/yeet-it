@@ -69,14 +69,14 @@ func _hide_slots_from(idx: int) -> void:
     _updating_slots = false
 
 func _handle_quick_tranfer_loot(from: LootContainerSlotUI, loot_slot: LootSlot) -> void:
-    if _paused:
+    if _paused || !visible:
         return
 
     if loot_slot == null && from != null:
         loot_slot = from.loot_slot
         
     if _debug:
-        print_debug("[Loot Container UI %s] Processing quick transfer of %s" % [name, from])
+        print_debug("[Loot Container UI %s] Processing quick transfer of %s" % [name, loot_slot.summarize()])
     if loot_slot.empty:
         push_warning("[Loot Container UI %s] Quick transfer of nothing should not happen" % name)
         return
@@ -100,7 +100,7 @@ func _handle_quick_tranfer_loot(from: LootContainerSlotUI, loot_slot: LootSlot) 
 
     elif _debug:
         print_debug("[Loot Container UI %s] %s not for me because visible=%s or my slot %s" % [
-            name, from, visible, _slots.has(from),
+            name, loot_slot.summarize(), visible, _slots.has(from),
         ])
 
 func _handle_open_container(loot_container: LootContainer) -> void:

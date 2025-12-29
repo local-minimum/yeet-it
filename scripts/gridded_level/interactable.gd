@@ -78,7 +78,12 @@ func player_is_in_range() -> bool:
 
 func bounding_box() -> AABB:
     var size: Vector3 = Vector3.ONE
-
+    var center: Vector3 = _collission_shape.global_position
+    
+    var body: PhysicsBody3D = NodeUtils.body3d(self)
+    if body != null:
+        center = body.global_position
+            
     if _collission_shape.shape is BoxShape3D:
         var box: BoxShape3D = _collission_shape.shape
         size = _collission_shape.global_basis * box.size
@@ -89,15 +94,28 @@ func bounding_box() -> AABB:
         
     elif _collission_shape.shape is ConvexPolygonShape3D:
         var poly_shape: ConvexPolygonShape3D = _collission_shape.shape
-        return AABBUtils.create_bounding_box(poly_shape.points, _collission_shape.to_global)
+        var trans: Callable = _collission_shape.to_global
+        
+        if body != null:
+            # TODO: This is a hack, kinda or but the points of a collision shape seems to be in the body's coordinate system!
+            # And converting to global using the collision shapes transform doesn't work
+            trans = body.to_global
+            # trans = func (v: Vector3) -> Vector3:
+            #     return v * _collission_shape.global_transform.affine_inverse()    
+                    
+        return AABBUtils.create_bounding_box(poly_shape.points, trans)
         
     else:
         push_warning("Collision shape %s type not handled" % _collission_shape.shape)
 
-    return AABB(_collission_shape.global_position - size * 0.5, size)
+    return AABB(center - size * 0.5, size)
 
 var global_center: Vector3:
     get():
+        var body: PhysicsBody3D = NodeUtils.body3d(self)
+        if body != null:
+            return body.global_position
+            
         if _collission_shape.shape is BoxShape3D:
             return _collission_shape.global_position
 
@@ -113,7 +131,7 @@ var global_center: Vector3:
                 center += pt
             center /= poly_shape.points.size()
             return _collission_shape.to_global(center)
-                   
+                       
         push_warning("Collision shape %s type not handled" % _collission_shape.shape)
         return _collission_shape.global_position
         

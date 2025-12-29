@@ -40,9 +40,16 @@ static func find_parent_type(node: Node, type: String) -> Node:
                 if script != null && script.get_global_name() == type:
                     return node
 
-
     return find_parent_type(node.get_parent(), type)
+
+static func body3d(node: Node) -> PhysicsBody3D:
+    if node is PhysicsBody3D:
+        return node
     
+    elif node == null:
+        return null
+    
+    return body3d(node.get_parent())
 
 static func disable_physics_in_children(root: Node3D) -> void:
     if root is PhysicsBody3D:

@@ -48,9 +48,7 @@ func _handle_hit(body: Node) -> void:
     
     
 func _on_body_entered(body: Node) -> void:
-    if _crashed:
-        if _debug:
-            print_debug("[Loot Projectile %s] Entered %s of %s but already crashed so disregarding" % [name, body, body.get_parent()])
+    if _crashed: 
         return
 
     if _debug:
@@ -148,6 +146,8 @@ func crash() -> void:
     if _crashed:
         return
 
+    contact_monitor = false
+    
     _crashed = true
     if _debug:
         print_debug("[Loot Projectile %s] Crashing!" % [name])
