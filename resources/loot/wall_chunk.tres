@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("1_2c2wx")
-id = "wall-chunk"
+id = "wall_chunk"
 world_model = ExtResource("3_2c2wx")
 ui_texture = ExtResource("2_36yb5")
 cooldown = 8.0

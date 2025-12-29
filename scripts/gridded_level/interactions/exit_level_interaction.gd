@@ -13,7 +13,7 @@ func check_allow_interact() -> bool:
         return false
     return true
 
-func _in_range(_event_position: Vector3) -> bool:
+func _in_range(_entity_position: Vector3) -> bool:
     var level: GridLevelCore = portal.get_level()
 
     # print_debug("[Airlock button] in range? %s == %s, %s == %s" % [

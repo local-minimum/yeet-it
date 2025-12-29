@@ -13,3 +13,5 @@ LOOT_ROBOTHUGGER_HEAD_NAME,Hugger Head,Kramishuvud
 LOOT_ROBOTHUGGER_HEAD_DESC,A dead glas screen in a sturdy frame,En död glasskärm i ett robust skal
 LOOT_ROBOTHUGGER_WHEEL_NAME,Hugger Wheel,Kramishjul
 LOOT_ROBOTHUGGER_WHEEL_DESC,Round and plastic,Rund och plastigt
+LOOT_WALL_CHUNK_NAME,Concrete slab,Cementblock
+LOOT_WALL_CHUNK_DESC,"Was part of a wall, rough and heavy","Var del av en vägg, kantig och tung"

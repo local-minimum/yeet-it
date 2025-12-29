@@ -14,6 +14,13 @@ const crash_bounce_fudge_angle: float = 0.5
 const crash_energy_scale: float = 0.005
 const crash_gravity_scale: float = 1.25
 
+func _enter_tree() -> void:
+    if (!body_entered.is_connected(_on_body_entered) && body_entered.connect(_on_body_entered) != OK):
+        push_error("Failed to connect body entered")
+
+func _exit_tree() -> void:
+    body_entered.disconnect(_on_body_entered)
+    
 var root: Node3D:
     get():
         var n: Node3D = self
@@ -42,6 +49,8 @@ func _handle_hit(body: Node) -> void:
     
 func _on_body_entered(body: Node) -> void:
     if _crashed:
+        if _debug:
+            print_debug("[Loot Projectile %s] Entered %s of %s but already crashed so disregarding" % [name, body, body.get_parent()])
         return
 
     if _debug:
@@ -108,12 +117,23 @@ var _tags: Array[Loot.Tag]
 func launch(tags: Array[Loot.Tag], direction: Vector3) -> void:
     _tags = tags
 
-    # print_debug("[Loot Projectile %s] Launching at %s with velocity %s" % [name, global_position, direction * throw_speed])
+    if _debug:
+        print_debug("[Loot Projectile %s] Launching at %s with velocity %s" % [name, global_position, direction * throw_speed])
+        
     linear_velocity = direction * throw_speed
 
     if tags.has(Loot.Tag.Thin):
         angular_velocity = Vector3(0, angular_speed, 0)
 
+    if !contact_monitor:
+        contact_monitor = true
+    
+    if max_contacts_reported < 1:
+        max_contacts_reported = 2
+    
+    if !continuous_cd:
+        continuous_cd = true
+        
     await get_tree().create_timer(max_flight_duration).timeout
     
     if !_crashed:

@@ -145,7 +145,12 @@ func remove_side(side: GridNodeSide) -> void:
             @warning_ignore_restore("return_value_discarded")
             return
     
-    push_warning("[Grid Node %s] %s is not one of my sides %s" % [name, side, _sides])
+    push_warning("[Grid Node %s] %s of %s is not one of my sides %s" % [
+        name, 
+        side,
+        side.get_parent(), 
+        _sides,
+    ])
 
 func add_side(side: GridNodeSide) -> void:
     if NodeUtils.is_parent(self, side):
@@ -300,15 +305,24 @@ static func _init_sides_and_anchors(node: GridNode) -> void:
 
 func remove_anchor(anchor: GridAnchor) -> bool:
     if !_anchors.has(anchor.direction):
-        push_warning("Node %s has no anchor in the %s direction" % [name, CardinalDirections.name(anchor.direction)])
+        push_warning("Node %s has no anchor in the %s direction %s" % [
+            name, 
+            CardinalDirections.name(anchor.direction),
+            _anchors,
+        ])
         return false
 
     if _anchors[anchor.direction] == anchor:
         return _anchors.erase(anchor.direction)
 
     push_warning(
-        "Node %s has another anchor %s in the %s direction" % [name, _anchors[anchor.direction], anchor.direction],
-    )
+        "Node %s has another anchor %s in the %s direction than %s of %s" % [
+            name, 
+            _anchors[anchor.direction],
+            CardinalDirections.name(anchor.direction),
+            anchor,
+            anchor.get_parent(),
+    ])
 
     return false
 

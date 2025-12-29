@@ -111,7 +111,7 @@ func _handle_door_state_chage(grid_door: GridDoorCore, _from: GridDoorCore.LockS
     if grid_door == door:
         _sync_reader_display()
 
-func _sync_reader_display(_level: GridLevelCore = null) -> void:
+func _sync_reader_display(__level: GridLevelCore = null) -> void:
     _set_interaction()
 
     if mesh == null:
@@ -149,12 +149,11 @@ func _sync_reader_display(_level: GridLevelCore = null) -> void:
 
     mesh.set_surface_override_material(display_material_idx, mat)
 
-func _in_range(event_position: Vector3) -> bool:
+func _in_range(entity_position: Vector3) -> bool:
     if mode == Mode.UNLOCK_ONLY && door.get_lock_state(self) != GridDoorCore.LockState.LOCKED:
         return false
 
     var level: GridLevelCore = door.get_level()
-    var player: GridPlayerCore = level.player
 
     if player.cinematic:
         return false
@@ -173,7 +172,7 @@ func _in_range(event_position: Vector3) -> bool:
         if VectorUtils.manhattan_distance(negative_coords, player_coords) < VectorUtils.manhattan_distance(door_coords, player_coords):
             return false
 
-    var direction: Vector3 = event_position - player.global_position
+    var direction: Vector3 = entity_position - global_center
     var look_direction: Vector3 = CardinalDirections.direction_to_vector(player.look_direction)
 
     var dot: float = direction.normalized().dot(look_direction)

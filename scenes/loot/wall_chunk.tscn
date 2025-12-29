@@ -8,7 +8,11 @@
 [node name="Wall Chunk-rigid" parent="." index="0"]
 mass = 10.0
 gravity_scale = 0.0
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 4
 script = ExtResource("1_xnqow")
+_debug = true
 throw_speed = 5.0
 angular_speed = 0.0
 max_flight_duration = 1.0
